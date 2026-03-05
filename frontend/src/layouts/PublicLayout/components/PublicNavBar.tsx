@@ -6,7 +6,7 @@ import logoSvg from '../../../assets/logo.svg';
 
 const navItems = [
   { label: 'Home', to: '/' },
-  { label: 'Planos', to: '#' },
+  { label: 'Planos', to: '/pricing' },
   { label: 'Contato', to: '/contact' },
   { label: 'Sobre', to: '/about' },
 ];
@@ -117,8 +117,8 @@ const PublicNavBar = () => {
           )}
         </button>
 
-        <button
-          type='button'
+        <Link
+          to='/login'
           className='group nav-container-gradient hidden h-10 cursor-pointer items-center gap-2 rounded-full pl-3 pr-4 text-sm text-text-primary transition-all duration-200 ease-in-out hover:scale-105 hover:pl-2 md:flex'
         >
           <span className='rounded-full bg-primary p-1 text-sm transition-colors duration-200 group-hover:bg-primary'>
@@ -128,7 +128,7 @@ const PublicNavBar = () => {
             />
           </span>
           <span>Login</span>
-        </button>
+        </Link>
       </header>
 
       {isMobileMenuOpen && (
