@@ -48,4 +48,15 @@ class AuthController extends Controller
             'token' => $result['token'],
         ], 200);
     }
+
+    public function logout() {
+        $this->userService->logout();
+        return response()->json(null, 204);
+    }
+
+    public function getProfile(Request $request) {
+        return response()->json([
+            'user' => new UserResource($request->user()),
+        ], 200);
+    }
 }

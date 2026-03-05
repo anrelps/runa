@@ -32,4 +32,8 @@ class UserService {
 
         return ['user' => $user, 'token' => $token];
     }
+
+    public function logout() {
+        return Auth::user()->currentAccessToken()->delete();
+    }
 }
