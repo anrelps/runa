@@ -4,12 +4,42 @@ import {
   XLogoIcon,
 } from '@phosphor-icons/react';
 import { motion } from 'framer-motion';
-import React, { type ReactNode } from 'react';
-import { Link } from 'react-router-dom';
+import React, { useEffect, useState, type ReactNode } from 'react';
+import { useSelector } from 'react-redux';
+import { Link, useNavigate } from 'react-router-dom';
 import { twMerge } from 'tailwind-merge';
 import logoSvg from '../../../assets/logo.svg';
+import { login } from '../../../redux/slices/userSlice';
+import { useAppDispatch } from '../../../redux/store';
 
 export const DarkGridAuth = () => {
+  const dispatch = useAppDispatch();
+  const navigate = useNavigate();
+
+  const [formData, setFormData] = useState({
+    email: '',
+    password: '',
+  });
+
+  const { isAuthenticated } = useSelector((state: any) => state.user);
+
+  const handleSubmit = (event: React.SyntheticEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    const email = formData.email;
+    const password = formData.password;
+    dispatch(login({ email, password }));
+  };
+
+  useEffect(
+    function () {
+      console.log('Authentication status changed:', isAuthenticated);
+      if (isAuthenticated) {
+        navigate('/dashboard');
+      }
+    },
+    [isAuthenticated, navigate],
+  );
+
   return (
     <div
       className='min-h-screen py-20'
@@ -43,10 +73,13 @@ export const DarkGridAuth = () => {
         className='relative z-10 mx-auto w-full max-w-xl p-4'
       >
         <Heading />
-
         <SocialOptions />
         <Or />
-        <Email />
+        <Email
+          handleSubmit={handleSubmit}
+          formData={formData}
+          setFormData={setFormData}
+        />
         <Terms />
       </motion.div>
 
@@ -82,14 +115,14 @@ const Heading = () => (
 const SocialOptions = () => (
   <div>
     <div className='mb-3 flex gap-3'>
-      <BubbleButton className='flex w-full justify-center py-3'>
+      <BubbleButton className='flex w-full justify-center py-3 pointer-events-none'>
         <XLogoIcon />
       </BubbleButton>
-      <BubbleButton className='flex w-full justify-center py-3'>
+      <BubbleButton className='flex w-full justify-center py-3 pointer-events-none'>
         <GithubLogoIcon />
       </BubbleButton>
     </div>
-    <BubbleButton className='flex w-full justify-center py-3'>
+    <BubbleButton className='flex w-full justify-center py-3 pointer-events-none'>
       Entrar com SSO
     </BubbleButton>
   </div>
@@ -111,9 +144,17 @@ const Or = () => {
   );
 };
 
-const Email = () => {
+type EmailProps = {
+  handleSubmit: (event: React.SyntheticEvent<HTMLFormElement>) => void;
+  formData: { email: string; password: string };
+  setFormData: React.Dispatch<
+    React.SetStateAction<{ email: string; password: string }>
+  >;
+};
+
+const Email = ({ handleSubmit, formData, setFormData }: EmailProps) => {
   return (
-    <form onSubmit={(e) => e.preventDefault()}>
+    <form onSubmit={handleSubmit}>
       <div className='mb-3'>
         <label
           htmlFor='email-input'
@@ -126,6 +167,10 @@ const Email = () => {
           id='email-input'
           type='email'
           placeholder='seu.email@provedor.com'
+          value={formData.email}
+          onChange={(e) =>
+            setFormData((prev) => ({ ...prev, email: e.target.value }))
+          }
           className='w-full rounded-md border px-3 py-2 ring-1 ring-transparent transition-shadow focus:outline-0'
           style={{
             backgroundColor: 'var(--color-background-card)',
@@ -155,6 +200,10 @@ const Email = () => {
           id='password-input'
           type='password'
           placeholder='••••••••••••'
+          value={formData.password}
+          onChange={(e) =>
+            setFormData((prev) => ({ ...prev, password: e.target.value }))
+          }
           className='w-full rounded-md border px-3 py-2 ring-1 ring-transparent transition-shadow focus:outline-0'
           style={{
             backgroundColor: 'var(--color-background-card)',
