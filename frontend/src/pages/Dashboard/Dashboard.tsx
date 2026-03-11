@@ -4,7 +4,7 @@ const Dashboard = () => {
   return (
     <>
       <AppLayout>
-        <h1 className='text-2xl font-bold'>Dashboard</h1>
+        <h1 className='text-2xl font-bold mb-8'>Dashboard</h1>
       </AppLayout>
     </>
   );

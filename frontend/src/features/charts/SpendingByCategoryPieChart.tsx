@@ -1,0 +1,135 @@
+import { ArcElement, Chart as ChartJS, Legend, Tooltip } from 'chart.js';
+import React from 'react';
+import { Pie } from 'react-chartjs-2';
+import { useChartResize } from './useChartResize';
+
+ChartJS.register(ArcElement, Tooltip, Legend);
+
+const getResolvedColor = (cssVar: string, fallback: string) => {
+  const value = getComputedStyle(document.documentElement).getPropertyValue(
+    cssVar,
+  );
+  return value?.trim() || fallback;
+};
+
+const CATEGORIES = [
+  {
+    label: 'Alimentação',
+    value: 1200,
+    colorVar: '--color-accent-start',
+    fallback: '#ff6b4a',
+  },
+  {
+    label: 'Transporte',
+    value: 800,
+    colorVar: '--color-primary',
+    fallback: '#20e096',
+  },
+  {
+    label: 'Lazer',
+    value: 500,
+    colorVar: '--color-accent-orange',
+    fallback: '#ff9a4a',
+  },
+  {
+    label: 'Saúde',
+    value: 350,
+    colorVar: '--color-accent-end',
+    fallback: '#00c6ff',
+  },
+  {
+    label: 'Outros',
+    value: 200,
+    colorVar: '--color-text-secondary',
+    fallback: '#6e8a85',
+  },
+];
+
+const getPieData = () => {
+  const backgroundColor = CATEGORIES.map((c) =>
+    getResolvedColor(c.colorVar, c.fallback),
+  );
+  const borderColor = getResolvedColor('--color-background-card', '#141f1f');
+  return {
+    labels: CATEGORIES.map((c) => c.label),
+    datasets: [
+      {
+        data: CATEGORIES.map((c) => c.value),
+        backgroundColor,
+        borderWidth: 2,
+        borderColor,
+      },
+    ],
+  };
+};
+
+const options = {
+  responsive: true,
+  maintainAspectRatio: true,
+  plugins: {
+    legend: { display: false },
+    tooltip: {
+      callbacks: {
+        label: (context: any) => {
+          const label = context.label || '';
+          const value = context.parsed || 0;
+          return `${label}: R$ ${value.toLocaleString('pt-BR')}`;
+        },
+      },
+    },
+  },
+};
+
+const SpendingByCategoryPieChart: React.FC = () => {
+  // outerRef vai no card inteiro — elemento estável que não muda ao remontar o canvas
+  const { outerRef, chartKey } = useChartResize(300);
+
+  return (
+    <div
+      ref={outerRef}
+      className='rounded-2xl p-4 mb-6 w-full flex flex-col min-h-65'
+      style={{
+        background: 'var(--color-background-card, #141f1f)',
+        border: '1px solid var(--color-border-card, rgba(32,224,150,0.08))',
+      }}
+    >
+      <div className='flex justify-between items-center mb-3.5'>
+        <span
+          className='text-[0.85rem] font-semibold'
+          style={{ color: 'var(--color-text-primary, #fff)' }}
+        >
+          Gastos por categoria
+        </span>
+      </div>
+
+      <div className='w-full flex justify-center'>
+        <div style={{ maxWidth: 220, width: '100%' }}>
+          <Pie key={chartKey} data={getPieData()} options={options} />
+        </div>
+      </div>
+
+      <div className='flex flex-wrap justify-center items-center gap-2 w-full mt-4'>
+        {CATEGORIES.map((cat) => (
+          <div key={cat.label} className='flex items-center gap-2'>
+            <span
+              className='inline-block w-3 h-3 rounded'
+              style={{
+                background: getResolvedColor(cat.colorVar, cat.fallback),
+                border:
+                  '1.5px solid var(--color-border-card, rgba(32,224,150,0.08))',
+              }}
+            />
+            <span
+              className='text-xs'
+              style={{ color: 'var(--color-text-secondary, #6e8a85)' }}
+            >
+              {cat.label}
+            </span>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+};
+
+export default SpendingByCategoryPieChart;

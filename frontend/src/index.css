@@ -1,9 +1,5 @@
 @import 'tailwindcss';
 
-html {
-  scrollbar-gutter: stable;
-}
-
 @theme {
   /* Dark Mode Colors (default) */
   --color-background-primary: #0b1212;
@@ -13,6 +9,9 @@ html {
   --color-text-secondary: #6e8a85;
   --color-accent-start: #ff6b4a;
   --color-accent-end: #00c6ff;
+  --color-accent-orange: #ff9a4a;
+  --color-border-card: rgba(32, 224, 150, 0.08);
+  --color-grid: rgba(32, 224, 150, 0.08);
 }
 
 /* Light Mode Palette (preserved for future use)

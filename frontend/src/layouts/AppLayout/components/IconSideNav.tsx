@@ -29,46 +29,64 @@ const IconSideNav = () => {
   const [expanded, setExpanded] = useState(false);
 
   return (
-    <motion.nav
-      className='h-screen bg-background-card flex flex-col items-start gap-2 sticky top-0 border-r border-white/10 overflow-hidden'
-      animate={{ width: expanded ? 220 : 80 }}
-      transition={{ type: 'spring', stiffness: 300, damping: 30 }}
-    >
-      <div className='flex items-center justify-center w-20 shrink-0 pt-4 pb-2'>
-        <img
-          src={logoSvg}
-          alt='Runa'
-          className='h-7 w-auto'
-          style={{ filter: 'brightness(0) saturate(100%) invert(1)' }}
-        />
-      </div>
+    <>
+      {/* Desktop sidebar — hidden on mobile */}
+      <motion.nav
+        className='hidden md:flex h-screen bg-background-card flex-col items-start gap-2 sticky top-0 border-r border-white/10 overflow-hidden'
+        animate={{ width: expanded ? 220 : 80 }}
+        transition={{ type: 'spring', stiffness: 300, damping: 30 }}
+      >
+        <div className='flex items-center justify-center w-20 shrink-0 pt-4 pb-2'>
+          <img
+            src={logoSvg}
+            alt='Runa'
+            className='h-7 w-auto'
+            style={{ filter: 'brightness(0) saturate(100%) invert(1)' }}
+          />
+        </div>
 
-      <div className='flex flex-col gap-2 w-full px-3 flex-1'>
+        <div className='flex flex-col gap-2 w-full px-3 flex-1'>
+          {navItems.map((item, i) => (
+            <NavItem
+              key={i}
+              selected={selected === i}
+              id={i}
+              setSelected={setSelected}
+              label={item.label}
+              expanded={expanded}
+            >
+              {item.icon}
+            </NavItem>
+          ))}
+        </div>
+
+        <div className='w-full px-3 pb-4'>
+          <motion.button
+            className='p-4 text-2xl w-full flex items-center justify-center rounded-md text-text-secondary hover:bg-white/10 transition-colors'
+            onClick={() => setExpanded((prev) => !prev)}
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+          >
+            {expanded ? <CaretLeftIcon /> : <CaretRightIcon />}
+          </motion.button>
+        </div>
+      </motion.nav>
+
+      {/* Mobile bottom nav — visible only on mobile */}
+      <nav className='md:hidden fixed bottom-0 left-0 right-0 z-50 bg-background-card border-t border-white/10 flex items-center justify-around px-2 py-2'>
         {navItems.map((item, i) => (
-          <NavItem
+          <BottomNavItem
             key={i}
             selected={selected === i}
             id={i}
             setSelected={setSelected}
             label={item.label}
-            expanded={expanded}
           >
             {item.icon}
-          </NavItem>
+          </BottomNavItem>
         ))}
-      </div>
-
-      <div className='w-full px-3 pb-4'>
-        <motion.button
-          className='p-4 text-2xl w-full flex items-center justify-center rounded-md text-text-secondary hover:bg-white/10 transition-colors'
-          onClick={() => setExpanded((prev) => !prev)}
-          whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.95 }}
-        >
-          {expanded ? <CaretLeftIcon /> : <CaretRightIcon />}
-        </motion.button>
-      </div>
-    </motion.nav>
+      </nav>
+    </>
   );
 };
 
@@ -120,6 +138,49 @@ const NavItem = ({
             animate={{ scale: 1 }}
             exit={{ scale: 0 }}
           ></motion.span>
+        )}
+      </AnimatePresence>
+    </motion.button>
+  );
+};
+
+const BottomNavItem = ({
+  children,
+  selected,
+  id,
+  setSelected,
+  label,
+}: {
+  children: ReactNode;
+  selected: boolean;
+  id: number;
+  setSelected: Dispatch<SetStateAction<number>>;
+  label: string;
+}) => {
+  return (
+    <motion.button
+      className='relative flex flex-col items-center justify-center gap-1 p-3 rounded-md flex-1 transition-colors'
+      onClick={() => setSelected(id)}
+      whileTap={{ scale: 0.95 }}
+    >
+      <span
+        className={`relative z-10 text-2xl shrink-0 transition-colors ${selected ? 'text-background-primary' : 'text-text-secondary'}`}
+      >
+        {children}
+      </span>
+      <span
+        className={`relative z-10 text-[10px] font-medium whitespace-nowrap transition-colors ${selected ? 'text-background-primary' : 'text-text-secondary'}`}
+      >
+        {label}
+      </span>
+      <AnimatePresence>
+        {selected && (
+          <motion.span
+            className='absolute inset-0 rounded-md bg-primary z-0'
+            initial={{ scale: 0 }}
+            animate={{ scale: 1 }}
+            exit={{ scale: 0 }}
+          />
         )}
       </AnimatePresence>
     </motion.button>
