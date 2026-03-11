@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Models;
+namespace App\Domain\Finance\RecurringExpense\Models;
 
+use App\Domain\User\Models\User;
 use Illuminate\Database\Eloquent\Model;
 
 class RecurringExpense extends Model

@@ -69,7 +69,6 @@ class ExpenseRepository implements ExpenseRepositoryInterface {
             'description' => $dto->description,
             'category' => $dto->category,
             'total_amount' => $dto->total_amount,
-            'first_due_date' => $dto->first_due_date,
         ]);
         return $expense;
     }
