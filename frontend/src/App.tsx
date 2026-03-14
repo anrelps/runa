@@ -3,7 +3,11 @@ import { BrowserRouter, Route, Routes } from 'react-router-dom';
 //Pages
 import About from './pages/About/About';
 import Contact from './pages/Contact/Contact';
+import Dashboard from './pages/Dashboard/Dashboard';
+import Expenses from './pages/Expenses/Expenses';
 import Home from './pages/Home/Home';
+import Login from './pages/Login/Login';
+import Pricing from './pages/Pricing/Pricing';
 
 function App() {
   useEffect(() => {
@@ -16,6 +20,10 @@ function App() {
         <Route path='/' element={<Home />} />
         <Route path='/about' element={<About />} />
         <Route path='/contact' element={<Contact />} />
+        <Route path='/pricing' element={<Pricing />} />
+        <Route path='/login' element={<Login />} />
+        <Route path='/dashboard' element={<Dashboard />} />
+        <Route path='/expenses' element={<Expenses />} />
       </Routes>
     </BrowserRouter>
   );
