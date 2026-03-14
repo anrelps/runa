@@ -9,12 +9,15 @@ use App\Domain\Finance\RecurringExpense\DTOs\UpdateRecurringExpenseDTO;
 use App\Domain\Finance\RecurringExpense\Models\RecurringExpense;
 use App\Domain\Finance\RecurringExpense\Models\RecurringExpenseEntry;
 use App\Domain\Finance\RecurringExpense\Repositories\Contracts\RecurringExpenseRepositoryInterface;
+use App\Domain\Finance\Transaction\DTOs\CreateTransactionDTO;
+use App\Domain\Finance\Transaction\Services\TransactionService;
 use Illuminate\Pagination\LengthAwarePaginator;
 
 class RecurringExpenseService {
 
     public function __construct(
         private RecurringExpenseRepositoryInterface $recurringExpenseRepository,
+        private TransactionService $transactionService,
     ) {}
 
     public function index(IndexRecurringExpenseDTO $dto): LengthAwarePaginator {
@@ -29,6 +32,17 @@ class RecurringExpenseService {
 
     public function createEntry(CreateRecurringExpenseEntryDTO $dto): RecurringExpenseEntry {
         $recurringExpenseEntry = $this->recurringExpenseRepository->createEntry($dto);
+        $this->transactionService->create(
+            new CreateTransactionDTO(
+                'expense',
+                $recurringExpenseEntry->amount,
+                "Pagamento recorrente de {$recurringExpenseEntry->recurringExpense->description}",
+                'Recurring Expense',
+                $recurringExpenseEntry->paid_at,
+                RecurringExpenseEntry::class,
+                $recurringExpenseEntry->id,
+            )
+        );
         return $recurringExpenseEntry;
     }
 

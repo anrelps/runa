@@ -19,6 +19,9 @@ class TransactionRepository implements TransactionRepositoryInterface {
         $user_id = Auth::user()->id;
         return $this->transactionModel
             ->where('user_id', $user_id)
+            ->when(isset($dto->type), function($q) use ($dto) {
+                $q->where('type', $dto->type);
+            })
             ->when(isset($dto->min_amount), function($q) use ($dto) {
                 $q->where('amount', '>=', $dto->min_amount);
             })

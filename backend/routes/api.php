@@ -16,7 +16,11 @@ Route::prefix('v1')->group(function () {
             Route::get('/profile', [AuthController::class, 'getProfile']);
         });
 
-        Route::apiResource('/expenses', ExpenseController::class);
+
+        Route::prefix('/expenses')->group(function() {
+            Route::apiResource('/', ExpenseController::class);
+            Route::put('/update-installment/{expenseInstallment}', [ExpenseController::class, 'updateInstallment']);
+        });
 
         Route::prefix('/recurring-expenses')->group(function() {
             Route::apiResource('/', RecurringExpenseController::class);

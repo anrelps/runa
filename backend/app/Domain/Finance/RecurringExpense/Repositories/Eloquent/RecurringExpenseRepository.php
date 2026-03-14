@@ -58,12 +58,14 @@ class RecurringExpenseRepository implements RecurringExpenseRepositoryInterface 
     }
 
     public function createEntry(CreateRecurringExpenseEntryDTO $dto): RecurringExpenseEntry {
-        return $this->recurringExpenseEntryModel->create([
+        $expenseEntry = $this->recurringExpenseEntryModel->create([
             'recurring_expense_id' => $dto->recurring_expense_id,
             'reference_month' => $dto->reference_month,
             'amount' => $dto->amount,
             'paid_at' => $dto->paid_at,
         ]);
+        $expenseEntry->load('recurringExpense');
+        return $expenseEntry;
     }
 
     public function update(RecurringExpense $recurringExpense, UpdateRecurringExpenseDTO $dto): RecurringExpense {

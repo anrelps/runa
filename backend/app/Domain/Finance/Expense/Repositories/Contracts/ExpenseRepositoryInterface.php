@@ -14,6 +14,7 @@ interface ExpenseRepositoryInterface {
     public function index(IndexExpenseDTO $dto): LengthAwarePaginator;
     public function create(CreateExpenseDTO $dto): Expense;
     public function createInstallment(CreateInstallmentDTO $dto): ExpenseInstallment;
+    public function updateInstallment(ExpenseInstallment $expenseInstallment): ExpenseInstallment;
     public function update(Expense $expense, UpdateExpenseDTO $dto): Expense;
     public function delete(Expense $expense): void;
 }

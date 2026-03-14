@@ -9,6 +9,7 @@ use App\Domain\Finance\Expense\DTOs\UpdateExpenseDTO;
 use App\Domain\Finance\Expense\Models\Expense;
 use App\Domain\Finance\Expense\Models\ExpenseInstallment;
 use App\Domain\Finance\Expense\Repositories\Contracts\ExpenseRepositoryInterface;
+use Carbon\Carbon;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Auth;
 
@@ -62,6 +63,14 @@ class ExpenseRepository implements ExpenseRepositoryInterface {
             'amount' => $dto->amount,
             'due_date' => $dto->due_date,
         ]);
+    }
+
+    public function updateInstallment(ExpenseInstallment $expenseInstallment): ExpenseInstallment {
+        $expenseInstallment->update([
+            'paid_at' => !is_null($expenseInstallment->paid_at) ? null : Carbon::now(),
+        ]);
+        $expenseInstallment->load('expense');
+        return $expenseInstallment;
     }
 
     public function update(Expense $expense, UpdateExpenseDTO $dto): Expense {

@@ -6,6 +6,7 @@ use App\Domain\Finance\Expense\DTOs\CreateExpenseDTO;
 use App\Domain\Finance\Expense\DTOs\IndexExpenseDTO;
 use App\Domain\Finance\Expense\DTOs\UpdateExpenseDTO;
 use App\Domain\Finance\Expense\Models\Expense;
+use App\Domain\Finance\Expense\Models\ExpenseInstallment;
 use App\Domain\Finance\Expense\Services\ExpenseService;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\ExpenseResource;
@@ -53,6 +54,15 @@ class ExpenseController extends Controller
                 CreateExpenseDTO::fromRequest($input),
             );
             return $this->successResponse(new ExpenseResource($result), 201);
+        } catch(Exception $e) {
+            return $this->errorResponse($e->getMessage(), 500);
+        }
+    }
+
+    public function updateInstallment(ExpenseInstallment $expenseInstallment) {
+        try {
+            $this->expenseService->updateInstallment($expenseInstallment);
+            return $this->successResponse('Installment updated successfully.', 200);
         } catch(Exception $e) {
             return $this->errorResponse($e->getMessage(), 500);
         }
