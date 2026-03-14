@@ -1,11 +1,8 @@
 import {
-  ArrowsClockwiseIcon,
   CaretLeftIcon,
   CaretRightIcon,
-  ChartBarIcon,
-  CurrencyDollarIcon,
-  GearIcon,
-  HouseIcon,
+  ChartLineDownIcon,
+  PresentationChartIcon,
 } from '@phosphor-icons/react';
 import { AnimatePresence, motion } from 'framer-motion';
 import {
@@ -14,19 +11,35 @@ import {
   type SetStateAction,
   useState,
 } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 import logoSvg from '../../../assets/logo.svg';
 
 const navItems = [
-  { icon: <HouseIcon weight='fill' />, label: 'Início' },
-  { icon: <ChartBarIcon weight='fill' />, label: 'Dashboard' },
-  { icon: <CurrencyDollarIcon weight='fill' />, label: 'Despesas' },
-  { icon: <ArrowsClockwiseIcon weight='fill' />, label: 'Recorrentes' },
-  { icon: <GearIcon weight='fill' />, label: 'Configurações' },
+  {
+    icon: <PresentationChartIcon weight='fill' />,
+    label: 'Dashboard',
+    path: '/dashboard',
+  },
+  {
+    icon: <ChartLineDownIcon weight='fill' />,
+    label: 'Gastos',
+    path: '/expenses',
+  },
 ];
 
 const IconSideNav = () => {
-  const [selected, setSelected] = useState(0);
   const [expanded, setExpanded] = useState(false);
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  // Determina o item ativo baseado na rota atual
+  const selected = navItems.findIndex((item) =>
+    location.pathname.startsWith(item.path),
+  );
+
+  const handleNav = (i: number) => {
+    navigate(navItems[i].path);
+  };
 
   return (
     <>
@@ -51,7 +64,7 @@ const IconSideNav = () => {
               key={i}
               selected={selected === i}
               id={i}
-              setSelected={setSelected}
+              setSelected={() => handleNav(i)}
               label={item.label}
               expanded={expanded}
             >
@@ -79,7 +92,7 @@ const IconSideNav = () => {
             key={i}
             selected={selected === i}
             id={i}
-            setSelected={setSelected}
+            setSelected={() => handleNav(i)}
             label={item.label}
           >
             {item.icon}

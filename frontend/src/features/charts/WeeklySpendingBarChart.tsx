@@ -9,6 +9,8 @@ import {
 } from 'chart.js';
 import React from 'react';
 import { Bar } from 'react-chartjs-2';
+
+import Card from '../shared/components/Card';
 import { useChartResize } from './useChartResize';
 
 ChartJS.register(
@@ -20,6 +22,8 @@ ChartJS.register(
   Legend,
 );
 
+// ── Data ──────────────────────────────────────────────────────────────────────
+
 const WEEKS = [
   { label: 'S1', val: 620 },
   { label: 'S2', val: 980 },
@@ -29,6 +33,8 @@ const WEEKS = [
 ];
 
 const TOTAL = WEEKS.reduce((acc, w) => acc + w.val, 0);
+
+// ── Chart config ──────────────────────────────────────────────────────────────
 
 const data = {
   labels: WEEKS.map((w) => w.label),
@@ -95,38 +101,38 @@ const options = {
   },
 };
 
-const WeeklySpendingBarChart: React.FC = () => {
-  // outerRef vai no card inteiro — elemento estável que não muda ao remontar o canvas
+// ── Types ─────────────────────────────────────────────────────────────────────
+
+type Props = {
+  decorated?: boolean;
+};
+
+// ── Component ─────────────────────────────────────────────────────────────────
+
+const WeeklySpendingBarChart: React.FC<Props> = ({ decorated = false }) => {
   const { outerRef, chartKey } = useChartResize(300);
 
   return (
-    <div
+    <Card
       ref={outerRef}
-      className='rounded-2xl p-4 mb-6 w-full flex flex-col min-h-65'
-      style={{
-        background: 'var(--color-background-card, #141f1f)',
-        border: '1px solid var(--color-border-card, rgba(32,224,150,0.08))',
-      }}
+      decorated={decorated}
+      className='flex flex-col min-h-65 mb-6'
     >
+      {/* Header */}
       <div className='flex justify-between items-center mb-3.5'>
-        <span
-          className='text-[0.85rem] font-semibold'
-          style={{ color: 'var(--color-text-primary, #fff)' }}
-        >
-          Gastos das ultimas 5 semanas
+        <span className='text-sm font-semibold text-text-primary'>
+          Gastos das últimas 5 semanas
         </span>
-        <span
-          className='text-[1.1rem] font-bold'
-          style={{ color: 'var(--color-accent-start, #ff6b4a)' }}
-        >
+        <span className='text-lg font-bold text-accent-start'>
           R$ {TOTAL.toLocaleString('pt-BR')}
         </span>
       </div>
 
+      {/* Chart */}
       <div className='relative flex-1 min-h-50'>
         <Bar key={chartKey} data={data} options={options} />
       </div>
-    </div>
+    </Card>
   );
 };
 

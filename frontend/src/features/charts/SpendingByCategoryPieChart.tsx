@@ -1,16 +1,22 @@
 import { ArcElement, Chart as ChartJS, Legend, Tooltip } from 'chart.js';
 import React from 'react';
 import { Pie } from 'react-chartjs-2';
+
+import Card from '../shared/components/Card';
 import { useChartResize } from './useChartResize';
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
-const getResolvedColor = (cssVar: string, fallback: string) => {
+// ── Helpers ───────────────────────────────────────────────────────────────────
+
+const getResolvedColor = (cssVar: string, fallback: string): string => {
   const value = getComputedStyle(document.documentElement).getPropertyValue(
     cssVar,
   );
   return value?.trim() || fallback;
 };
+
+// ── Data ──────────────────────────────────────────────────────────────────────
 
 const CATEGORIES = [
   {
@@ -45,23 +51,21 @@ const CATEGORIES = [
   },
 ];
 
-const getPieData = () => {
-  const backgroundColor = CATEGORIES.map((c) =>
-    getResolvedColor(c.colorVar, c.fallback),
-  );
-  const borderColor = getResolvedColor('--color-background-card', '#141f1f');
-  return {
-    labels: CATEGORIES.map((c) => c.label),
-    datasets: [
-      {
-        data: CATEGORIES.map((c) => c.value),
-        backgroundColor,
-        borderWidth: 2,
-        borderColor,
-      },
-    ],
-  };
-};
+const getPieData = () => ({
+  labels: CATEGORIES.map((c) => c.label),
+  datasets: [
+    {
+      data: CATEGORIES.map((c) => c.value),
+      backgroundColor: CATEGORIES.map((c) =>
+        getResolvedColor(c.colorVar, c.fallback),
+      ),
+      borderWidth: 2,
+      borderColor: getResolvedColor('--color-background-card', '#141f1f'),
+    },
+  ],
+});
+
+// ── Chart options ─────────────────────────────────────────────────────────────
 
 const options = {
   responsive: true,
@@ -80,37 +84,41 @@ const options = {
   },
 };
 
-const SpendingByCategoryPieChart: React.FC = () => {
-  // outerRef vai no card inteiro — elemento estável que não muda ao remontar o canvas
+// ── Types ─────────────────────────────────────────────────────────────────────
+
+type Props = {
+  decorated?: boolean;
+};
+
+// ── Component ─────────────────────────────────────────────────────────────────
+
+const SpendingByCategoryPieChart: React.FC<Props> = ({ decorated = false }) => {
   const { outerRef, chartKey } = useChartResize(300);
 
   return (
-    <div
+    <Card
       ref={outerRef}
-      className='rounded-2xl p-4 mb-6 w-full flex flex-col min-h-65'
-      style={{
-        background: 'var(--color-background-card, #141f1f)',
-        border: '1px solid var(--color-border-card, rgba(32,224,150,0.08))',
-      }}
+      decorated={decorated}
+      className='flex flex-col min-h-65 mb-6'
     >
+      {/* Header */}
       <div className='flex justify-between items-center mb-3.5'>
-        <span
-          className='text-[0.85rem] font-semibold'
-          style={{ color: 'var(--color-text-primary, #fff)' }}
-        >
+        <span className='text-sm font-semibold text-text-primary'>
           Gastos por categoria
         </span>
       </div>
 
+      {/* Pie chart */}
       <div className='w-full flex justify-center'>
         <div style={{ maxWidth: 220, width: '100%' }}>
           <Pie key={chartKey} data={getPieData()} options={options} />
         </div>
       </div>
 
+      {/* Legend */}
       <div className='flex flex-wrap justify-center items-center gap-2 w-full mt-4'>
         {CATEGORIES.map((cat) => (
-          <div key={cat.label} className='flex items-center gap-2'>
+          <div key={cat.label} className='flex items-center gap-1.5'>
             <span
               className='inline-block w-3 h-3 rounded'
               style={{
@@ -119,16 +127,11 @@ const SpendingByCategoryPieChart: React.FC = () => {
                   '1.5px solid var(--color-border-card, rgba(32,224,150,0.08))',
               }}
             />
-            <span
-              className='text-xs'
-              style={{ color: 'var(--color-text-secondary, #6e8a85)' }}
-            >
-              {cat.label}
-            </span>
+            <span className='text-xs text-text-secondary'>{cat.label}</span>
           </div>
         ))}
       </div>
-    </div>
+    </Card>
   );
 };
 

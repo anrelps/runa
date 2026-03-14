@@ -1,31 +1,23 @@
-import {
-  CarIcon,
-  ForkKnifeIcon,
-  GiftIcon,
-  HeartbeatIcon,
-  SparkleIcon,
-} from '@phosphor-icons/react';
+import { GiftIcon } from '@phosphor-icons/react';
 import React from 'react';
 
-type Category = 'Alimentação' | 'Transporte' | 'Lazer' | 'Saúde' | 'Outros';
+import type { category } from '../../../utils/consts';
+import { CATEGORY_ICONS } from '../../../utils/consts';
 
-const CATEGORY_ICONS: Record<Category, React.ElementType> = {
-  Alimentação: ForkKnifeIcon,
-  Transporte: CarIcon,
-  Lazer: SparkleIcon,
-  Saúde: HeartbeatIcon,
-  Outros: GiftIcon,
-};
+// ── Types ─────────────────────────────────────────────────────────────────────
 
 interface Expense {
   id: number;
   title: string;
-  category: Category;
+  category: category;
   amount: number;
   date: string;
-  color: string;
   accent: string;
+  isInstallment?: boolean;
+  installmentInfo?: string;
 }
+
+// ── Data ──────────────────────────────────────────────────────────────────────
 
 const MOCK_EXPENSES: Expense[] = [
   {
@@ -34,8 +26,9 @@ const MOCK_EXPENSES: Expense[] = [
     category: 'Alimentação',
     amount: 120.5,
     date: '2026-03-09',
-    color: 'var(--color-accent-start, #ff6b4a)',
     accent: 'var(--color-accent-start, #ff6b4a)',
+    isInstallment: true,
+    installmentInfo: '2/6',
   },
   {
     id: 2,
@@ -43,7 +36,6 @@ const MOCK_EXPENSES: Expense[] = [
     category: 'Transporte',
     amount: 32.0,
     date: '2026-03-09',
-    color: 'var(--color-primary, #20e096)',
     accent: 'var(--color-primary, #20e096)',
   },
   {
@@ -52,7 +44,6 @@ const MOCK_EXPENSES: Expense[] = [
     category: 'Lazer',
     amount: 45.0,
     date: '2026-03-08',
-    color: 'var(--color-accent-orange, #ff9a4a)',
     accent: 'var(--color-accent-orange, #ff9a4a)',
   },
   {
@@ -61,7 +52,6 @@ const MOCK_EXPENSES: Expense[] = [
     category: 'Saúde',
     amount: 60.0,
     date: '2026-03-08',
-    color: 'var(--color-accent-end, #00c6ff)',
     accent: 'var(--color-accent-end, #00c6ff)',
   },
   {
@@ -70,10 +60,11 @@ const MOCK_EXPENSES: Expense[] = [
     category: 'Outros',
     amount: 15.0,
     date: '2026-03-07',
-    color: 'var(--color-text-secondary, #6e8a85)',
     accent: 'var(--color-text-secondary, #6e8a85)',
   },
 ];
+
+// ── Helpers ───────────────────────────────────────────────────────────────────
 
 function groupByDate(expenses: Expense[]): Record<string, Expense[]> {
   return expenses.reduce<Record<string, Expense[]>>((acc, exp) => {
@@ -82,20 +73,30 @@ function groupByDate(expenses: Expense[]): Record<string, Expense[]> {
   }, {});
 }
 
+const formatBRL = (value: number): string =>
+  value.toLocaleString('pt-BR', {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  });
+
+// ── Component ─────────────────────────────────────────────────────────────────
+
 const RecentExpensesList: React.FC = () => {
   const grouped = groupByDate(MOCK_EXPENSES);
   const dates = Object.keys(grouped).sort((a, b) => b.localeCompare(a));
 
   return (
-    <div className='rounded-2xl p-4 bg-background-card border border-(--color-border-card,rgba(32,224,150,0.08)) w-full mb-8'>
-      <h2 className='text-lg font-semibold mb-4 text-(--color-text-primary,#fff)'>
+    <div className='rounded-2xl p-4 bg-background-card border border-border-card w-full mb-8'>
+      <h2 className='text-lg font-semibold mb-4 text-text-primary'>
         Últimos Gastos
       </h2>
-      <div className='flex flex-col gap-10'>
+
+      <div className='flex flex-col gap-6'>
         {dates.map((date) => (
           <div key={date}>
+            {/* Date divider */}
             <div className='flex items-center gap-2 mb-2'>
-              <span className='text-xs font-semibold text-(--color-text-tertiary,#b6d1c9) whitespace-nowrap'>
+              <span className='text-xs font-semibold text-text-secondary whitespace-nowrap'>
                 {new Date(date).toLocaleDateString('pt-BR', {
                   weekday: 'short',
                   day: '2-digit',
@@ -104,22 +105,21 @@ const RecentExpensesList: React.FC = () => {
                 })}
               </span>
               <span
-                className='flex-1 h-px bg-(--color-border-divider,#b6d1c922)'
+                className='flex-1 h-px bg-border-card'
                 style={{ minWidth: 24 }}
               />
             </div>
-            <div className='flex flex-col gap-3'>
+
+            {/* Expense items */}
+            <div className='flex flex-col gap-2.5'>
               {grouped[date].map((exp) => {
                 const Icon = CATEGORY_ICONS[exp.category] ?? GiftIcon;
+
                 return (
                   <div
                     key={exp.id}
-                    className='flex items-center justify-between p-3 rounded-xl shadow-sm'
-                    style={{
-                      background: 'rgba(255,255,255,0.01)',
-                      border:
-                        '1px solid var(--color-border-card, rgba(32,224,150,0.06))',
-                    }}
+                    className='flex items-center justify-between p-3 rounded-xl
+                               bg-white/[0.03] border border-border-card'
                   >
                     <div className='flex items-center gap-3 min-w-0'>
                       <Icon
@@ -127,28 +127,34 @@ const RecentExpensesList: React.FC = () => {
                         weight='duotone'
                         style={{ color: exp.accent }}
                       />
+
                       <div className='flex flex-col min-w-0'>
-                        <span className='truncate text-sm font-medium text-(--color-text-primary,#fff)'>
+                        <span className='truncate text-sm font-medium text-text-primary'>
                           {exp.title}
+                          {exp.isInstallment && (
+                            <span
+                              className='ml-2 px-1.5 py-0.5 rounded text-[10px] font-semibold
+                                         align-middle bg-white/10 text-text-secondary
+                                         border border-white/10 inline-flex items-center leading-tight'
+                            >
+                              {exp.installmentInfo
+                                ? `Parcela ${exp.installmentInfo}`
+                                : 'Parcelado'}
+                            </span>
+                          )}
                         </span>
                         <span
-                          className='truncate text-xs font-semibold px-2 py-0.5 rounded-md mt-1 w-fit'
-                          style={{
-                            background: exp.accent,
-                            color: '#fff',
-                            boxShadow: '0 1px 4px 0 rgba(0,0,0,0.08)',
-                          }}
+                          className='text-[10px] font-semibold px-1.5 py-0.5 rounded mt-0.5 w-fit'
+                          style={{ background: exp.accent, color: '#0b1212' }}
                         >
                           {exp.category}
                         </span>
                       </div>
                     </div>
-                    <div className='flex flex-col items-end'>
-                      <span
-                        className='text-base font-bold'
-                        style={{ color: 'var(--color-accent-start, #ff6b4a)' }}
-                      >
-                        R$ {exp.amount.toFixed(2)}
+
+                    <div className='flex flex-col items-end shrink-0 ml-3'>
+                      <span className='text-sm font-bold text-accent-start'>
+                        R$ {formatBRL(exp.amount)}
                       </span>
                       <span className='text-xs text-text-secondary'>
                         {new Date(exp.date).toLocaleTimeString('pt-BR', {
