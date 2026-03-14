@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Models;
+namespace App\Domain\Finance\RecurringExpense\Models;
 
+use App\Domain\Finance\Transaction\Models\Transaction;
 use Illuminate\Database\Eloquent\Model;
 
 class RecurringExpenseEntry extends Model
