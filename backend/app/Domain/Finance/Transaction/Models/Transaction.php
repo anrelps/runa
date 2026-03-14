@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Models;
+namespace App\Domain\Finance\Transaction\Models;
 
+use App\Domain\User\Models\User;
 use Illuminate\Database\Eloquent\Model;
 
 class Transaction extends Model
