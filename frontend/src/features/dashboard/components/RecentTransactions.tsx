@@ -1,3 +1,5 @@
+import { ArrowRightIcon } from '@phosphor-icons/react';
+import { useNavigate } from 'react-router-dom';
 import type { category } from '../../../utils/consts';
 import { CATEGORY_ACCENTS, CATEGORY_ICONS } from '../../../utils/consts';
 import Card from '../../shared/components/Card';
@@ -135,6 +137,7 @@ type Props = {
 };
 
 export default function RecentTransactions({ decorated = false }: Props) {
+  const navigate = useNavigate();
   const grouped = groupByDate(MOCK_TRANSACTIONS);
   const dates = Object.keys(grouped).sort((a, b) => b.localeCompare(a));
 
@@ -162,9 +165,20 @@ export default function RecentTransactions({ decorated = false }: Props) {
           </p>
         </div>
 
-        <button className='flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold transition-all duration-200 bg-primary/10 border border-primary/20 text-primary hover:bg-primary/15'>
-          Ver todas
-        </button>
+        <div className='flex gap-2'>
+          <button
+            onClick={() => navigate('/incomes')}
+            className='flex items-center gap-1 px-3 py-1.5 rounded-full text-xs font-semibold cursor-pointer transition-all border border-primary/20 bg-primary/8 text-primary hover:bg-primary/15'
+          >
+            Rendas <ArrowRightIcon size={11} weight='bold' />
+          </button>
+          <button
+            onClick={() => navigate('/expenses')}
+            className='flex items-center gap-1 px-3 py-1.5 rounded-full text-xs font-semibold cursor-pointer transition-all border border-accent-start/20 bg-accent-start/8 text-accent-start hover:bg-accent-start/15'
+          >
+            Gastos <ArrowRightIcon size={11} weight='bold' />
+          </button>
+        </div>
       </div>
 
       {/* Summary chips */}
@@ -269,17 +283,19 @@ const TransactionItem: React.FC<TransactionItemProps> = ({
               {t.title}
             </span>
             {t.isInstallment && (
-              <span className='shrink-0 text-[10px] font-semibold px-1.5 py-0.5 rounded bg-white/8 text-text-secondary border border-white/10'>
+              <span className='shrink-0 text-[10px] font-semibold px-1.5 py-0.5 rounded bg-border-subtle text-text-secondary border border-border-subtle'>
                 {t.installmentInfo ?? 'Parcela'}
               </span>
             )}
           </div>
-          <span
-            className='text-[10px] font-semibold px-1.5 py-0.5 rounded mt-0.5 w-fit'
-            style={{ background: accent, color: '#0b1212' }}
-          >
-            {t.category}
-          </span>
+          {!isIncome && (
+            <span
+              className='text-[10px] font-semibold px-1.5 py-0.5 rounded mt-0.5 w-fit'
+              style={{ background: accent, color: 'var(--color-background-primary)' }}
+            >
+              {t.category}
+            </span>
+          )}
         </div>
       </div>
 

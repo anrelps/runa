@@ -14,11 +14,11 @@ export type category =
   | 'Outros';
 
 export const CATEGORY_ACCENTS: Record<category, string> = {
-  Alimentação: 'var(--color-accent-green, #4caf50)',
-  Transporte: 'var(--color-accent-blue, #2196f3)',
-  Lazer: 'var(--color-accent-orange, #ff9a4a)',
-  Saúde: 'var(--color-accent-end, #00c6ff)',
-  Outros: 'var(--color-text-secondary, #6e8a85)',
+  Alimentação: 'var(--color-category-food)',
+  Transporte:  'var(--color-category-transport)',
+  Lazer:       'var(--color-category-leisure)',
+  Saúde:       'var(--color-category-health)',
+  Outros:      'var(--color-category-other)',
 };
 
 export const CATEGORY_ICONS: Record<category, React.ElementType> = {

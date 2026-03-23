@@ -106,7 +106,7 @@ export default function PendingBills({ decorated = false }: Props) {
           <span>Pago este mês</span>
           <strong className='text-primary'>{pct}%</strong>
         </div>
-        <div className='h-1.5 rounded-full bg-white/5 overflow-hidden'>
+        <div className='h-1.5 rounded-full bg-border-subtle overflow-hidden'>
           <div
             className='h-full rounded-full bg-gradient-to-r from-accent-start to-accent-orange
                        transition-all duration-700'
@@ -190,7 +190,7 @@ const BillItem: React.FC<BillItemProps> = ({ bill }) => {
           </span>
           <span
             className='text-[10px] font-semibold px-1.5 py-0.5 rounded mt-0.5 w-fit'
-            style={{ background: accent, color: '#0b1212' }}
+            style={{ background: accent, color: 'var(--color-background-primary)' }}
           >
             {bill.category}
           </span>

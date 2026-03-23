@@ -2,6 +2,9 @@ import { useEffect } from 'react';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 //Pages
 import About from './pages/About/About';
+import AddExpense from './pages/AddExpense/AddExpense';
+import AddIncome from './pages/AddIncome/AddIncome';
+import Incomes from './pages/Incomes/Incomes';
 import Contact from './pages/Contact/Contact';
 import Dashboard from './pages/Dashboard/Dashboard';
 import Expenses from './pages/Expenses/Expenses';
@@ -24,6 +27,9 @@ function App() {
         <Route path='/login' element={<Login />} />
         <Route path='/dashboard' element={<Dashboard />} />
         <Route path='/expenses' element={<Expenses />} />
+        <Route path='/expenses/add' element={<AddExpense />} />
+        <Route path='/incomes' element={<Incomes />} />
+        <Route path='/income/add' element={<AddIncome />} />
       </Routes>
     </BrowserRouter>
   );

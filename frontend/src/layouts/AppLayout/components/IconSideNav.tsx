@@ -2,6 +2,7 @@ import {
   CaretLeftIcon,
   CaretRightIcon,
   ChartLineDownIcon,
+  ChartLineUpIcon,
   PresentationChartIcon,
 } from '@phosphor-icons/react';
 import { AnimatePresence, motion } from 'framer-motion';
@@ -13,6 +14,7 @@ import {
 } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import logoSvg from '../../../assets/logo.svg';
+import { useTheme } from '../../../contexts/ThemeContext';
 
 const navItems = [
   {
@@ -25,12 +27,18 @@ const navItems = [
     label: 'Gastos',
     path: '/expenses',
   },
+  {
+    icon: <ChartLineUpIcon weight='fill' />,
+    label: 'Rendas',
+    path: '/incomes',
+  },
 ];
 
 const IconSideNav = () => {
-  const [expanded, setExpanded] = useState(false);
+  const [expanded, setExpanded] = useState(() => localStorage.getItem('sidenav-expanded') === 'true');
   const navigate = useNavigate();
   const location = useLocation();
+  const { theme } = useTheme();
 
   // Determina o item ativo baseado na rota atual
   const selected = navItems.findIndex((item) =>
@@ -45,7 +53,7 @@ const IconSideNav = () => {
     <>
       {/* Desktop sidebar — hidden on mobile */}
       <motion.nav
-        className='hidden md:flex h-screen bg-background-card flex-col items-start gap-2 sticky top-0 border-r border-white/10 overflow-hidden'
+        className='hidden md:flex h-screen bg-background-card flex-col items-start gap-2 sticky top-0 border-r border-border-subtle overflow-hidden'
         animate={{ width: expanded ? 220 : 80 }}
         transition={{ type: 'spring', stiffness: 300, damping: 30 }}
       >
@@ -53,8 +61,8 @@ const IconSideNav = () => {
           <img
             src={logoSvg}
             alt='Runa'
-            className='h-7 w-auto'
-            style={{ filter: 'brightness(0) saturate(100%) invert(1)' }}
+            className='h-7 w-auto transition-all duration-300'
+            style={{ filter: theme === 'light' ? 'brightness(0)' : 'brightness(0) saturate(100%) invert(1)' }}
           />
         </div>
 
@@ -75,8 +83,8 @@ const IconSideNav = () => {
 
         <div className='w-full px-3 pb-4'>
           <motion.button
-            className='p-4 text-2xl w-full flex items-center justify-center rounded-md text-text-secondary hover:bg-white/10 transition-colors'
-            onClick={() => setExpanded((prev) => !prev)}
+            className='p-4 text-2xl w-full flex items-center justify-center rounded-md text-text-secondary hover:bg-white/10 transition-colors cursor-pointer'
+            onClick={() => setExpanded((prev) => { const next = !prev; localStorage.setItem('sidenav-expanded', String(next)); return next; })}
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
           >
@@ -86,7 +94,7 @@ const IconSideNav = () => {
       </motion.nav>
 
       {/* Mobile bottom nav — visible only on mobile */}
-      <nav className='md:hidden fixed bottom-0 left-0 right-0 z-50 bg-background-card border-t border-white/10 flex items-center justify-around px-2 py-2'>
+      <nav className='md:hidden fixed bottom-0 left-0 right-0 z-50 bg-background-card border-t border-border-subtle flex items-center justify-around px-2 py-2'>
         {navItems.map((item, i) => (
           <BottomNavItem
             key={i}
@@ -120,7 +128,7 @@ const NavItem = ({
 }) => {
   return (
     <motion.button
-      className='p-4 text-2xl bg-background-primary hover:bg-white/10 rounded-md transition-colors relative flex items-center gap-3 w-full'
+      className='p-4 text-2xl bg-background-primary hover:bg-white/10 rounded-md transition-colors relative flex items-center gap-3 w-full cursor-pointer'
       onClick={() => setSelected(id)}
       whileHover={{ scale: 1.05 }}
       whileTap={{ scale: 0.95 }}
@@ -172,7 +180,7 @@ const BottomNavItem = ({
 }) => {
   return (
     <motion.button
-      className='relative flex flex-col items-center justify-center gap-1 p-3 rounded-md flex-1 transition-colors'
+      className='relative flex flex-col items-center justify-center gap-1 p-3 rounded-md flex-1 transition-colors cursor-pointer'
       onClick={() => setSelected(id)}
       whileTap={{ scale: 0.95 }}
     >

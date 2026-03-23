@@ -1,48 +1,44 @@
-import { useEffect, useRef, useState } from 'react';
+import type { Chart as ChartJS } from 'chart.js';
+import { useEffect, useRef } from 'react';
 
 /**
- * Observa o `outerRef` (elemento estável, fora do canvas) e remonta o gráfico
- * apenas quando a largura muda além de um threshold, evitando loops causados
- * pelo próprio remount alterando o tamanho do container interno.
+ * Observes the outer container for size changes and calls chart.resize()
+ * in-place — no remount, no flash, no layout loops.
  *
- * @param delay     - debounce em ms após o último evento de resize (default: 300ms)
- * @param threshold - mínimo de px de diferença para considerar uma mudança real (default: 5px)
+ * Attach `outerRef` to the wrapper div and pass `chartRef` as `ref` to the
+ * <Bar>, <Pie>, etc. component.
+ *
+ * @param delay - debounce in ms after the last resize event (default: 120ms)
  */
-export function useChartResize(delay = 300, threshold = 5) {
+export function useChartResize(delay = 120) {
   const outerRef = useRef<HTMLDivElement>(null);
-  const [chartKey, setChartKey] = useState(0);
-  const lastWidth = useRef<number | null>(null);
+  const chartRef = useRef<ChartJS | null>(null);
 
   useEffect(() => {
     const el = outerRef.current;
     if (!el) return;
 
     let timeoutId: ReturnType<typeof setTimeout>;
+    let rafId: number;
 
-    const observer = new ResizeObserver((entries) => {
-      const width = entries[0]?.contentRect.width;
-      if (width === undefined) return;
-
-      // Ignora mudanças menores que o threshold — evita o loop de remount
-      if (
-        lastWidth.current !== null &&
-        Math.abs(width - lastWidth.current) < threshold
-      )
-        return;
-
+    const observer = new ResizeObserver(() => {
       clearTimeout(timeoutId);
       timeoutId = setTimeout(() => {
-        lastWidth.current = width;
-        setChartKey((k) => k + 1);
+        cancelAnimationFrame(rafId);
+        rafId = requestAnimationFrame(() => {
+          chartRef.current?.resize();
+        });
       }, delay);
     });
 
     observer.observe(el);
+
     return () => {
       observer.disconnect();
       clearTimeout(timeoutId);
+      cancelAnimationFrame(rafId);
     };
-  }, [delay, threshold]);
+  }, [delay]);
 
-  return { outerRef, chartKey };
+  return { outerRef, chartRef };
 }

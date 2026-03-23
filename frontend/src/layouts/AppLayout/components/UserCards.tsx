@@ -61,7 +61,7 @@ const Card = ({
   const colors = colorMap[color];
 
   return (
-    <div className='group w-full px-3 py-2 rounded-lg border border-white/10 relative overflow-hidden bg-background-card cursor-default'>
+    <div className='group w-full px-3 py-2 rounded-lg border border-border-subtle relative overflow-hidden bg-background-card cursor-default'>
       <div
         className={`absolute inset-0 bg-linear-to-r ${colors.gradient} translate-y-full group-hover:translate-y-0 transition-transform duration-300`}
       />

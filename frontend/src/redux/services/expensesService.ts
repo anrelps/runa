@@ -14,7 +14,8 @@ export interface ExpenseData {
   type: string;
   total_amount: number;
   installment_count: number;
-  first_due_date: string;
+  first_due_date?: string;
+  recurring_day?: number;
 }
 
 export interface CreateExpenseData {

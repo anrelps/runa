@@ -2,7 +2,7 @@ import { GiftIcon } from '@phosphor-icons/react';
 import React from 'react';
 
 import type { category } from '../../../utils/consts';
-import { CATEGORY_ICONS } from '../../../utils/consts';
+import { CATEGORY_ACCENTS, CATEGORY_ICONS } from '../../../utils/consts';
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
@@ -12,7 +12,6 @@ interface Expense {
   category: category;
   amount: number;
   date: string;
-  accent: string;
   isInstallment?: boolean;
   installmentInfo?: string;
 }
@@ -20,48 +19,11 @@ interface Expense {
 // ── Data ──────────────────────────────────────────────────────────────────────
 
 const MOCK_EXPENSES: Expense[] = [
-  {
-    id: 1,
-    title: 'Supermercado',
-    category: 'Alimentação',
-    amount: 120.5,
-    date: '2026-03-09',
-    accent: 'var(--color-accent-start, #ff6b4a)',
-    isInstallment: true,
-    installmentInfo: '2/6',
-  },
-  {
-    id: 2,
-    title: 'Uber',
-    category: 'Transporte',
-    amount: 32.0,
-    date: '2026-03-09',
-    accent: 'var(--color-primary, #20e096)',
-  },
-  {
-    id: 3,
-    title: 'Cinema',
-    category: 'Lazer',
-    amount: 45.0,
-    date: '2026-03-08',
-    accent: 'var(--color-accent-orange, #ff9a4a)',
-  },
-  {
-    id: 4,
-    title: 'Farmácia',
-    category: 'Saúde',
-    amount: 60.0,
-    date: '2026-03-08',
-    accent: 'var(--color-accent-end, #00c6ff)',
-  },
-  {
-    id: 5,
-    title: 'Café',
-    category: 'Outros',
-    amount: 15.0,
-    date: '2026-03-07',
-    accent: 'var(--color-text-secondary, #6e8a85)',
-  },
+  { id: 1, title: 'Supermercado', category: 'Alimentação', amount: 120.5, date: '2026-03-09', isInstallment: true, installmentInfo: '2/6' },
+  { id: 2, title: 'Uber',         category: 'Transporte',  amount: 32.0,  date: '2026-03-09' },
+  { id: 3, title: 'Cinema',       category: 'Lazer',       amount: 45.0,  date: '2026-03-08' },
+  { id: 4, title: 'Farmácia',     category: 'Saúde',       amount: 60.0,  date: '2026-03-08' },
+  { id: 5, title: 'Café',         category: 'Outros',      amount: 15.0,  date: '2026-03-07' },
 ];
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
@@ -125,7 +87,7 @@ const RecentExpensesList: React.FC = () => {
                       <Icon
                         size={20}
                         weight='duotone'
-                        style={{ color: exp.accent }}
+                        style={{ color: CATEGORY_ACCENTS[exp.category] }}
                       />
 
                       <div className='flex flex-col min-w-0'>
@@ -134,8 +96,8 @@ const RecentExpensesList: React.FC = () => {
                           {exp.isInstallment && (
                             <span
                               className='ml-2 px-1.5 py-0.5 rounded text-[10px] font-semibold
-                                         align-middle bg-white/10 text-text-secondary
-                                         border border-white/10 inline-flex items-center leading-tight'
+                                         align-middle bg-border-subtle text-text-secondary
+                                         border border-border-subtle inline-flex items-center leading-tight'
                             >
                               {exp.installmentInfo
                                 ? `Parcela ${exp.installmentInfo}`
@@ -145,7 +107,7 @@ const RecentExpensesList: React.FC = () => {
                         </span>
                         <span
                           className='text-[10px] font-semibold px-1.5 py-0.5 rounded mt-0.5 w-fit'
-                          style={{ background: exp.accent, color: '#0b1212' }}
+                          style={{ background: CATEGORY_ACCENTS[exp.category], color: 'var(--color-background-primary)' }}
                         >
                           {exp.category}
                         </span>

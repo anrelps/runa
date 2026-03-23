@@ -15,7 +15,7 @@ const CategoryFilterButtons: React.FC = () => {
         <button
           key={cat.label}
           type='button'
-          className='flex items-center gap-2 px-3 py-1.5 rounded-lg border border-[var(--color-border-card,rgba(32,224,150,0.08))] bg-[var(--color-background-card,#141f1f)] text-[var(--color-text-secondary,#6e8a85)] text-sm font-medium hover:bg-[var(--color-border-card,rgba(32,224,150,0.08))] transition-colors'
+          className='flex items-center gap-2 px-3 py-1.5 rounded-lg border border-(--color-border-card,rgba(32,224,150,0.08)) bg-background-card text-text-secondary text-sm font-medium hover:bg-(--color-border-card,rgba(32,224,150,0.08)) transition-colors'
         >
           <span
             className='inline-block w-3 h-3 rounded-full'
