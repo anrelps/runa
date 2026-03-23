@@ -56,7 +56,7 @@ const expensesSlice = createSlice({
       })
       .addCase(expensesIndex.fulfilled, (state, action) => {
         state.loading = false;
-        state.expenses = action.payload;
+        state.expenses = action.payload.data.data;
       })
       .addCase(expensesIndex.rejected, (state, action) => {
         state.loading = false;

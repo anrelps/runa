@@ -1,22 +1,10 @@
-import {
-  getLocalTimeZone,
-  today,
-  type CalendarDate,
-} from '@internationalized/date';
 import { ArrowCircleUpIcon, ArrowLeftIcon } from '@phosphor-icons/react';
 import { motion } from 'framer-motion';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { DateField } from '../../features/shared/components/DateRangePicker/DateField';
 import AppLayout from '../../layouts/AppLayout/AppLayout';
 
-// ── Constants ──────────────────────────────────────────────────────────────────
-
 const ACCENT = 'var(--color-primary)';
-
-// ── Sub-components ─────────────────────────────────────────────────────────────
-
-const Divider = () => <div className='h-px shrink-0 bg-border-subtle' />;
 
 const FieldLabel = ({ children }: { children: React.ReactNode }) => (
   <p className='text-[10px] font-semibold uppercase tracking-widest mb-2 text-text-secondary/60'>
@@ -24,14 +12,11 @@ const FieldLabel = ({ children }: { children: React.ReactNode }) => (
   </p>
 );
 
-// ── Component ──────────────────────────────────────────────────────────────────
-
 const AddIncome = () => {
   const navigate = useNavigate();
 
   const [description, setDescription] = useState('');
   const [amount, setAmount] = useState('');
-  const [date, setDate] = useState<CalendarDate>(today(getLocalTimeZone()));
 
   const cardStyle = {
     background:
@@ -42,14 +27,13 @@ const AddIncome = () => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    // TODO: dispatch action
+
     navigate('/dashboard');
   };
 
   return (
     <AppLayout>
       <div className='max-w-lg'>
-        {/* ── Header ── */}
         <div className='flex items-center gap-4 mb-8'>
           <button
             type='button'
@@ -85,7 +69,6 @@ const AddIncome = () => {
             className='relative overflow-hidden rounded-2xl border'
             style={cardStyle}
           >
-            {/* Dot grid */}
             <span
               className='pointer-events-none absolute inset-0 opacity-[0.04]'
               style={{
@@ -151,13 +134,6 @@ const AddIncome = () => {
                   border: `1px solid ${description ? 'var(--color-border-medium)' : 'var(--color-border-subtle)'}`,
                 }}
               />
-            </div>
-            <Divider />
-
-            {/* ── Data ── */}
-            <div className='px-5 py-4'>
-              <FieldLabel>Data</FieldLabel>
-              <DateField value={date} onChange={(val) => val && setDate(val)} />
             </div>
           </div>
 

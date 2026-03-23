@@ -1,6 +1,12 @@
+import { SignOutIcon } from '@phosphor-icons/react';
+import { useDispatch } from 'react-redux';
 import avatarImg from '../../../assets/images/user/test.jpg';
+import { logout } from '../../../redux/slices/userSlice';
+import type { AppDispatch } from '../../../redux/store';
 
 const UserInfo = () => {
+  const dispatch = useDispatch<AppDispatch>();
+
   return (
     <div className='flex items-center gap-3'>
       <img
@@ -16,6 +22,13 @@ const UserInfo = () => {
           joao.silva@email.com
         </p>
       </div>
+      <button
+        onClick={() => dispatch(logout())}
+        className='p-1 text-text-secondary hover:text-red-500 transition-colors cursor-pointer'
+        title='Sair'
+      >
+        <SignOutIcon size={16} />
+      </button>
     </div>
   );
 };

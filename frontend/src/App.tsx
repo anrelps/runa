@@ -1,16 +1,19 @@
 import { useEffect } from 'react';
-import { BrowserRouter, Route, Routes } from 'react-router-dom';
+import { BrowserRouter, Outlet, Route, Routes } from 'react-router-dom';
 //Pages
 import About from './pages/About/About';
 import AddExpense from './pages/AddExpense/AddExpense';
 import AddIncome from './pages/AddIncome/AddIncome';
-import Incomes from './pages/Incomes/Incomes';
 import Contact from './pages/Contact/Contact';
 import Dashboard from './pages/Dashboard/Dashboard';
 import Expenses from './pages/Expenses/Expenses';
 import Home from './pages/Home/Home';
+import Incomes from './pages/Incomes/Incomes';
 import Login from './pages/Login/Login';
 import Pricing from './pages/Pricing/Pricing';
+
+//Components
+import ProtectedRoute from './features/shared/ProtectedRoute';
 
 function App() {
   useEffect(() => {
@@ -25,11 +28,19 @@ function App() {
         <Route path='/contact' element={<Contact />} />
         <Route path='/pricing' element={<Pricing />} />
         <Route path='/login' element={<Login />} />
-        <Route path='/dashboard' element={<Dashboard />} />
-        <Route path='/expenses' element={<Expenses />} />
-        <Route path='/expenses/add' element={<AddExpense />} />
-        <Route path='/incomes' element={<Incomes />} />
-        <Route path='/income/add' element={<AddIncome />} />
+        <Route
+          element={
+            <ProtectedRoute>
+              <Outlet />
+            </ProtectedRoute>
+          }
+        >
+          <Route path='/dashboard' element={<Dashboard />} />
+          <Route path='/expenses' element={<Expenses />} />
+          <Route path='/expenses/add' element={<AddExpense />} />
+          <Route path='/incomes' element={<Incomes />} />
+          <Route path='/income/add' element={<AddIncome />} />
+        </Route>
       </Routes>
     </BrowserRouter>
   );
