@@ -1,4 +1,4 @@
-import api from '../../features/utils/api';
+import api from '../../utils/api';
 
 interface LoginCredentials {
   email: string;

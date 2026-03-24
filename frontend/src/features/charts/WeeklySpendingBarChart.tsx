@@ -12,7 +12,7 @@ import { Bar } from 'react-chartjs-2';
 
 import { useTheme } from '../../contexts/ThemeContext';
 import Card from '../shared/components/Card';
-import { useChartResize } from './useChartResize';
+import { useChartResize } from '../../hooks/useChartResize';
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 

@@ -14,7 +14,7 @@ import {
 } from 'react-aria-components';
 import { twMerge } from 'tailwind-merge';
 import { tv } from 'tailwind-variants';
-import { composeTailwindRenderProps, focusRing } from '../../../utils/utils';
+import { composeTailwindRenderProps, focusRing } from '../../../../utils/utils';
 
 export function Label(props: LabelProps) {
   return (

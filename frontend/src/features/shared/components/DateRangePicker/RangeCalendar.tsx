@@ -9,7 +9,7 @@ import {
   Text,
 } from 'react-aria-components';
 import { tv } from 'tailwind-variants';
-import { composeTailwindRenderProps, focusRing } from '../../../utils/utils';
+import { composeTailwindRenderProps, focusRing } from '../../../../utils/utils';
 import { CalendarGridHeader, CalendarHeader } from './Calendar';
 
 export interface RangeCalendarProps<T extends DateValue> extends Omit<
