@@ -22,6 +22,7 @@ export const ThemeProvider = ({ children }: { children: ReactNode }) => {
 
   useEffect(() => {
     localStorage.setItem('app-theme', theme);
+    document.documentElement.style.colorScheme = theme;
   }, [theme]);
 
   const toggleTheme = () =>

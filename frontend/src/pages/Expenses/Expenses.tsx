@@ -17,17 +17,21 @@ const Expenses = () => {
         onClick={() => navigate('/expenses/add')}
         className='w-full flex items-center justify-center gap-2.5 py-4 rounded-2xl mb-4 text-sm font-bold cursor-pointer transition-all'
         style={{
-          background: 'linear-gradient(135deg, var(--color-accent-start) 0%, #ff4a4a 100%)',
+          background:
+            'linear-gradient(135deg, var(--color-accent-start) 0%, #ff4a4a 100%)',
           color: '#fff',
-          boxShadow: '0 6px 20px color-mix(in srgb, var(--color-accent-start) 35%, transparent)',
+          boxShadow:
+            '0 6px 20px color-mix(in srgb, var(--color-accent-start) 35%, transparent)',
         }}
-        onMouseEnter={e => {
+        onMouseEnter={(e) => {
           e.currentTarget.style.filter = 'brightness(1.1)';
-          e.currentTarget.style.boxShadow = '0 8px 28px color-mix(in srgb, var(--color-accent-start) 50%, transparent)';
+          e.currentTarget.style.boxShadow =
+            '0 8px 28px color-mix(in srgb, var(--color-accent-start) 50%, transparent)';
         }}
-        onMouseLeave={e => {
+        onMouseLeave={(e) => {
           e.currentTarget.style.filter = '';
-          e.currentTarget.style.boxShadow = '0 6px 20px color-mix(in srgb, var(--color-accent-start) 35%, transparent)';
+          e.currentTarget.style.boxShadow =
+            '0 6px 20px color-mix(in srgb, var(--color-accent-start) 35%, transparent)';
         }}
       >
         <PlusCircleIcon weight='fill' size={20} />

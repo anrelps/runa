@@ -31,18 +31,13 @@ type ExpenseType = (typeof TYPES)[number]['value'];
 
 // ── Sub-components ─────────────────────────────────────────────────────────────
 
-const Divider = () => (
-  <div className='h-px mx-0 shrink-0 bg-border-subtle' />
-);
+const Divider = () => <div className='h-px mx-0 shrink-0 bg-border-subtle' />;
 
 const FieldLabel = ({ children }: { children: React.ReactNode }) => (
   <p className='text-[10px] font-semibold uppercase tracking-widest mb-2 text-text-secondary/60'>
     {children}
   </p>
 );
-
-const inputClass =
-  'w-full bg-transparent text-sm text-text-primary placeholder:text-text-secondary/30 outline-none py-0';
 
 // ── Component ──────────────────────────────────────────────────────────────────
 
@@ -51,33 +46,41 @@ const AddExpense = () => {
   const dispatch = useDispatch<AppDispatch>();
   const loading = useSelector(selectLoading);
 
-  const [type, setType] = useState<ExpenseType>('single');
-  const [description, setDescription] = useState('');
-  const [category, setCategory] = useState('');
-  const [amount, setAmount] = useState('');
-  const [date, setDate] = useState<CalendarDate>(today(getLocalTimeZone()));
-  const [installmentCount, setInstallmentCount] = useState('2');
-  const [recurringDay, setRecurringDay] = useState<string>('1');
+  const [data, setData] = useState({
+    type: 'single' as ExpenseType,
+    description: '',
+    category: '',
+    amount: '',
+    date: today(getLocalTimeZone()) as CalendarDate,
+    installmentCount: '2',
+    recurringDay: '1',
+  });
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const set = <K extends keyof typeof data>(key: K, value: (typeof data)[K]) =>
+    setData((prev) => ({ ...prev, [key]: value }));
+
+  const handleSubmit = async (e: React.SyntheticEvent<HTMLFormElement>) => {
     e.preventDefault();
     await dispatch(
       expensesCreate({
-        description,
-        category,
-        type,
-        total_amount: parseFloat(amount),
+        description: data.description,
+        category: data.category,
+        type: data.type,
+        total_amount: parseFloat(data.amount),
         installment_count:
-          type === 'installment' ? parseInt(installmentCount) : 1,
-        first_due_date: type === 'recurring' ? undefined : date.toString(),
-        recurring_day: type === 'recurring' ? parseInt(recurringDay) : undefined,
+          data.type === 'installment' ? parseInt(data.installmentCount) : undefined,
+        first_due_date:
+          data.type === 'recurring' ? undefined : data.date.toString(),
+        recurring_day:
+          data.type === 'recurring' ? parseInt(data.recurringDay) : undefined,
       }),
     );
     navigate('/expenses');
   };
 
   const cardStyle = {
-    background: 'linear-gradient(160deg, var(--color-background-card) 0%, var(--color-background-primary) 100%)',
+    background:
+      'linear-gradient(160deg, var(--color-background-card) 0%, var(--color-background-primary) 100%)',
     borderColor: 'var(--color-border-subtle)',
     boxShadow: '0 8px 32px var(--color-card-shadow)',
   };
@@ -159,8 +162,8 @@ const AddExpense = () => {
                   step='0.01'
                   min='0'
                   placeholder='0,00'
-                  value={amount}
-                  onChange={(e) => setAmount(e.target.value)}
+                  value={data.amount}
+                  onChange={(e) => set('amount', e.target.value)}
                   required
                   className='bg-transparent text-5xl font-black text-text-primary placeholder:text-text-secondary/20 outline-none w-52 text-center [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none'
                 />
@@ -175,13 +178,14 @@ const AddExpense = () => {
               <input
                 type='text'
                 placeholder='Dê um nome para essa despesa...'
-                value={description}
-                onChange={(e) => setDescription(e.target.value)}
+                value={data.description}
+                onChange={(e) => set('description', e.target.value)}
                 required
                 className='w-full rounded-xl px-4 py-3 mt-1 text-sm font-medium text-text-primary placeholder:text-text-secondary/30 outline-none transition-all'
                 style={{
-                  background: 'color-mix(in srgb, var(--color-text-primary) 5%, transparent)',
-                  border: `1px solid ${description ? 'var(--color-border-medium)' : 'var(--color-border-subtle)'}`,
+                  background:
+                    'color-mix(in srgb, var(--color-text-primary) 5%, transparent)',
+                  border: `1px solid ${data.description ? 'var(--color-border-medium)' : 'var(--color-border-subtle)'}`,
                 }}
               />
             </div>
@@ -191,15 +195,17 @@ const AddExpense = () => {
               <div className='flex flex-wrap gap-2 mt-1'>
                 {CATEGORIES.map((cat) => {
                   const color = CATEGORY_ACCENTS[cat];
-                  const selected = category === cat;
+                  const selected = data.category === cat;
                   return (
                     <button
                       key={cat}
                       type='button'
-                      onClick={() => setCategory(cat)}
+                      onClick={() => set('category', cat)}
                       className='flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold border transition-all cursor-pointer'
                       style={{
-                        borderColor: selected ? color : 'var(--color-border-subtle)',
+                        borderColor: selected
+                          ? color
+                          : 'var(--color-border-subtle)',
                         color: selected ? color : 'var(--color-text-secondary)',
                         background: selected
                           ? `color-mix(in srgb, ${color} 12%, transparent)`
@@ -224,17 +230,25 @@ const AddExpense = () => {
               <FieldLabel>Tipo de despesa</FieldLabel>
               <div
                 className='flex gap-1.5 mt-1 p-1 rounded-xl'
-                style={{ background: 'color-mix(in srgb, var(--color-text-primary) 6%, transparent)' }}
+                style={{
+                  background:
+                    'color-mix(in srgb, var(--color-text-primary) 6%, transparent)',
+                }}
               >
                 {TYPES.map((t) => (
                   <button
                     key={t.value}
                     type='button'
-                    onClick={() => setType(t.value)}
+                    onClick={() => set('type', t.value)}
                     className='relative flex-1 py-2 rounded-lg text-xs font-bold transition-colors cursor-pointer'
-                    style={{ color: type === t.value ? ACCENT : 'var(--color-text-secondary)' }}
+                    style={{
+                      color:
+                        data.type === t.value
+                          ? ACCENT
+                          : 'var(--color-text-secondary)',
+                    }}
                   >
-                    {type === t.value && (
+                    {data.type === t.value && (
                       <motion.span
                         layoutId='type-bg'
                         className='absolute inset-0 rounded-lg'
@@ -242,7 +256,11 @@ const AddExpense = () => {
                           background: `color-mix(in srgb, ${ACCENT} 12%, transparent)`,
                           border: `1px solid color-mix(in srgb, ${ACCENT} 25%, transparent)`,
                         }}
-                        transition={{ type: 'spring', stiffness: 400, damping: 30 }}
+                        transition={{
+                          type: 'spring',
+                          stiffness: 400,
+                          damping: 30,
+                        }}
                       />
                     )}
                     <span className='relative z-10'>{t.label}</span>
@@ -253,7 +271,7 @@ const AddExpense = () => {
 
             {/* Parcelas: data + nº de parcelas */}
             <AnimatePresence>
-              {type === 'installment' && (
+              {data.type === 'installment' && (
                 <motion.div
                   initial={{ height: 0, opacity: 0 }}
                   animate={{ height: 'auto', opacity: 1 }}
@@ -264,7 +282,10 @@ const AddExpense = () => {
                   <Divider />
                   <div className='px-5 py-4'>
                     <FieldLabel>Vencimento da 1ª parcela</FieldLabel>
-                    <DateField value={date} onChange={(val) => val && setDate(val)} />
+                    <DateField
+                      value={data.date}
+                      onChange={(val) => val && set('date', val)}
+                    />
                   </div>
                   <Divider />
                   <div className='px-5 py-4'>
@@ -274,12 +295,21 @@ const AddExpense = () => {
                         <button
                           key={n}
                           type='button'
-                          onClick={() => setInstallmentCount(String(n))}
+                          onClick={() => set('installmentCount', String(n))}
                           className='h-9 px-4 rounded-lg text-xs font-bold border transition-all cursor-pointer'
                           style={{
-                            borderColor: installmentCount === String(n) ? ACCENT : 'var(--color-border-subtle)',
-                            color: installmentCount === String(n) ? ACCENT : 'var(--color-text-secondary)',
-                            background: installmentCount === String(n) ? `color-mix(in srgb, ${ACCENT} 10%, transparent)` : 'transparent',
+                            borderColor:
+                              data.installmentCount === String(n)
+                                ? ACCENT
+                                : 'var(--color-border-subtle)',
+                            color:
+                              data.installmentCount === String(n)
+                                ? ACCENT
+                                : 'var(--color-text-secondary)',
+                            background:
+                              data.installmentCount === String(n)
+                                ? `color-mix(in srgb, ${ACCENT} 10%, transparent)`
+                                : 'transparent',
                           }}
                         >
                           {n}x
@@ -287,13 +317,19 @@ const AddExpense = () => {
                       ))}
                     </div>
                     <div className='flex items-center gap-3 mt-3'>
-                      <span className='text-xs text-text-secondary/50 shrink-0'>Outro</span>
+                      <span className='text-xs text-text-secondary/50 shrink-0'>
+                        Outro
+                      </span>
                       <input
                         type='number'
                         min='2'
                         max='48'
-                        value={[2, 3, 6, 12, 24].includes(Number(installmentCount)) ? '' : installmentCount}
-                        onChange={(e) => setInstallmentCount(e.target.value)}
+                        value={
+                          [2, 3, 6, 12, 24].includes(Number(data.installmentCount))
+                            ? ''
+                            : data.installmentCount
+                        }
+                        onChange={(e) => set('installmentCount', e.target.value)}
                         placeholder='Nº de parcelas'
                         className='flex-1 h-9 px-3 rounded-lg text-xs font-semibold border bg-transparent text-text-primary placeholder:text-text-secondary/30 outline-none transition-all [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none'
                         style={{ borderColor: 'var(--color-border-subtle)' }}
@@ -306,7 +342,7 @@ const AddExpense = () => {
 
             {/* Recorrente: apenas dia do mês */}
             <AnimatePresence>
-              {type === 'recurring' && (
+              {data.type === 'recurring' && (
                 <motion.div
                   initial={{ height: 0, opacity: 0 }}
                   animate={{ height: 'auto', opacity: 1 }}
@@ -322,12 +358,21 @@ const AddExpense = () => {
                         <button
                           key={d}
                           type='button'
-                          onClick={() => setRecurringDay(String(d))}
+                          onClick={() => set('recurringDay', String(d))}
                           className='h-9 px-4 rounded-lg text-xs font-bold border transition-all cursor-pointer'
                           style={{
-                            borderColor: recurringDay === String(d) ? ACCENT : 'var(--color-border-subtle)',
-                            color: recurringDay === String(d) ? ACCENT : 'var(--color-text-secondary)',
-                            background: recurringDay === String(d) ? `color-mix(in srgb, ${ACCENT} 10%, transparent)` : 'transparent',
+                            borderColor:
+                              data.recurringDay === String(d)
+                                ? ACCENT
+                                : 'var(--color-border-subtle)',
+                            color:
+                              data.recurringDay === String(d)
+                                ? ACCENT
+                                : 'var(--color-text-secondary)',
+                            background:
+                              data.recurringDay === String(d)
+                                ? `color-mix(in srgb, ${ACCENT} 10%, transparent)`
+                                : 'transparent',
                           }}
                         >
                           dia {d}
@@ -335,13 +380,19 @@ const AddExpense = () => {
                       ))}
                     </div>
                     <div className='flex items-center gap-3 mt-3'>
-                      <span className='text-xs text-text-secondary/50 shrink-0'>Outro dia</span>
+                      <span className='text-xs text-text-secondary/50 shrink-0'>
+                        Outro dia
+                      </span>
                       <input
                         type='number'
                         min='1'
                         max='31'
-                        value={[1, 5, 10, 15, 20, 25].includes(Number(recurringDay)) ? '' : recurringDay}
-                        onChange={(e) => setRecurringDay(e.target.value)}
+                        value={
+                          [1, 5, 10, 15, 20, 25].includes(Number(data.recurringDay))
+                            ? ''
+                            : data.recurringDay
+                        }
+                        onChange={(e) => set('recurringDay', e.target.value)}
                         placeholder='1 – 31'
                         className='flex-1 h-9 px-3 rounded-lg text-xs font-semibold border bg-transparent text-text-primary placeholder:text-text-secondary/30 outline-none transition-all [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none'
                         style={{ borderColor: 'var(--color-border-subtle)' }}

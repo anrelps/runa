@@ -1,4 +1,4 @@
-import api from '../../features/utils/api';
+import api from '../../utils/api';
 
 export interface Filters {
   category: string;
@@ -13,7 +13,7 @@ export interface ExpenseData {
   category: string;
   type: string;
   total_amount: number;
-  installment_count: number;
+  installment_count?: number;
   first_due_date?: string;
   recurring_day?: number;
 }
