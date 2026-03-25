@@ -1,5 +1,10 @@
 import { useEffect } from 'react';
+import { useSelector } from 'react-redux';
 import { BrowserRouter, Outlet, Route, Routes } from 'react-router-dom';
+import { profile } from './redux/slices/userSlice';
+import type { RootState } from './redux/store';
+import { useAppDispatch } from './redux/store';
+
 //Pages
 import About from './pages/About/About';
 import AddExpense from './pages/AddExpense/AddExpense';
@@ -15,10 +20,19 @@ import Pricing from './pages/Pricing/Pricing';
 //Components
 import ProtectedRoute from './features/shared/ProtectedRoute';
 
-function App() {
+const App = () => {
   useEffect(() => {
     document.documentElement.classList.add('dark');
   }, []);
+
+  const dispatch = useAppDispatch();
+  const { token } = useSelector((state: RootState) => state.user);
+
+  useEffect(() => {
+    if (token) {
+      dispatch(profile());
+    }
+  }, [dispatch, token]);
 
   return (
     <BrowserRouter>
@@ -44,6 +58,6 @@ function App() {
       </Routes>
     </BrowserRouter>
   );
-}
+};
 
 export default App;

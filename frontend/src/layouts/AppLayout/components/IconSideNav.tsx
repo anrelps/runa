@@ -29,7 +29,7 @@ const navItems = [
   },
   {
     icon: <ChartLineUpIcon weight='fill' />,
-    label: 'Rendas',
+    label: 'Saldo',
     path: '/incomes',
   },
 ];

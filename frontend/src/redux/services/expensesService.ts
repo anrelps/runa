@@ -1,11 +1,12 @@
 import api from '../../utils/api';
 
 export interface Filters {
-  category: string;
-  type: string;
-  total_amount: number;
-  from_date: string;
-  to_date: string;
+  category?: string;
+  type?: string;
+  total_amount?: number;
+  from_date?: string;
+  to_date?: string;
+  page?: number;
 }
 
 export interface ExpenseData {

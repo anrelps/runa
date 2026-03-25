@@ -14,7 +14,7 @@ const Dashboard = () => {
       <AppLayout>
         <div className='flex items-center gap-4 mb-6 w-full'>
           <CardButton
-            label={'Renda\nAdicionar'}
+            label={'Saldo\nAdicionar'}
             icon={ArrowCircleUpIcon}
             accent='var(--color-primary)'
             onClick={() => navigate('/income/add')}

@@ -39,7 +39,7 @@ const RecentIncomesList = () => {
 
   return (
     <div className='rounded-2xl p-4 bg-background-card border border-border-card w-full mb-8'>
-      <h2 className='text-lg font-semibold mb-4 text-text-primary'>Rendas recentes</h2>
+      <h2 className='text-lg font-semibold mb-4 text-text-primary'>Saldo recente</h2>
 
       <div className='flex flex-col gap-6'>
         {dates.map((date) => (

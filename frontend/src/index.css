@@ -18,11 +18,16 @@
   --color-border-medium: hsla(0, 0%, 100%, 0.14);
 
   /* Category Colors (dark) */
-  --color-category-food: hsl(139, 69%, 58%);
+  --color-category-housing:   hsl(38,  92%, 60%);
+  --color-category-food:      hsl(139, 69%, 58%);
   --color-category-transport: hsl(203, 89%, 62%);
-  --color-category-leisure: hsl(27, 100%, 65%);
-  --color-category-health: hsl(270, 95%, 75%);
-  --color-category-other: hsl(170, 11%, 49%);
+  --color-category-shopping:  hsl(340, 82%, 65%);
+  --color-category-leisure:   hsl(27,  100%, 65%);
+  --color-category-health:    hsl(270, 95%, 75%);
+  --color-category-education: hsl(185, 80%, 52%);
+  --color-category-business:  hsl(230, 70%, 65%);
+  --color-category-finance:   hsl(48,  95%, 55%);
+  --color-category-other:     hsl(170, 11%, 49%);
 }
 
 /* Light Mode — applied to the app wrapper, landing stays dark */
@@ -43,11 +48,16 @@
   --color-border-medium:      hsla(180, 25%, 8%, 0.28);
 
   /* Category Colors (light — pastel/muted) */
-  --color-category-food:      hsl(134, 42%, 58%);
-  --color-category-transport: hsl(205, 55%, 58%);
-  --color-category-leisure:   hsl(24, 62%, 58%);
-  --color-category-health:    hsl(270, 44%, 62%);
-  --color-category-other:     hsl(173, 10%, 65%);
+  --color-category-housing:   hsl(38,  70%, 52%);
+  --color-category-food:      hsl(134, 42%, 50%);
+  --color-category-transport: hsl(205, 55%, 50%);
+  --color-category-shopping:  hsl(340, 60%, 55%);
+  --color-category-leisure:   hsl(24,  62%, 52%);
+  --color-category-health:    hsl(270, 44%, 56%);
+  --color-category-education: hsl(185, 55%, 42%);
+  --color-category-business:  hsl(230, 50%, 55%);
+  --color-category-finance:   hsl(45,  75%, 45%);
+  --color-category-other:     hsl(173, 10%, 55%);
 }
 
 /* Utility Classes */

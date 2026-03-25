@@ -6,11 +6,18 @@ import {
   index,
 } from '../services/expensesService';
 
+interface Pagination {
+  current_page: number;
+  last_page: number;
+  total: number;
+}
+
 interface ExpensesState {
   expenses: any[];
   expense: any | null;
   loading: boolean;
   error: string | null;
+  pagination: Pagination;
 }
 
 const initialState: ExpensesState = {
@@ -18,6 +25,11 @@ const initialState: ExpensesState = {
   expense: null,
   loading: false,
   error: null,
+  pagination: {
+    current_page: 1,
+    last_page: 1,
+    total: 0,
+  },
 };
 
 export const expensesIndex = createAsyncThunk<any, Filters>(
@@ -56,7 +68,17 @@ const expensesSlice = createSlice({
       })
       .addCase(expensesIndex.fulfilled, (state, action) => {
         state.loading = false;
-        state.expenses = action.payload.data;
+        const items = action.payload?.data ?? [];
+        const currentPage = action.meta.arg?.page ?? 1;
+        const PER_PAGE = 20;
+        const hasMore = items.length >= PER_PAGE;
+
+        state.expenses = items;
+        state.pagination = {
+          current_page: currentPage,
+          last_page:    hasMore ? currentPage + 1 : currentPage,
+          total:        0,
+        };
       })
       .addCase(expensesIndex.rejected, (state, action) => {
         state.loading = false;
@@ -69,7 +91,6 @@ const expensesSlice = createSlice({
       .addCase(expensesCreate.fulfilled, (state, action) => {
         state.loading = false;
         state.expense = action.payload;
-        console.log('Created expense:', action.payload.data);
       })
       .addCase(expensesCreate.rejected, (state, action) => {
         state.loading = false;
@@ -78,13 +99,10 @@ const expensesSlice = createSlice({
   },
 });
 
-export const selectExpenses = (state: { expenses: ExpensesState }) =>
-  state.expenses.expenses;
-export const selectExpense = (state: { expenses: ExpensesState }) =>
-  state.expenses.expense;
-export const selectLoading = (state: { expenses: ExpensesState }) =>
-  state.expenses.loading;
-export const selectError = (state: { expenses: ExpensesState }) =>
-  state.expenses.error;
+export const selectExpenses   = (state: { expenses: ExpensesState }) => state.expenses.expenses;
+export const selectExpense    = (state: { expenses: ExpensesState }) => state.expenses.expense;
+export const selectLoading    = (state: { expenses: ExpensesState }) => state.expenses.loading;
+export const selectError      = (state: { expenses: ExpensesState }) => state.expenses.error;
+export const selectPagination = (state: { expenses: ExpensesState }) => state.expenses.pagination;
 
 export default expensesSlice.reducer;

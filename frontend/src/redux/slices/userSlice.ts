@@ -1,5 +1,9 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
-import { type LoginResponse, userLogin } from '../services/userService';
+import {
+  getUserData,
+  type LoginResponse,
+  userLogin,
+} from '../services/userService';
 
 interface LoginArgs {
   email: string;
@@ -29,6 +33,23 @@ export const login = createAsyncThunk<LoginResponse, LoginArgs>(
   async ({ email, password }, { rejectWithValue }) => {
     try {
       const res = await userLogin({ email, password });
+
+      if (!res) {
+        return rejectWithValue('Resposta vazia do servidor');
+      }
+
+      return res;
+    } catch (error: any) {
+      return rejectWithValue(error?.message ?? 'Erro desconhecido');
+    }
+  },
+);
+
+export const profile = createAsyncThunk<LoginResponse['user']>(
+  'user/profile',
+  async (_, { rejectWithValue }) => {
+    try {
+      const res = await getUserData();
 
       if (!res) {
         return rejectWithValue('Resposta vazia do servidor');
@@ -84,6 +105,31 @@ const userSlice = createSlice({
         if (action.payload.token) {
           localStorage.setItem('token', action.payload.token);
         }
+      })
+
+      .addCase(profile.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+
+      .addCase(profile.fulfilled, (state, action) => {
+        state.loading = false;
+        state.user = action.payload ?? null;
+        state.isAuthenticated = true;
+        state.authChecked = true;
+      })
+
+      .addCase(profile.rejected, (state, action) => {
+        state.loading = false;
+        state.user = null;
+        state.isAuthenticated = false;
+        state.authChecked = true;
+        state.token = null;
+        state.error =
+          (action.payload as string) ??
+          action.error.message ??
+          'Erro ao obter perfil do usuário';
+        localStorage.removeItem('token');
       })
 
       .addCase(login.rejected, (state, action) => {
