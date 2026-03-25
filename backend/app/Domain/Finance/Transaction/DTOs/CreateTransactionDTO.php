@@ -12,4 +12,16 @@ class CreateTransactionDTO {
         public readonly string $transactionable_type,
         public readonly int $transactionable_id,
     ) {}
+
+    public static function fromRequest(array $data) {
+        return new self(
+            type: $data["type"],
+            amount: $data["amount"],
+            description: $data["description"],
+            category: $data["category"],
+            date: $data["date"],
+            transactionable_type: $data["transactionable_type"],
+            transactionable_id: $data["transactionable_id"],
+        );
+    }
 }

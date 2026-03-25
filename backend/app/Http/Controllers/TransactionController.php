@@ -45,20 +45,11 @@ class TransactionController extends Controller
                 'description' => 'required|string',
                 'category' => 'required|string',
                 'date' => 'required|string',
-                'transactionable_type' => 'required|string',
-                'transactionable_id' => 'required|numeric',
+                'transactionable_type' => 'nullable|string',
+                'transactionable_id' => 'nullable|numeric',
             ]);
             $result = $this->transactionService->create(
-                new CreateTransactionDTO(
-                    $input['user_id'],
-                    $input['type'],
-                    $input['amount'],
-                    $input['description'],
-                    $input['category'],
-                    $input['date'],
-                    $input['transactionable_type'],
-                    $input['transactionable_id'],
-                ),
+                CreateTransactionDTO::fromRequest($input),
             );
             return $this->successResponse(new TransactionResource($result), 201);
         } catch(Exception $e) {

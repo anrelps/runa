@@ -9,7 +9,7 @@ use App\Domain\Finance\Expense\Models\Expense;
 use App\Domain\Finance\Expense\Models\ExpenseInstallment;
 use App\Domain\Finance\Expense\Services\ExpenseService;
 use App\Http\Controllers\Controller;
-use App\Http\Resources\ExpenseResource;
+use App\Http\Resources\Finance\Expense\ExpenseResource;
 use Illuminate\Http\Request;
 use App\Traits\Api\ApiResponse;
 use Exception;
