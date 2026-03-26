@@ -1,22 +1,38 @@
 import React from 'react';
-import { CATEGORIES, CATEGORY_ACCENTS } from '../../../utils/consts';
+import { CATEGORIES, CATEGORY_ACCENTS, type category } from '../../../utils/consts';
 
-const CategoryFilterButtons: React.FC = () => {
+interface Props {
+  selected: category | null;
+  onSelect: (cat: category | null) => void;
+}
+
+const CategoryFilterButtons: React.FC<Props> = ({ selected, onSelect }) => {
   return (
     <div className='flex flex-wrap gap-2'>
-      {CATEGORIES.map((cat) => (
-        <button
-          key={cat}
-          type='button'
-          className='flex items-center gap-2 px-3 py-1.5 rounded-lg border border-(--color-border-card,rgba(32,224,150,0.08)) bg-background-card text-text-secondary text-sm font-medium hover:bg-(--color-border-card,rgba(32,224,150,0.08)) transition-colors'
-        >
-          <span
-            className='inline-block w-3 h-3 rounded-full'
-            style={{ background: CATEGORY_ACCENTS[cat] }}
-          />
-          {cat}
-        </button>
-      ))}
+      {CATEGORIES.map((cat) => {
+        const isActive = selected === cat;
+        return (
+          <button
+            key={cat}
+            type='button'
+            onClick={() => onSelect(isActive ? null : cat)}
+            className='flex items-center gap-2 px-3 py-1.5 rounded-lg border text-sm font-medium transition-all cursor-pointer'
+            style={{
+              borderColor: isActive ? CATEGORY_ACCENTS[cat] : 'rgba(32,224,150,0.08)',
+              background: isActive
+                ? `color-mix(in srgb, ${CATEGORY_ACCENTS[cat]} 15%, transparent)`
+                : 'var(--color-background-card)',
+              color: isActive ? CATEGORY_ACCENTS[cat] : 'var(--color-text-secondary)',
+            }}
+          >
+            <span
+              className='inline-block w-3 h-3 rounded-full shrink-0'
+              style={{ background: CATEGORY_ACCENTS[cat] }}
+            />
+            {cat}
+          </button>
+        );
+      })}
     </div>
   );
 };

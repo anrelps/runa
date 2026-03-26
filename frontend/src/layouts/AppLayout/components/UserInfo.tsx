@@ -1,25 +1,26 @@
-import { SignOutIcon } from '@phosphor-icons/react';
-import { useDispatch } from 'react-redux';
-import avatarImg from '../../../assets/images/user/test.jpg';
+import { SignOutIcon, UserCircleIcon } from '@phosphor-icons/react';
+import { useDispatch, useSelector } from 'react-redux';
 import { logout } from '../../../redux/slices/userSlice';
-import type { AppDispatch } from '../../../redux/store';
+import type { AppDispatch, RootState } from '../../../redux/store';
 
 const UserInfo = () => {
   const dispatch = useDispatch<AppDispatch>();
+  const user = useSelector((state: RootState) => state.user.user) as {
+    name: string;
+    email: string;
+  } | null;
 
   return (
     <div className='flex items-center gap-3'>
-      <img
-        src={avatarImg}
-        alt='Avatar'
-        className='w-10 h-10 rounded-full object-cover border border-primary/50'
-      />
+      <div className='w-10 h-10 rounded-full border border-primary/50 bg-primary/10 flex items-center justify-center shrink-0'>
+        <UserCircleIcon size={24} weight='duotone' className='text-primary' />
+      </div>
       <div className='lg:block xs:block sm:hidden md:hidden'>
         <p className='text-sm font-medium text-text-primary leading-tight'>
-          João Silva
+          {user?.name ?? '—'}
         </p>
         <p className='text-xs text-text-secondary leading-tight'>
-          joao.silva@email.com
+          {user?.email ?? '—'}
         </p>
       </div>
       <button

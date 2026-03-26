@@ -22,7 +22,7 @@ const Incomes = () => {
         onMouseLeave={e => { e.currentTarget.style.filter = ''; }}
       >
         <PlusCircleIcon weight='fill' size={20} />
-        Adicionar renda
+        Adicionar saldo
       </button>
 
       <div className='mb-4'>

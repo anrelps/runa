@@ -1,9 +1,7 @@
 import { GiftIcon } from '@phosphor-icons/react';
-import React, { useEffect } from 'react';
+import React from 'react';
 import { useSelector } from 'react-redux';
 import { useCurrencyBRL } from '../../../hooks/useCurrencyBRL';
-import { expensesIndex } from '../../../redux/slices/expensesSlice';
-import { useAppDispatch } from '../../../redux/store';
 import type { category } from '../../../utils/consts';
 import { CATEGORY_ACCENTS, CATEGORY_ICONS } from '../../../utils/consts';
 
@@ -44,7 +42,7 @@ const ExpenseItem: React.FC<{ exp: Expense }> = ({ exp }) => {
         />
 
         <div className='flex flex-col min-w-0'>
-          <span className='truncate text-sm font-medium text-text-primary'>
+          <span className='truncate text-sm font-medium text-text-primary capitalize'>
             {exp.description}
             {exp.installment_count > 1 && (
               <span
@@ -86,12 +84,7 @@ const ExpenseItem: React.FC<{ exp: Expense }> = ({ exp }) => {
 // ── RecentExpensesList ────────────────────────────────────────────────────────
 
 const RecentExpensesList: React.FC = () => {
-  const dispatch = useAppDispatch();
   const { expenses = [] } = useSelector((state: any) => state.expenses);
-
-  useEffect(() => {
-    dispatch(expensesIndex({} as any));
-  }, [dispatch]);
 
   const grouped = groupByDate(expenses);
   const dates = Object.keys(grouped).sort((a, b) => b.localeCompare(a));

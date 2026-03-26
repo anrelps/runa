@@ -170,7 +170,7 @@ export default function RecentTransactions({ decorated = false }: Props) {
             onClick={() => navigate('/incomes')}
             className='flex items-center gap-1 px-3 py-1.5 rounded-full text-xs font-semibold cursor-pointer transition-all border border-primary/20 bg-primary/8 text-primary hover:bg-primary/15'
           >
-            Rendas <ArrowRightIcon size={11} weight='bold' />
+            Saldo <ArrowRightIcon size={11} weight='bold' />
           </button>
           <button
             onClick={() => navigate('/expenses')}

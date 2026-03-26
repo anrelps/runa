@@ -1,3 +1,6 @@
+import { useSelector } from 'react-redux';
+import type { RootState } from '../../../redux/store';
+
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
 const getGreeting = (): string => {
@@ -18,13 +21,16 @@ const getFormattedDate = (): string =>
 // ── Component ─────────────────────────────────────────────────────────────────
 
 const Greeting = () => {
+  const user = useSelector((state: RootState) => state.user.user) as { name: string } | null;
+  const firstName = user?.name?.split(' ')[0] ?? '';
+
   return (
     <div className='flex flex-col items-end gap-3 flex-1 self-end'>
       <span
         className='text-4xl font-black uppercase leading-none tracking-tight text-right'
         style={{ color: 'var(--color-text-secondary)' }}
       >
-        {getGreeting()},<br />João
+        {getGreeting()},<br />{firstName}
       </span>
       <span
         className='text-xs font-medium uppercase tracking-widest'
