@@ -62,8 +62,8 @@ class TransactionRepository implements TransactionRepositoryInterface {
                 $q->whereDate('date', '<=', $dto->to_date);
             })
             ->selectRaw("
-                SUM(CASE WHEN 'income' THEN amount ELSE 0 END) as total_income,
-                SUM(CASE WHEN 'expense' THEN amount ELSE 0 END) as total_expense
+                SUM(CASE WHEN type = 'income' THEN amount ELSE 0 END) as total_income,
+                SUM(CASE WHEN type = 'expense' THEN amount ELSE 0 END) as total_expense
             ")
             ->orderBy('date', 'DESC')
             ->first();
