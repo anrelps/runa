@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Domain\Finance\Transactions\ValueObjects;
+namespace App\Domain\Finance\Transaction\ValueObjects;
 
 readonly class TransactionHistory {
     public function __construct(

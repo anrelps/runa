@@ -7,7 +7,7 @@ use App\Domain\Finance\Transaction\DTOs\IndexTransactionDTO;
 use App\Domain\Finance\Transaction\DTOs\TransactionHistoryDTO;
 use App\Domain\Finance\Transaction\Models\Transaction;
 use App\Domain\Finance\Transaction\Repositories\Contracts\TransactionRepositoryInterface;
-use App\Domain\Finance\Transactions\ValueObjects\TransactionHistory;
+use App\Domain\Finance\Transaction\ValueObjects\TransactionHistory;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
