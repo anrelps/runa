@@ -39,6 +39,7 @@ class ExpenseRepository implements ExpenseRepositoryInterface {
             ->when(isset($dto->to_date), function($q) use ($dto) {
                 $q->where('created_at',  '<=', $dto->to_date);
             })
+            ->orderBy('first_due_date', 'DESC')
             ->paginate(20);
         return $expenses;
     }
