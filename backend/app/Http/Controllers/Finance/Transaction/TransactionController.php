@@ -54,7 +54,7 @@ class TransactionController extends Controller
                 'total_income' => $result->totalIncome,
                 'total_expense' => $result->totalExpense,
                 'balance' => $result->getBalance(),
-                'formated_balance' => $result->getFormattedBalance(),
+                'formatted_balance' => $result->getFormattedBalance(),
             ], 200);
         } catch (Exception $e) {
             return $this->errorResponse($e->getMessage(), 500);
