@@ -4,9 +4,12 @@ namespace App\Domain\Finance\Transaction\Repositories\Eloquent;
 
 use App\Domain\Finance\Transaction\DTOs\CreateTransactionDTO;
 use App\Domain\Finance\Transaction\DTOs\IndexTransactionDTO;
+use App\Domain\Finance\Transaction\DTOs\TransactionHistoryDTO;
 use App\Domain\Finance\Transaction\Models\Transaction;
 use App\Domain\Finance\Transaction\Repositories\Contracts\TransactionRepositoryInterface;
+use App\Domain\Finance\Transactions\ValueObjects\TransactionHistory;
 use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
 
 class TransactionRepository implements TransactionRepositoryInterface {
@@ -36,6 +39,38 @@ class TransactionRepository implements TransactionRepositoryInterface {
             })
             ->orderBy('date', 'DESC')
             ->paginate(20);
+    }
+
+    public function transactionHistory(TransactionHistoryDTO $dto): TransactionHistory {
+        $user_id = Auth::user()->id;
+
+        $transacions = $this->transactionModel
+            ->where('user_id', $user_id)
+            ->when(isset($dto->type), function($q) use ($dto) {
+                $q->where('type', $dto->type);
+            })
+            ->when(isset($dto->min_amount), function($q) use ($dto) {
+                $q->where('amount', '>=', $dto->min_amount);
+            })
+            ->when(isset($dto->max_amount), function($q) use ($dto) {
+                $q->where('amount', '<=', $dto->max_amount);
+            })
+            ->when(isset($dto->from_date), function($q) use ($dto) {
+                $q->whereDate('date', '>=', $dto->from_date);
+            })
+            ->when(isset($dto->to_date), function($q) use ($dto) {
+                $q->whereDate('date', '<=', $dto->to_date);
+            })
+            ->selectRaw("
+                SUM(CASE WHEN 'income' THEN amount ELSE 0 END) as total_income,
+                SUM(CASE WHEN 'expense' THEN amount ELSE 0 END) as total_expense
+            ")
+            ->orderBy('date', 'DESC')
+            ->first();
+        return new TransactionHistory(
+            totalIncome: (float) ($transacions->total_income ?? 0),
+            totalExpense: (float) ($transacions->total_expense ?? 0),
+        );
     }
 
     public function create(CreateTransactionDTO $dto): Transaction {

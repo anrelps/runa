@@ -29,6 +29,7 @@ Route::prefix('v1')->group(function () {
 
         Route::prefix('/transactions')->controller(TransactionController::class)->group(function() {
             Route::get('/', 'index');
+            Route::get('/history', 'transactionHistory');
             Route::post('/', 'store');
         });
     });

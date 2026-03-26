@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Finance\Transaction;
 
 use App\Domain\Finance\Transaction\DTOs\CreateTransactionDTO;
 use App\Domain\Finance\Transaction\DTOs\IndexTransactionDTO;
+use App\Domain\Finance\Transaction\DTOs\TransactionHistoryDTO;
 use App\Domain\Finance\Transaction\Services\TransactionService;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\Finance\Transaction\TransactionResource;
@@ -33,6 +34,29 @@ class TransactionController extends Controller
             );
             return $this->successResponse(TransactionResource::collection($result), 200);
         } catch(Exception $e) {
+            return $this->errorResponse($e->getMessage(), 500);
+        }
+    }
+
+    public function transactionHistory(Request $request) {
+        try {
+            $input = $request->validate([
+                'type' => 'nullable|string',
+                'min_amount' => 'nullable|numeric',
+                'max_amount' => 'nullable|numeric',
+                'from_date' => 'nullable|date',
+                'to_date' => 'nullable|date',
+            ]);
+            $result = $this->transactionService->transactionHistory(
+                TransactionHistoryDTO::fromRequest($input),
+            );
+            return $this->successResponse([
+                'total_income' => $result->totalIncome,
+                'total_expense' => $result->totalExpense,
+                'balance' => $result->getBalance(),
+                'formated_balance' => $result->getFormattedBalance(),
+            ], 200);
+        } catch (Exception $e) {
             return $this->errorResponse($e->getMessage(), 500);
         }
     }
