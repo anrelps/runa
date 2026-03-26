@@ -65,7 +65,6 @@ class TransactionRepository implements TransactionRepositoryInterface {
                 SUM(CASE WHEN type = 'income' THEN amount ELSE 0 END) as total_income,
                 SUM(CASE WHEN type = 'expense' THEN amount ELSE 0 END) as total_expense
             ")
-            ->orderBy('date', 'DESC')
             ->first();
         return new TransactionHistory(
             totalIncome: (float) ($transacions->total_income ?? 0),
