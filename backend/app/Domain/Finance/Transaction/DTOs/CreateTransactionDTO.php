@@ -9,8 +9,8 @@ class CreateTransactionDTO {
         public readonly string $description,
         public readonly string $category,
         public readonly string $date,
-        public readonly string $transactionable_type,
-        public readonly int $transactionable_id,
+        public readonly ?string $transactionable_type,
+        public readonly ?int $transactionable_id,
     ) {}
 
     public static function fromRequest(array $data) {
@@ -20,8 +20,8 @@ class CreateTransactionDTO {
             description: $data["description"],
             category: $data["category"],
             date: $data["date"],
-            transactionable_type: $data["transactionable_type"],
-            transactionable_id: $data["transactionable_id"],
+            transactionable_type: $data["transactionable_type"] ?? null,
+            transactionable_id: $data["transactionable_id"] ?? null,
         );
     }
 }
