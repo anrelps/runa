@@ -13,10 +13,12 @@ use App\Http\Resources\Finance\Expense\ExpenseResource;
 use Illuminate\Http\Request;
 use App\Traits\Api\ApiResponse;
 use Exception;
+use Illuminate\Auth\Access\AuthorizationException;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 
 class ExpenseController extends Controller
 {
-    use ApiResponse;
+    use ApiResponse, AuthorizesRequests;
 
     public function __construct(
         private ExpenseService $expenseService,
@@ -35,6 +37,17 @@ class ExpenseController extends Controller
                 IndexExpenseDTO::fromRequest($filters),
             );
             return $this->successResponse(ExpenseResource::collection($result), 200);
+        } catch(Exception $e) {
+            return $this->errorResponse($e->getMessage(), 500);
+        }
+    }
+
+    public function show(Expense $expense) {
+        try {
+            $this->authorize('view', $expense);
+            return $this->successResponse(new ExpenseResource($expense), 200);
+        } catch(AuthorizationException $e) {
+            return $this->errorResponse('You cannot access this expense.', 403);
         } catch(Exception $e) {
             return $this->errorResponse($e->getMessage(), 500);
         }

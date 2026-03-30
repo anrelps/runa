@@ -12,11 +12,13 @@ use App\Http\Controllers\Controller;
 use App\Http\Resources\Finance\Expense\RecurringExpenseResource;
 use App\Traits\Api\ApiResponse;
 use Exception;
+use Illuminate\Auth\Access\AuthorizationException;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\Request;
 
 class RecurringExpenseController extends Controller
 {
-    use ApiResponse;
+    use ApiResponse, AuthorizesRequests;
 
     public function __construct(
         private RecurringExpenseService $recurringExpenseService,
@@ -37,6 +39,19 @@ class RecurringExpenseController extends Controller
             );
             return $this->successResponse(RecurringExpenseResource::collection($result), 200);
         } catch(Exception $e) {
+            return $this->errorResponse($e->getMessage(), 500);
+        }
+    }
+
+    public function show(RecurringExpense $recurringExpense) {
+        try {
+            $this->authorize('view', $recurringExpense);
+            return $this->successResponse(new RecurringExpenseResource($recurringExpense), 200);
+        }
+        catch(AuthorizationException $e) {
+            return $this->errorResponse('You cannot access this recurring exception.', 403);
+        }
+        catch(Exception $e) {
             return $this->errorResponse($e->getMessage(), 500);
         }
     }
