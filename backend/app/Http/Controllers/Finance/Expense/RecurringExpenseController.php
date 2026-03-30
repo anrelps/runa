@@ -33,6 +33,7 @@ class RecurringExpenseController extends Controller
                 'from_due_day' => 'nullable|numeric',
                 'to_due_day' => 'nullable|numeric',
                 'is_active' => 'nullable|numeric',
+                'per_page' => 'nullable|numeric',
             ]);
             $result = $this->recurringExpenseService->index(
                 IndexRecurringExpenseDTO::fromRequest($filters),

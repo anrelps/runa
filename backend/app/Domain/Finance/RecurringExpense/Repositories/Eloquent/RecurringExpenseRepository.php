@@ -42,7 +42,12 @@ class RecurringExpenseRepository implements RecurringExpenseRepositoryInterface 
                 $q->where('active', 1);
             })
             ->orderBy('due_day', 'ASC')
-            ->paginate(20);
+            ->when(isset($dto->per_page), function($q) use ($dto) {
+                $q->paginate($dto->per_page);
+            })
+            ->when(!isset($dto->per_page), function($q) use ($dto) {
+                $q->get();
+            });
         return $recurringExpenses;
     }
 

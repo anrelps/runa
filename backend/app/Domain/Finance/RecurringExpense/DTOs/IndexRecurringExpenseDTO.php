@@ -10,6 +10,7 @@ class IndexRecurringExpenseDTO {
         public readonly ?int $from_due_day,
         public readonly ?int $to_due_day,
         public readonly ?int $is_active,
+        public readonly ?int $per_page,
     ) {}
 
     public static function fromRequest(array $data) {
@@ -20,6 +21,7 @@ class IndexRecurringExpenseDTO {
             from_due_day: $data['from_due_day'] ?? null,
             to_due_day: $data['to_due_day'] ?? null,
             is_active: $data['is_active'] ?? null,
+            per_page: $data['per_page'] ?? null,
         );
     }
 }

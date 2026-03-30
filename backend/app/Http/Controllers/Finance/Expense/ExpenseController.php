@@ -32,6 +32,7 @@ class ExpenseController extends Controller
                 'total_amount' => 'nullable|numeric',
                 'from_date' => 'nullable|date',
                 'to_date' => 'nullable|date',
+                'per_page' => 'nullable|numeric'
             ]);
             $result = $this->expenseService->index(
                 IndexExpenseDTO::fromRequest($filters),
