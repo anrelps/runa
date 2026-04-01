@@ -2,19 +2,19 @@ import {
   BarElement,
   CategoryScale,
   Chart as ChartJS,
-  Legend,
   LinearScale,
-  Title,
   Tooltip,
 } from 'chart.js';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { Bar } from 'react-chartjs-2';
+import { useSelector } from 'react-redux';
 
 import { useTheme } from '../../contexts/ThemeContext';
-import Card from '../shared/components/Card';
 import { useChartResize } from '../../hooks/useChartResize';
+import { selectExpenses } from '../../redux/slices/expensesSlice';
+import Card from '../shared/components/Card';
 
-ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
+ChartJS.register(CategoryScale, LinearScale, BarElement, Tooltip);
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
@@ -23,41 +23,86 @@ const getCssVar = (cssVar: string): string => {
   return getComputedStyle(el).getPropertyValue(cssVar).trim();
 };
 
-// ── Data ──────────────────────────────────────────────────────────────────────
-
-const WEEKS = [
-  { label: 'S1', val: 620 },
-  { label: 'S2', val: 980 },
-  { label: 'S3', val: 740 },
-  { label: 'S4', val: 877 },
-  { label: 'S5', val: 0 },
-];
-
-const TOTAL = WEEKS.reduce((acc, w) => acc + w.val, 0);
-
 interface ChartColors {
   accent: string;
+  accentSoft: string;
+  accentMid: string;
   grid: string;
   tick: string;
   label: string;
 }
 
-const computeColors = (): ChartColors => ({
-  accent: getCssVar('--color-accent-start'),
-  grid:   getCssVar('--color-grid'),
-  tick:   getCssVar('--color-text-secondary'),
-  label:  getCssVar('--color-text-primary'),
-});
+const hexToRgba = (color: string, alpha: number): string => {
+  const value = color.trim();
+  if (value.startsWith('#')) {
+    let hex = value.slice(1);
+    if (hex.length === 3) hex = hex.split('').map((c) => c + c).join('');
+    if (hex.length === 6) {
+      const r = parseInt(hex.slice(0, 2), 16);
+      const g = parseInt(hex.slice(2, 4), 16);
+      const b = parseInt(hex.slice(4, 6), 16);
+      return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+    }
+  }
+  return value;
+};
 
-// ── Types ─────────────────────────────────────────────────────────────────────
+const computeColors = (): ChartColors => {
+  const accent = getCssVar('--color-accent-start');
+  return {
+    accent,
+    accentSoft: hexToRgba(accent, 0.15),
+    accentMid: hexToRgba(accent, 0.45),
+    grid: getCssVar('--color-grid'),
+    tick: getCssVar('--color-text-secondary'),
+    label: getCssVar('--color-text-primary'),
+  };
+};
 
-type Props = { decorated?: boolean };
+const formatBRL = (v: number): string =>
+  v >= 1000
+    ? `R$ ${(v / 1000).toLocaleString('pt-BR', { maximumFractionDigits: 1 })}k`
+    : `R$ ${v.toLocaleString('pt-BR', { maximumFractionDigits: 0 })}`;
+
+// ── Build last 6 months ───────────────────────────────────────────────────────
+
+const buildMonths = () => {
+  const now = new Date();
+  return Array.from({ length: 6 }, (_, i) => {
+    const d = new Date(now.getFullYear(), now.getMonth() - (5 - i), 1);
+    const start = new Date(d.getFullYear(), d.getMonth(), 1);
+    start.setHours(0, 0, 0, 0);
+    const end = new Date(d.getFullYear(), d.getMonth() + 1, 0);
+    end.setHours(23, 59, 59, 999);
+
+    const label = d
+      .toLocaleDateString('pt-BR', { month: 'short' })
+      .replace('.', '')
+      .replace(/^\w/, (c) => c.toUpperCase());
+
+    const isCurrent = i === 5;
+    return { label, start, end, isCurrent };
+  });
+};
+
+const periodLabel = (months: ReturnType<typeof buildMonths>): string => {
+  const first = months[0].start;
+  const last = months[months.length - 1].end;
+  const fmt = (d: Date) =>
+    d.toLocaleDateString('pt-BR', { month: 'short', year: 'numeric' })
+      .replace('.', '')
+      .replace(/^\w/, (c) => c.toUpperCase());
+  return `${fmt(first)} – ${fmt(last)}`;
+};
 
 // ── Component ─────────────────────────────────────────────────────────────────
+
+type Props = { decorated?: boolean };
 
 const WeeklySpendingBarChart: React.FC<Props> = ({ decorated = false }) => {
   const { outerRef, chartRef } = useChartResize();
   const { theme } = useTheme();
+  const expenses = useSelector(selectExpenses);
 
   const [colors, setColors] = useState<ChartColors>(computeColors);
 
@@ -65,20 +110,41 @@ const WeeklySpendingBarChart: React.FC<Props> = ({ decorated = false }) => {
     setColors(computeColors());
   }, [theme]);
 
-  const data = {
-    labels: WEEKS.map((w) => w.label),
-    datasets: [{
-      label: 'Gastos (R$)',
-      data: WEEKS.map((w) => w.val),
-      backgroundColor: WEEKS.map((w) =>
-        w.val === 0
-          ? `color-mix(in srgb, ${colors.accent} 18%, transparent)`
-          : colors.accent
+  const months = useMemo(() => buildMonths(), []);
+
+  const monthlyTotals = useMemo(
+    () =>
+      months.map(({ start, end }) =>
+        expenses.reduce((sum, exp) => {
+          if (!exp.first_due_date) return sum;
+          const d = new Date(`${exp.first_due_date}T00:00:00`);
+          const amount = parseFloat(String(exp.total_amount)) || 0;
+          return d >= start && d <= end ? sum + amount : sum;
+        }, 0),
       ),
-      borderRadius: 4,
-      barThickness: 24,
-      borderSkipped: false,
-    }],
+    [expenses, months],
+  );
+
+  const maxVal = Math.max(...monthlyTotals, 1);
+  const hasData = monthlyTotals.some((v) => v > 0);
+
+  const data = {
+    labels: months.map((m) => m.label),
+    datasets: [
+      {
+        data: monthlyTotals,
+        backgroundColor: months.map((m, i) =>
+          monthlyTotals[i] === 0
+            ? colors.accentSoft
+            : m.isCurrent
+              ? colors.accent
+              : colors.accentMid,
+        ),
+        borderRadius: 6,
+        barThickness: 20,
+        borderSkipped: false as const,
+      },
+    ],
   };
 
   const options = {
@@ -87,37 +153,73 @@ const WeeklySpendingBarChart: React.FC<Props> = ({ decorated = false }) => {
     maintainAspectRatio: false,
     plugins: {
       legend: { display: false },
-      title: { display: false },
       tooltip: {
-        callbacks: { label: (context: any) => `R$ ${context.parsed.x}` },
+        callbacks: {
+          label: (ctx: any) =>
+            `  ${(ctx.parsed.x as number).toLocaleString('pt-BR', {
+              style: 'currency',
+              currency: 'BRL',
+            })}`,
+        },
       },
     },
     scales: {
       x: {
         beginAtZero: true,
+        max: maxVal * 1.15,
         grid: { color: colors.grid },
-        ticks: { color: colors.tick, font: { size: 14 } },
+        border: { display: false },
+        ticks: {
+          color: colors.tick,
+          maxTicksLimit: 5,
+          callback: (v: any) => formatBRL(v as number),
+        },
       },
       y: {
         grid: { display: false },
-        ticks: { color: colors.label, font: { size: 15 } },
+        border: { display: false },
+        ticks: { color: colors.label, font: { size: 12 } },
       },
     },
   };
 
   return (
-    <Card ref={outerRef} decorated={decorated} className='flex flex-col min-h-65 mb-6'>
-      <div className='flex justify-between items-center mb-3.5'>
-        <span className='text-sm font-semibold text-text-primary'>
-          Gastos das últimas 5 semanas
-        </span>
-        <span className='text-lg font-bold text-accent-start'>
-          R$ {TOTAL.toLocaleString('pt-BR')}
-        </span>
+    <Card ref={outerRef} decorated={decorated} className='flex flex-col mb-6'>
+      <div className='flex justify-between items-start mb-4'>
+        <div className='flex flex-col gap-0.5'>
+          <span className='text-sm font-semibold text-text-primary'>
+            Gastos mensais
+          </span>
+          <span className='text-xs text-text-secondary opacity-60'>
+            {periodLabel(months)}
+          </span>
+        </div>
+        <div className='flex items-center gap-3 text-xs text-text-secondary'>
+          <span className='flex items-center gap-1.5'>
+            <span
+              className='inline-block w-2.5 h-2.5 rounded-sm'
+              style={{ background: colors.accent }}
+            />
+            Mês atual
+          </span>
+          <span className='flex items-center gap-1.5'>
+            <span
+              className='inline-block w-2.5 h-2.5 rounded-sm'
+              style={{ background: colors.accentMid }}
+            />
+            Anteriores
+          </span>
+        </div>
       </div>
 
-      <div className='relative flex-1 min-h-50'>
-        <Bar key={theme} ref={chartRef} data={data} options={options} />
+      <div className='relative min-h-52'>
+        {hasData ? (
+          <Bar key={theme} ref={chartRef as any} data={data} options={options} />
+        ) : (
+          <div className='flex h-full items-center justify-center'>
+            <p className='text-sm text-text-secondary/50'>Sem dados</p>
+          </div>
+        )}
       </div>
     </Card>
   );

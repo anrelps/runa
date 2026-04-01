@@ -1,4 +1,5 @@
 import {
+  ArrowsClockwiseIcon,
   CaretLeftIcon,
   CaretRightIcon,
   ChartLineDownIcon,
@@ -31,6 +32,11 @@ const navItems = [
     icon: <ChartLineUpIcon weight='fill' />,
     label: 'Saldo',
     path: '/incomes',
+  },
+  {
+    icon: <ArrowsClockwiseIcon weight='fill' />,
+    label: 'Compromissos',
+    path: '/commitments',
   },
 ];
 

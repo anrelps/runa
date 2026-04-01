@@ -133,7 +133,7 @@ const PublicNavBar = () => {
 
       {isMobileMenuOpen && (
         <div
-          className='fixed inset-0 z-40 bg-background-primary md:hidden'
+          className='fixed inset-0 z-40 bg-background-primary/80 backdrop-blur-md md:hidden'
           onClick={toggleMobileMenu}
         >
           <nav
@@ -152,6 +152,18 @@ const PublicNavBar = () => {
                   </Link>
                 </li>
               ))}
+              <li>
+                <Link
+                  to='/login'
+                  onClick={() => setIsMobileMenuOpen(false)}
+                  className='group nav-container-gradient flex h-11 cursor-pointer items-center gap-2 rounded-full pl-3 pr-5 text-lg text-text-primary transition-all duration-200 ease-in-out hover:scale-105'
+                >
+                  <span className='rounded-full bg-primary p-1 text-sm'>
+                    <ArrowRightIcon weight='bold' className='text-background-primary' />
+                  </span>
+                  <span>Login</span>
+                </Link>
+              </li>
             </ul>
           </nav>
         </div>

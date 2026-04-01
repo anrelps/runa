@@ -1,123 +1,316 @@
-import { GiftIcon } from '@phosphor-icons/react';
-import React from 'react';
+import { ArrowsClockwiseIcon, GiftIcon, PencilSimpleIcon, TrashIcon } from '@phosphor-icons/react';
+import { AnimatePresence, motion } from 'framer-motion';
+import React, { useEffect, useRef, useState } from 'react';
 import { useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 import { useCurrencyBRL } from '../../../hooks/useCurrencyBRL';
+import { indexRecurring } from '../../../redux/services/expensesService';
+import {
+  expensesDelete,
+  expensesIndex,
+  selectExpenses,
+} from '../../../redux/slices/expensesSlice';
+import { useAppDispatch, type RootState } from '../../../redux/store';
+import api from '../../../utils/api';
 import type { category } from '../../../utils/consts';
 import { CATEGORY_ACCENTS, CATEGORY_ICONS } from '../../../utils/consts';
 
-// ── Types ─────────────────────────────────────────────────────────────────────
-
 interface Expense {
   id: number;
-  description: string;
-  category: category;
-  total_amount: number;
-  first_due_date: string;
-  installment_count: number;
-  created_at: string;
+  description?: string;
+  category?: category;
+  total_amount?: number;
+  first_due_date?: string;
+  installment_count?: number;
+  created_at?: string;
+  isRecurring?: boolean;
+  recurringId?: number;
+  due_day?: number;
+  [key: string]: any;
 }
+
+const currentInstallment = (firstDueDate: string, installmentCount: number): number => {
+  const start = new Date(`${firstDueDate}T00:00:00`);
+  const now = new Date();
+  const months = (now.getFullYear() - start.getFullYear()) * 12 + (now.getMonth() - start.getMonth());
+  return Math.min(Math.max(months + 1, 1), installmentCount);
+};
+
+const currentMonthDate = (day: number): string => {
+  const now = new Date();
+  const d = String(day).padStart(2, '0');
+  const m = String(now.getMonth() + 1).padStart(2, '0');
+  return `${now.getFullYear()}-${m}-${d}`;
+};
 
 const groupByDate = (expenses: Expense[]): Record<string, Expense[]> =>
   expenses.reduce<Record<string, Expense[]>>((acc, exp) => {
-    (acc[exp.first_due_date] = acc[exp.first_due_date] || []).push(exp);
+    const key = exp.first_due_date ?? 'Sem data';
+    if (!acc[key]) acc[key] = [];
+    acc[key].push(exp);
     return acc;
   }, {});
 
-// ── ExpenseItem ───────────────────────────────────────────────────────────────
+interface ExpenseItemProps {
+  exp: Expense;
+  isActive: boolean;
+  onActivate: (id: number) => void;
+  onClose: () => void;
+  onRecurringDeleted?: (id: number) => void;
+}
 
-const ExpenseItem: React.FC<{ exp: Expense }> = ({ exp }) => {
-  const Icon = CATEGORY_ICONS[exp.category] ?? GiftIcon;
-  const formattedAmount = useCurrencyBRL(exp.total_amount);
+const ExpenseItem: React.FC<ExpenseItemProps> = ({
+  exp,
+  isActive,
+  onActivate,
+  onClose,
+  onRecurringDeleted,
+}) => {
+  const navigate = useNavigate();
+  const dispatch = useAppDispatch();
+  const ref = useRef<HTMLDivElement>(null);
+
+  const safeCategory = exp.category;
+  const Icon = exp.isRecurring
+    ? ArrowsClockwiseIcon
+    : safeCategory
+      ? (CATEGORY_ICONS[safeCategory] ?? GiftIcon)
+      : GiftIcon;
+
+  const formattedAmount = useCurrencyBRL(exp.total_amount ?? 0);
+
+  useEffect(() => {
+    if (!isActive) return;
+    const handleClickOutside = (e: MouseEvent) => {
+      if (ref.current && !ref.current.contains(e.target as Node)) onClose();
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, [isActive, onClose]);
+
+  const handleDelete = async () => {
+    onClose();
+    if (exp.isRecurring && exp.recurringId != null) {
+      await api.delete(`/recurring-expenses/${exp.recurringId}`);
+      onRecurringDeleted?.(exp.recurringId);
+    } else {
+      await dispatch(expensesDelete(exp.id));
+      dispatch(expensesIndex({ page: 1 }));
+    }
+  };
 
   return (
     <div
-      className='flex items-center justify-between p-3 rounded-xl
-                 bg-white/3 border border-border-card'
+      ref={ref}
+      className='relative flex items-center justify-between p-3 rounded-xl bg-white/3 border border-border-card overflow-hidden'
     >
       <div className='flex items-center gap-3 min-w-0'>
         <Icon
           size={20}
           weight='duotone'
-          style={{ color: CATEGORY_ACCENTS[exp.category] }}
+          style={{
+            color: exp.isRecurring
+              ? 'var(--color-primary)'
+              : safeCategory
+                ? CATEGORY_ACCENTS[safeCategory]
+                : 'var(--color-text-secondary)',
+          }}
         />
 
         <div className='flex flex-col min-w-0'>
-          <span className='truncate text-sm font-medium text-text-primary capitalize'>
-            {exp.description}
-            {exp.installment_count > 1 && (
-              <span
-                className='ml-2 px-1.5 py-0.5 rounded text-[10px] font-semibold
-                           align-middle bg-border-subtle text-text-secondary
-                           border border-border-subtle inline-flex items-center leading-tight'
-              >
-                {exp.installment_count}x
+          <div className='flex items-center gap-2 min-w-0'>
+            <span className='truncate text-sm font-medium text-text-primary capitalize'>
+              {exp.description ?? 'Sem descrição'}
+            </span>
+
+            {(exp.installment_count ?? 0) > 1 && exp.first_due_date && (
+              <span className='shrink-0 px-1.5 py-0.5 rounded text-[10px] font-semibold bg-border-subtle text-text-secondary border border-border-subtle'>
+                {currentInstallment(exp.first_due_date, exp.installment_count!)}/{exp.installment_count}
               </span>
             )}
-          </span>
-          <span
-            className='text-[10px] font-semibold px-1.5 py-0.5 rounded mt-0.5 w-fit'
-            style={{
-              background: CATEGORY_ACCENTS[exp.category],
-              color: 'var(--color-background-primary)',
-            }}
-          >
-            {exp.category}
-          </span>
+
+            {exp.isRecurring && (
+              <span
+                className='shrink-0 text-[10px] font-semibold px-1.5 py-0.5 rounded'
+                style={{
+                  background: 'color-mix(in srgb, var(--color-primary) 15%, transparent)',
+                  color: 'var(--color-primary)',
+                }}
+              >
+                Recorrente · dia {exp.due_day}
+              </span>
+            )}
+          </div>
+
+          {!exp.isRecurring && safeCategory && (
+            <span
+              className='text-[10px] font-semibold px-1.5 py-0.5 rounded mt-0.5 w-fit'
+              style={{
+                background: CATEGORY_ACCENTS[safeCategory],
+                color: 'var(--color-background-primary)',
+              }}
+            >
+              {safeCategory}
+            </span>
+          )}
         </div>
       </div>
 
       <div className='flex flex-col items-end shrink-0 ml-3'>
-        <span className='text-sm font-bold text-accent-start'>
-          {formattedAmount}
-        </span>
+        <span className='text-sm font-bold text-accent-start'>{formattedAmount}</span>
         <span className='text-xs text-text-secondary'>
-          {new Date(exp.created_at).toLocaleTimeString('pt-BR', {
-            hour: '2-digit',
-            minute: '2-digit',
-          })}
+          {exp.isRecurring
+            ? 'mensal'
+            : exp.created_at
+              ? new Date(exp.created_at).toLocaleTimeString('pt-BR', {
+                  hour: '2-digit',
+                  minute: '2-digit',
+                })
+              : '--:--'}
         </span>
       </div>
+
+      {!isActive && (
+        <button
+          type='button'
+          aria-label='Opções'
+          onClick={() => onActivate(exp.id)}
+          className='absolute inset-0 cursor-pointer'
+        />
+      )}
+
+      <AnimatePresence>
+        {isActive && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.15 }}
+            className='absolute inset-0 flex items-center justify-center gap-3 rounded-xl'
+            style={{
+              background: 'color-mix(in srgb, var(--color-background-card) 85%, transparent)',
+              backdropFilter: 'blur(4px)',
+            }}
+          >
+            {!exp.isRecurring && (
+              <motion.button
+                type='button'
+                onClick={() => navigate(`/expenses/${exp.id}/edit`)}
+                initial={{ scale: 0.8, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                exit={{ scale: 0.8, opacity: 0 }}
+                transition={{ duration: 0.15, delay: 0.05 }}
+                className='flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold cursor-pointer transition-colors'
+                style={{
+                  background: 'color-mix(in srgb, var(--color-accent-start) 15%, transparent)',
+                  border: '1px solid color-mix(in srgb, var(--color-accent-start) 30%, transparent)',
+                  color: 'var(--color-accent-start)',
+                }}
+              >
+                <PencilSimpleIcon size={14} weight='bold' />
+                Editar
+              </motion.button>
+            )}
+
+            <motion.button
+              type='button'
+              onClick={handleDelete}
+              initial={{ scale: 0.8, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.8, opacity: 0 }}
+              transition={{ duration: 0.15, delay: exp.isRecurring ? 0.05 : 0.08 }}
+              className='flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold cursor-pointer transition-colors'
+              style={{
+                background: 'color-mix(in srgb, #ef4444 15%, transparent)',
+                border: '1px solid color-mix(in srgb, #ef4444 30%, transparent)',
+                color: '#ef4444',
+              }}
+            >
+              <TrashIcon size={14} weight='bold' />
+              Remover
+            </motion.button>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 };
 
-// ── RecentExpensesList ────────────────────────────────────────────────────────
-
 const RecentExpensesList: React.FC = () => {
-  const { expenses = [] } = useSelector((state: any) => state.expenses);
+  const expenses = useSelector((state: RootState) => selectExpenses(state)) as Expense[];
+  const [recurring, setRecurring] = useState<Expense[]>([]);
+  const [activeId, setActiveId] = useState<number | null>(null);
 
-  const grouped = groupByDate(expenses);
-  const dates = Object.keys(grouped).sort((a, b) => b.localeCompare(a));
+  useEffect(() => {
+    indexRecurring().then((res) => {
+      const raw: any[] = Array.isArray(res) ? res : Array.isArray(res?.data) ? res.data : [];
+      const normalized: Expense[] = raw.map((r) => ({
+        id: -r.id,
+        recurringId: r.id,
+        description: r.description,
+        total_amount: r.amount,
+        first_due_date: currentMonthDate(r.due_day),
+        due_day: r.due_day,
+        isRecurring: true,
+      }));
+      setRecurring(normalized);
+    });
+  }, []);
+
+  const handleRecurringDeleted = (id: number) => {
+    setRecurring((prev) => prev.filter((r) => r.recurringId !== id));
+  };
+
+  const allExpenses = [...expenses, ...recurring];
+
+  const grouped = groupByDate(allExpenses);
+
+  const dates = Object.keys(grouped).sort((a, b) => {
+    if (a === 'Sem data') return 1;
+    if (b === 'Sem data') return -1;
+    return new Date(b).getTime() - new Date(a).getTime();
+  });
+
+  if (!allExpenses.length) {
+    return (
+      <div className='rounded-2xl p-4 bg-background-card border border-border-card w-full mb-8'>
+        <h2 className='text-lg font-semibold mb-4 text-text-primary'>Últimas Despesas</h2>
+        <p className='text-sm text-text-secondary'>Nenhuma despesa encontrada.</p>
+      </div>
+    );
+  }
 
   return (
     <div className='rounded-2xl p-4 bg-background-card border border-border-card w-full mb-8'>
-      <h2 className='text-lg font-semibold mb-4 text-text-primary'>
-        Últimos Gastos
-      </h2>
+      <h2 className='text-lg font-semibold mb-4 text-text-primary'>Últimas Despesas</h2>
 
       <div className='flex flex-col gap-6'>
         {dates.map((date) => (
           <div key={date}>
-            {/* Date divider */}
             <div className='flex items-center gap-2 mb-2'>
-              <span className='text-xs font-semibold text-text-secondary whitespace-nowrap'>
-                {new Date(date + 'T00:00:00').toLocaleDateString('pt-BR', {
-                  weekday: 'short',
-                  day: '2-digit',
-                  month: '2-digit',
-                  year: '2-digit',
-                })}
+              <span className='text-xs font-semibold text-text-secondary'>
+                {date === 'Sem data'
+                  ? 'Sem data'
+                  : new Date(`${date}T00:00:00`).toLocaleDateString('pt-BR', {
+                      weekday: 'short',
+                      day: '2-digit',
+                      month: '2-digit',
+                      year: '2-digit',
+                    })}
               </span>
-              <span
-                className='flex-1 h-px bg-border-card'
-                style={{ minWidth: 24 }}
-              />
+              <span className='flex-1 h-px bg-border-card' />
             </div>
 
-            {/* Expense items */}
             <div className='flex flex-col gap-2.5'>
               {grouped[date].map((exp) => (
-                <ExpenseItem key={exp.id} exp={exp} />
+                <ExpenseItem
+                  key={exp.isRecurring ? `recurring-${exp.recurringId}` : exp.id}
+                  exp={exp}
+                  isActive={activeId === exp.id}
+                  onActivate={setActiveId}
+                  onClose={() => setActiveId(null)}
+                  onRecurringDeleted={handleRecurringDeleted}
+                />
               ))}
             </div>
           </div>

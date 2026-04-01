@@ -55,7 +55,7 @@ const CardButton = ({
       whileTap={{ scale: 0.96 }}
       className={twMerge(
         'group relative flex flex-col overflow-hidden cursor-pointer',
-        'w-72 rounded-2xl border',
+        'w-full sm:w-72 rounded-2xl border',
         className,
       )}
       style={{

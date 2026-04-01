@@ -1,5 +1,7 @@
 import { ArrowRightIcon } from '@phosphor-icons/react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { index } from '../../../redux/services/transactionsService';
 import type { category } from '../../../utils/consts';
 import { CATEGORY_ACCENTS, CATEGORY_ICONS } from '../../../utils/consts';
 import Card from '../../shared/components/Card';
@@ -15,72 +17,7 @@ type Transaction = {
   amount: number;
   type: TransactionType;
   date: string;
-  isInstallment?: boolean;
-  installmentInfo?: string;
 };
-
-// ── Data ──────────────────────────────────────────────────────────────────────
-
-const MOCK_TRANSACTIONS: Transaction[] = [
-  {
-    id: 1,
-    title: 'Salário',
-    category: 'Outros',
-    amount: 5200,
-    type: 'income',
-    date: '2026-03-10',
-  },
-  {
-    id: 2,
-    title: 'Supermercado',
-    category: 'Alimentação',
-    amount: 312.8,
-    type: 'expense',
-    date: '2026-03-10',
-    isInstallment: true,
-    installmentInfo: '1/3',
-  },
-  {
-    id: 3,
-    title: 'Uber',
-    category: 'Transporte',
-    amount: 28.5,
-    type: 'expense',
-    date: '2026-03-09',
-  },
-  {
-    id: 4,
-    title: 'Freelance Design',
-    category: 'Outros',
-    amount: 800,
-    type: 'income',
-    date: '2026-03-09',
-  },
-  {
-    id: 5,
-    title: 'Cinema',
-    category: 'Lazer',
-    amount: 45,
-    type: 'expense',
-    date: '2026-03-08',
-  },
-  {
-    id: 6,
-    title: 'Farmácia',
-    category: 'Saúde',
-    amount: 87.6,
-    type: 'expense',
-    date: '2026-03-08',
-  },
-  {
-    id: 7,
-    title: 'Café',
-    category: 'Alimentação',
-    amount: 18.9,
-    type: 'expense',
-    date: '2026-03-07',
-  },
-];
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
@@ -138,16 +75,39 @@ type Props = {
 
 export default function RecentTransactions({ decorated = false }: Props) {
   const navigate = useNavigate();
-  const grouped = groupByDate(MOCK_TRANSACTIONS);
+  const [transactions, setTransactions] = useState<Transaction[]>([]);
+
+  useEffect(() => {
+    index().then((res) => {
+      const raw: any[] = Array.isArray(res) ? res : Array.isArray(res?.data) ? res.data : [];
+      const extractTitle = (desc: string) =>
+        desc.match(/^Gasto de R\$ .+ em: (.+)$/)?.[1] ?? desc;
+
+      const mapped: Transaction[] = raw
+        .map((t) => ({
+          id: t.id,
+          title: extractTitle(t.description),
+          category: t.category as category,
+          amount: parseFloat(t.amount),
+          type: t.type as TransactionType,
+          date: t.date,
+        }))
+        .sort((a, b) => b.date.localeCompare(a.date))
+        .slice(0, 8);
+      setTransactions(mapped);
+    });
+  }, []);
+
+  const grouped = groupByDate(transactions);
   const dates = Object.keys(grouped).sort((a, b) => b.localeCompare(a));
 
-  const totalIncome = MOCK_TRANSACTIONS.filter(
-    (t) => t.type === 'income',
-  ).reduce((s, t) => s + t.amount, 0);
+  const totalIncome = transactions
+    .filter((t) => t.type === 'income')
+    .reduce((s, t) => s + t.amount, 0);
 
-  const totalExpense = MOCK_TRANSACTIONS.filter(
-    (t) => t.type === 'expense',
-  ).reduce((s, t) => s + t.amount, 0);
+  const totalExpense = transactions
+    .filter((t) => t.type === 'expense')
+    .reduce((s, t) => s + t.amount, 0);
 
   return (
     <Card decorated={decorated}>
@@ -158,7 +118,7 @@ export default function RecentTransactions({ decorated = false }: Props) {
             Transações Recentes
           </p>
           <p className='text-2xl font-bold leading-none tracking-tight text-text-primary'>
-            {MOCK_TRANSACTIONS.length}
+            {transactions.length}
             <span className='text-base font-normal text-text-secondary ml-1.5'>
               transações
             </span>
@@ -279,14 +239,9 @@ const TransactionItem: React.FC<TransactionItemProps> = ({
 
         <div className='flex flex-col min-w-0'>
           <div className='flex items-center gap-1.5 min-w-0'>
-            <span className='truncate text-sm font-medium text-text-primary'>
+            <span className='truncate text-sm font-medium text-text-primary capitalize'>
               {t.title}
             </span>
-            {t.isInstallment && (
-              <span className='shrink-0 text-[10px] font-semibold px-1.5 py-0.5 rounded bg-border-subtle text-text-secondary border border-border-subtle'>
-                {t.installmentInfo ?? 'Parcela'}
-              </span>
-            )}
           </div>
           {!isIncome && (
             <span

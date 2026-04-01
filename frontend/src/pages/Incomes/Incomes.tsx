@@ -1,12 +1,60 @@
 import { PlusCircleIcon } from '@phosphor-icons/react';
+import { useCallback, useEffect, useState } from 'react';
+import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import RecentIncomesList from '../../features/incomes/components/RecentIncomesList';
 import { DateRangePicker } from '../../features/shared/components/DateRangePicker/DateRangePicker';
 import { Pagination } from '../../features/shared/components/Pagination';
 import AppLayout from '../../layouts/AppLayout/AppLayout';
+import {
+  selectTransactionsPagination,
+  transactionsIndex,
+} from '../../redux/slices/transactionsSlice';
+import { useAppDispatch } from '../../redux/store';
 
 const Incomes = () => {
   const navigate = useNavigate();
+  const dispatch = useAppDispatch();
+
+  const pagination = useSelector(selectTransactionsPagination);
+
+  const [currentPage, setCurrentPage] = useState(1);
+  const [dateRange, setDateRange] = useState<{ start: string; end: string } | null>(null);
+
+  const loadIncomes = useCallback(
+    (page: number) => {
+      const filters: Record<string, any> = { type: 'income', page };
+
+      if (dateRange?.start) filters.from_date = dateRange.start;
+      if (dateRange?.end) filters.to_date = dateRange.end;
+
+      dispatch(transactionsIndex(filters));
+    },
+    [dispatch, dateRange],
+  );
+
+  useEffect(() => {
+    loadIncomes(currentPage);
+  }, [loadIncomes, currentPage]);
+
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const handleDateChange = (range: any) => {
+    if (!range) {
+      setDateRange(null);
+      setCurrentPage(1);
+      return;
+    }
+
+    setDateRange({
+      start: range.start.toString(),
+      end: range.end.toString(),
+    });
+    setCurrentPage(1);
+  };
 
   return (
     <AppLayout>
@@ -26,11 +74,18 @@ const Incomes = () => {
       </button>
 
       <div className='mb-4'>
-        <DateRangePicker />
+        <DateRangePicker onChange={handleDateChange} />
       </div>
 
       <RecentIncomesList />
-      <Pagination pageCount={5} currentPage={1} />
+
+      <div className='mb-12'>
+        <Pagination
+          pageCount={pagination.last_page || 1}
+          currentPage={currentPage}
+          onPageChange={handlePageChange}
+        />
+      </div>
     </AppLayout>
   );
 };

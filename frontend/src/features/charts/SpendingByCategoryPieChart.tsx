@@ -1,10 +1,13 @@
 import { ArcElement, Chart as ChartJS, Legend, Tooltip } from 'chart.js';
 import React, { useEffect, useState } from 'react';
 import { Pie } from 'react-chartjs-2';
+import { useSelector } from 'react-redux';
 
 import { useTheme } from '../../contexts/ThemeContext';
-import Card from '../shared/components/Card';
 import { useChartResize } from '../../hooks/useChartResize';
+import { selectExpenses } from '../../redux/slices/expensesSlice';
+import { CATEGORIES, CATEGORY_ACCENTS } from '../../utils/consts';
+import Card from '../shared/components/Card';
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
@@ -15,20 +18,8 @@ const getCssVar = (cssVar: string): string => {
   return getComputedStyle(el).getPropertyValue(cssVar).trim();
 };
 
-// ── Data ──────────────────────────────────────────────────────────────────────
-
-const CATEGORIES = [
-  { label: 'Alimentação', value: 1200, colorVar: '--color-category-food' },
-  { label: 'Transporte',  value: 800,  colorVar: '--color-category-transport' },
-  { label: 'Lazer',       value: 500,  colorVar: '--color-category-leisure' },
-  { label: 'Saúde',       value: 350,  colorVar: '--color-category-health' },
-  { label: 'Outros',      value: 200,  colorVar: '--color-category-other' },
-];
-
-const computeColors = () => ({
-  slices: CATEGORIES.map((c) => getCssVar(c.colorVar)),
-  border: getCssVar('--color-background-card'),
-});
+// 'var(--color-category-food)' → resolved color string
+const resolveColor = (varRef: string): string => getCssVar(varRef.slice(4, -1));
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
@@ -39,21 +30,40 @@ type Props = { decorated?: boolean };
 const SpendingByCategoryPieChart: React.FC<Props> = ({ decorated = false }) => {
   const { outerRef, chartRef } = useChartResize();
   const { theme } = useTheme();
+  const expenses = useSelector(selectExpenses);
 
-  const [colors, setColors] = useState(computeColors);
+  const [borderColor, setBorderColor] = useState('');
 
   useEffect(() => {
-    setColors(computeColors());
+    setBorderColor(getCssVar('--color-background-card'));
   }, [theme]);
 
+  // Aggregate total_amount by category
+  const totals = CATEGORIES.reduce<Record<string, number>>((acc, cat) => {
+    acc[cat] = expenses.reduce(
+      (sum, exp) =>
+        exp.category === cat ? sum + (parseFloat(exp.total_amount) || 0) : sum,
+      0,
+    );
+    return acc;
+  }, {});
+
+  const activeCategories = CATEGORIES.filter((cat) => totals[cat] > 0);
+  const hasData = activeCategories.length > 0;
+  const sliceColors = activeCategories.map((cat) =>
+    resolveColor(CATEGORY_ACCENTS[cat]),
+  );
+
   const pieData = {
-    labels: CATEGORIES.map((c) => c.label),
-    datasets: [{
-      data: CATEGORIES.map((c) => c.value),
-      backgroundColor: colors.slices,
-      borderWidth: 2,
-      borderColor: colors.border,
-    }],
+    labels: activeCategories,
+    datasets: [
+      {
+        data: activeCategories.map((cat) => totals[cat]),
+        backgroundColor: sliceColors,
+        borderWidth: 2,
+        borderColor: borderColor || 'transparent',
+      },
+    ],
   };
 
   const options = {
@@ -63,39 +73,65 @@ const SpendingByCategoryPieChart: React.FC<Props> = ({ decorated = false }) => {
       legend: { display: false },
       tooltip: {
         callbacks: {
-          label: (context: any) => {
-            const label = context.label || '';
-            const value = context.parsed || 0;
-            return `${label}: R$ ${value.toLocaleString('pt-BR')}`;
-          },
+          label: (context: any) =>
+            `${context.label}: R$ ${(context.parsed as number).toLocaleString(
+              'pt-BR',
+              {
+                minimumFractionDigits: 2,
+              },
+            )}`,
         },
       },
     },
   };
 
   return (
-    <Card ref={outerRef} decorated={decorated} className='flex flex-col min-h-65 mb-6'>
+    <Card
+      ref={outerRef}
+      decorated={decorated}
+      className='flex flex-col min-h-65 mb-6'
+    >
       <div className='flex justify-between items-center mb-3.5'>
-        <span className='text-sm font-semibold text-text-primary'>Gastos por categoria</span>
+        <span className='text-sm font-semibold text-text-primary'>
+          Gastos por categoria
+        </span>
       </div>
 
-      <div className='w-full flex justify-center'>
-        <div style={{ maxWidth: 220, width: '100%' }}>
-          <Pie key={theme} ref={chartRef} data={pieData} options={options} />
-        </div>
-      </div>
-
-      <div className='flex flex-wrap justify-center items-center gap-2 w-full mt-4'>
-        {CATEGORIES.map((cat, i) => (
-          <div key={cat.label} className='flex items-center gap-1.5'>
-            <span
-              className='inline-block w-3 h-3 rounded'
-              style={{ background: colors.slices[i], border: '1.5px solid var(--color-border-card)' }}
-            />
-            <span className='text-xs text-text-secondary'>{cat.label}</span>
+      {hasData ? (
+        <>
+          <div className='w-full flex justify-center'>
+            <div style={{ maxWidth: 220, width: '100%' }}>
+              <Pie
+                key={theme}
+                ref={chartRef as any}
+                data={pieData}
+                options={options}
+              />
+            </div>
           </div>
-        ))}
-      </div>
+
+          <div className='flex flex-wrap justify-center items-center gap-2 w-full mt-4'>
+            {activeCategories.map((cat, i) => (
+              <div key={cat} className='flex items-center gap-1.5'>
+                <span
+                  className='inline-block w-3 h-3 rounded'
+                  style={{
+                    background: sliceColors[i],
+                    border: '1.5px solid var(--color-border-card)',
+                  }}
+                />
+                <span className='text-xs text-text-secondary'>{cat}</span>
+              </div>
+            ))}
+          </div>
+        </>
+      ) : (
+        <div className='flex-1 flex items-center justify-center'>
+          <p className='text-sm text-text-secondary/50'>
+            Sem despesas para exibir
+          </p>
+        </div>
+      )}
     </Card>
   );
 };

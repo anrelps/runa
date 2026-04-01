@@ -65,7 +65,7 @@ export function DateInput(props: Omit<DateInputProps, 'children'>) {
         fieldGroupStyles({
           ...renderProps,
           class:
-            'inline min-w-[150px] px-3 h-9 text-sm leading-8.5 font-sans cursor-text disabled:cursor-default whitespace-nowrap overflow-x-auto [scrollbar-width:none]',
+            'inline min-w-37.5 px-3 h-9 text-sm leading-8.5 font-sans cursor-text disabled:cursor-default whitespace-nowrap overflow-x-auto [scrollbar-width:none]',
         })
       }
       {...props}

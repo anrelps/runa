@@ -8,7 +8,10 @@ import { useAppDispatch } from './redux/store';
 //Pages
 import About from './pages/About/About';
 import AddExpense from './pages/AddExpense/AddExpense';
+import Commitments from './pages/Commitments/Commitments';
+import EditExpense from './pages/EditExpense/EditExpense';
 import AddIncome from './pages/AddIncome/AddIncome';
+import EditIncome from './pages/EditIncome/EditIncome';
 import Contact from './pages/Contact/Contact';
 import Dashboard from './pages/Dashboard/Dashboard';
 import Expenses from './pages/Expenses/Expenses';
@@ -52,8 +55,11 @@ const App = () => {
           <Route path='/dashboard' element={<Dashboard />} />
           <Route path='/expenses' element={<Expenses />} />
           <Route path='/expenses/add' element={<AddExpense />} />
+          <Route path='/expenses/:id/edit' element={<EditExpense />} />
           <Route path='/incomes' element={<Incomes />} />
           <Route path='/income/add' element={<AddIncome />} />
+          <Route path='/incomes/:id/edit' element={<EditIncome />} />
+          <Route path='/commitments' element={<Commitments />} />
         </Route>
       </Routes>
     </BrowserRouter>

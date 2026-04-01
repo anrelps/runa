@@ -14,7 +14,7 @@ const AppLayoutInner = ({ children }: AppLayoutProps) => {
     <div className={`${theme === 'light' ? 'light' : ''} flex h-screen bg-background-primary text-text-primary`}>
       <IconSideNav />
       <main className='flex-1 overflow-auto'>
-        <div className='mx-auto mt-4 px-6 w-full max-w-6xl'>
+        <div className='mx-auto mt-4 px-6 w-full max-w-6xl pb-24 md:pb-8'>
           <UserSection />
           <div className='mt-10'>{children}</div>
         </div>

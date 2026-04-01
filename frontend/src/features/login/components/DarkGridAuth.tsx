@@ -113,12 +113,12 @@ const Heading = () => (
 );
 
 const SocialOptions = () => (
-  <div>
-    <div className='mb-3 flex gap-3'>
-      <BubbleButton className='flex w-full justify-center py-3 pointer-events-none'>
+  <div className='opacity-40 cursor-not-allowed'>
+    <div className='mb-3 flex gap-3 pointer-events-none'>
+      <BubbleButton className='flex w-full justify-center py-3'>
         <XLogoIcon />
       </BubbleButton>
-      <BubbleButton className='flex w-full justify-center py-3 pointer-events-none'>
+      <BubbleButton className='flex w-full justify-center py-3'>
         <GithubLogoIcon />
       </BubbleButton>
     </div>
@@ -130,7 +130,7 @@ const SocialOptions = () => (
 
 const Or = () => {
   return (
-    <div className='my-6 flex items-center gap-3'>
+    <div className='my-6 flex items-center gap-3 opacity-40'>
       <div
         className='h-px w-full'
         style={{ backgroundColor: 'rgba(255,255,255,0.08)' }}

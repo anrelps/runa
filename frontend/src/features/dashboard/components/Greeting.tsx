@@ -25,9 +25,9 @@ const Greeting = () => {
   const firstName = user?.name?.split(' ')[0] ?? '';
 
   return (
-    <div className='flex flex-col items-end gap-3 flex-1 self-end'>
+    <div className='flex flex-col items-start sm:items-end gap-3 flex-1 sm:self-end'>
       <span
-        className='text-4xl font-black uppercase leading-none tracking-tight text-right'
+        className='text-4xl font-black uppercase leading-none tracking-tight text-left sm:text-right'
         style={{ color: 'var(--color-text-secondary)' }}
       >
         {getGreeting()},<br />{firstName}

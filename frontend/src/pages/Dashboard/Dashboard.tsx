@@ -12,19 +12,21 @@ const Dashboard = () => {
   return (
     <>
       <AppLayout>
-        <div className='flex items-center gap-4 mb-6 w-full'>
-          <CardButton
-            label={'Saldo\nAdicionar'}
-            icon={ArrowCircleUpIcon}
-            accent='var(--color-primary)'
-            onClick={() => navigate('/income/add')}
-          />
-          <CardButton
-            label={'Despesa\nAdicionar'}
-            icon={ArrowCircleDownIcon}
-            accent='var(--color-accent-start)'
-            onClick={() => navigate('/expenses/add')}
-          />
+        <div className='flex flex-col-reverse sm:flex-row items-start sm:items-center gap-4 mb-6 w-full'>
+          <div className='flex gap-4 w-full sm:w-auto'>
+            <CardButton
+              label={'Saldo\nAdicionar'}
+              icon={ArrowCircleUpIcon}
+              accent='var(--color-primary)'
+              onClick={() => navigate('/income/add')}
+            />
+            <CardButton
+              label={'Despesa\nAdicionar'}
+              icon={ArrowCircleDownIcon}
+              accent='var(--color-accent-start)'
+              onClick={() => navigate('/expenses/add')}
+            />
+          </div>
           <Greeting />
         </div>
 

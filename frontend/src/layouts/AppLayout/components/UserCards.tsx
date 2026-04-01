@@ -1,24 +1,44 @@
 import type { Icon as PhosphorIcon } from '@phosphor-icons/react';
 import { TrendDownIcon, TrendUpIcon, WalletIcon } from '@phosphor-icons/react';
+import { useEffect } from 'react';
+import { useSelector } from 'react-redux';
+import {
+  selectWallet,
+  transactionBalanceWallet,
+} from '../../../redux/slices/transactionsSlice';
+import { useAppDispatch } from '../../../redux/store';
+
+const formatCurrency = (value: number | undefined) =>
+  `R$ ${(value ?? 0).toLocaleString('pt-BR', {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  })}`;
 
 const UserCards = () => {
+  const dispatch = useAppDispatch();
+  const wallet = useSelector(selectWallet);
+
+  useEffect(() => {
+    dispatch(transactionBalanceWallet());
+  }, [dispatch]);
+
   return (
     <div className='grid gap-2 grid-cols-1 sm:grid-cols-3 max-w-2xl'>
       <Card
         title='Gastos do mês'
-        value='R$ 3.250,00'
+        value={formatCurrency(wallet?.expenseMonth)}
         Icon={TrendDownIcon}
         color='red'
       />
       <Card
         title='Ganhos do mês'
-        value='R$ 8.500,00'
+        value={formatCurrency(wallet?.incomeMonth)}
         Icon={TrendUpIcon}
         color='green'
       />
       <Card
         title='Saldo restante'
-        value='R$ 5.250,00'
+        value={wallet?.formatted_balance ?? 'R$ 0,00'}
         Icon={WalletIcon}
         color='blue'
       />
