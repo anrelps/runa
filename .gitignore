@@ -1,3 +1,5 @@
 frontend/.env
 backend/.env.example
 backend/.env.example
+.claude/
+.env

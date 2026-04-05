@@ -7,6 +7,7 @@ import { ArrowCircleDownIcon, ArrowLeftIcon } from '@phosphor-icons/react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useCurrencyBRL } from '../../../hooks/useCurrencyBRL';
 import { DateField } from '../../shared/components/DateRangePicker/DateField';
 import { CATEGORIES, CATEGORY_ACCENTS } from '../../../utils/consts';
 
@@ -80,8 +81,20 @@ const ExpenseForm = ({
     ...initialData,
   });
 
+  const formattedAmount = useCurrencyBRL(parseFloat(data.amount) || 0);
+  const amountDisplay = data.amount ? formattedAmount.replace(/^R\$\s*/, '') : '';
+
   const set = <K extends keyof ExpenseFormData>(key: K, value: ExpenseFormData[K]) =>
     setData((prev) => ({ ...prev, [key]: value }));
+
+  const handleAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const digits = e.target.value.replace(/\D/g, '');
+    if (!digits) {
+      set('amount', '');
+      return;
+    }
+    set('amount', String(parseInt(digits, 10) / 100));
+  };
 
   const handleSubmit = (e: React.SyntheticEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -160,14 +173,13 @@ const ExpenseForm = ({
             <div className='flex items-baseline gap-2'>
               <span className='text-xl font-semibold text-text-secondary'>R$</span>
               <input
-                type='number'
-                step='0.01'
-                min='0'
+                type='text'
+                inputMode='numeric'
                 placeholder='0,00'
-                value={data.amount}
-                onChange={(e) => set('amount', e.target.value)}
+                value={amountDisplay}
+                onChange={handleAmountChange}
                 required
-                className='bg-transparent text-5xl font-black text-text-primary placeholder:text-text-secondary/20 outline-none w-52 text-center [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none'
+                className='bg-transparent text-5xl font-black text-text-primary placeholder:text-text-secondary/20 outline-none w-64 text-center'
               />
             </div>
           </div>

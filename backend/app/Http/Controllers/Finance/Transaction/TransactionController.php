@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Finance\Transaction;
 use App\Domain\Finance\Transaction\DTOs\CreateTransactionDTO;
 use App\Domain\Finance\Transaction\DTOs\IndexTransactionDTO;
 use App\Domain\Finance\Transaction\DTOs\TransactionHistoryDTO;
+use App\Domain\Finance\Transaction\Models\Transaction;
 use App\Domain\Finance\Transaction\Services\TransactionService;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\Finance\Transaction\TransactionResource;
@@ -76,6 +77,38 @@ class TransactionController extends Controller
                 CreateTransactionDTO::fromRequest($input),
             );
             return $this->successResponse(new TransactionResource($result), 201);
+        } catch(Exception $e) {
+            return $this->errorResponse($e->getMessage(), 500);
+        }
+    }
+
+    public function show(int $id) {
+        try {
+            $result = $this->transactionService->show($id);
+            return $this->successResponse(new TransactionResource($result), 200);
+        } catch(Exception $e) {
+            return $this->errorResponse($e->getMessage(), 404);
+        }
+    }
+
+    public function update(Request $request, Transaction $transaction) {
+        try {
+            $input = $request->validate([
+                'amount' => 'nullable|numeric',
+                'description' => 'nullable|string',
+                'date' => 'nullable|string',
+            ]);
+            $result = $this->transactionService->update($transaction, array_filter($input, fn($v) => !is_null($v)));
+            return $this->successResponse(new TransactionResource($result), 200);
+        } catch(Exception $e) {
+            return $this->errorResponse($e->getMessage(), 500);
+        }
+    }
+
+    public function destroy(Transaction $transaction) {
+        try {
+            $this->transactionService->delete($transaction);
+            return $this->successResponse(null, 200);
         } catch(Exception $e) {
             return $this->errorResponse($e->getMessage(), 500);
         }

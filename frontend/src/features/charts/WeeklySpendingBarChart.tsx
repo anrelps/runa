@@ -7,11 +7,11 @@ import {
 } from 'chart.js';
 import React, { useEffect, useMemo, useState } from 'react';
 import { Bar } from 'react-chartjs-2';
-import { useSelector } from 'react-redux';
 
 import { useTheme } from '../../contexts/ThemeContext';
 import { useChartResize } from '../../hooks/useChartResize';
-import { selectExpenses } from '../../redux/slices/expensesSlice';
+import { index } from '../../redux/services/expensesService';
+import type { Expense } from '../../redux/slices/expensesSlice';
 import Card from '../shared/components/Card';
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, Tooltip);
@@ -24,40 +24,22 @@ const getCssVar = (cssVar: string): string => {
 };
 
 interface ChartColors {
-  accent: string;
-  accentSoft: string;
-  accentMid: string;
+  current: string;
+  past: string;
+  empty: string;
   grid: string;
   tick: string;
   label: string;
 }
 
-const hexToRgba = (color: string, alpha: number): string => {
-  const value = color.trim();
-  if (value.startsWith('#')) {
-    let hex = value.slice(1);
-    if (hex.length === 3) hex = hex.split('').map((c) => c + c).join('');
-    if (hex.length === 6) {
-      const r = parseInt(hex.slice(0, 2), 16);
-      const g = parseInt(hex.slice(2, 4), 16);
-      const b = parseInt(hex.slice(4, 6), 16);
-      return `rgba(${r}, ${g}, ${b}, ${alpha})`;
-    }
-  }
-  return value;
-};
-
-const computeColors = (): ChartColors => {
-  const accent = getCssVar('--color-accent-start');
-  return {
-    accent,
-    accentSoft: hexToRgba(accent, 0.15),
-    accentMid: hexToRgba(accent, 0.45),
-    grid: getCssVar('--color-grid'),
-    tick: getCssVar('--color-text-secondary'),
-    label: getCssVar('--color-text-primary'),
-  };
-};
+const computeColors = (): ChartColors => ({
+  current: 'hsl(11, 100%, 65%)',
+  past: 'hsl(11, 40%, 38%)',
+  empty: 'hsl(11, 20%, 20%)',
+  grid: getCssVar('--color-grid'),
+  tick: getCssVar('--color-text-secondary'),
+  label: getCssVar('--color-text-primary'),
+});
 
 const formatBRL = (v: number): string =>
   v >= 1000
@@ -102,7 +84,7 @@ type Props = { decorated?: boolean };
 const WeeklySpendingBarChart: React.FC<Props> = ({ decorated = false }) => {
   const { outerRef, chartRef } = useChartResize();
   const { theme } = useTheme();
-  const expenses = useSelector(selectExpenses);
+  const [expenses, setExpenses] = useState<Expense[]>([]);
 
   const [colors, setColors] = useState<ChartColors>(computeColors);
 
@@ -111,6 +93,14 @@ const WeeklySpendingBarChart: React.FC<Props> = ({ decorated = false }) => {
   }, [theme]);
 
   const months = useMemo(() => buildMonths(), []);
+
+  useEffect(() => {
+    const fromDate = months[0].start.toISOString().substring(0, 10);
+    index({ from_date: fromDate }).then((res) => {
+      const items: Expense[] = Array.isArray(res?.data) ? res.data : Array.isArray(res) ? res : [];
+      setExpenses(items);
+    });
+  }, [months]);
 
   const monthlyTotals = useMemo(
     () =>
@@ -135,10 +125,10 @@ const WeeklySpendingBarChart: React.FC<Props> = ({ decorated = false }) => {
         data: monthlyTotals,
         backgroundColor: months.map((m, i) =>
           monthlyTotals[i] === 0
-            ? colors.accentSoft
+            ? colors.empty
             : m.isCurrent
-              ? colors.accent
-              : colors.accentMid,
+              ? colors.current
+              : colors.past,
         ),
         borderRadius: 6,
         barThickness: 20,
@@ -198,14 +188,14 @@ const WeeklySpendingBarChart: React.FC<Props> = ({ decorated = false }) => {
           <span className='flex items-center gap-1.5'>
             <span
               className='inline-block w-2.5 h-2.5 rounded-sm'
-              style={{ background: colors.accent }}
+              style={{ background: colors.current }}
             />
             Mês atual
           </span>
           <span className='flex items-center gap-1.5'>
             <span
               className='inline-block w-2.5 h-2.5 rounded-sm'
-              style={{ background: colors.accentMid }}
+              style={{ background: colors.past }}
             />
             Anteriores
           </span>

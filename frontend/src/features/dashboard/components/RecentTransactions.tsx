@@ -1,4 +1,4 @@
-import { ArrowRightIcon } from '@phosphor-icons/react';
+import { ArrowRightIcon, DotsThreeOutlineIcon } from '@phosphor-icons/react';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { index } from '../../../redux/services/transactionsService';
@@ -223,8 +223,8 @@ const TransactionItem: React.FC<TransactionItemProps> = ({
   transaction: t,
 }) => {
   const isIncome = t.type === 'income';
-  const Icon = CATEGORY_ICONS[t.category];
-  const accent = CATEGORY_ACCENTS[t.category];
+  const Icon = CATEGORY_ICONS[t.category] ?? DotsThreeOutlineIcon;
+  const accent = CATEGORY_ACCENTS[t.category] ?? 'var(--color-text-secondary)';
 
   return (
     <div className='flex items-center justify-between p-3 rounded-xl bg-white/[0.03] border border-border-card hover:bg-white/[0.05] hover:border-primary/20 transition-all duration-200 cursor-pointer'>

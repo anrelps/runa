@@ -26,6 +26,9 @@ Route::prefix('v1')->group(function () {
             Route::get('/', 'index');
             Route::get('/history', 'transactionHistory');
             Route::post('/', 'store');
+            Route::get('/{transaction}', 'show');
+            Route::put('/{transaction}', 'update');
+            Route::delete('/{transaction}', 'destroy');
         });
     });
 });

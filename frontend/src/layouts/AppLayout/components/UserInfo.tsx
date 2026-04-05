@@ -1,5 +1,6 @@
-import { SignOutIcon, UserCircleIcon } from '@phosphor-icons/react';
+import { SignOutIcon } from '@phosphor-icons/react';
 import { useDispatch, useSelector } from 'react-redux';
+import avatarJpg from '../../../assets/avatar.jpg';
 import { logout } from '../../../redux/slices/userSlice';
 import type { AppDispatch, RootState } from '../../../redux/store';
 
@@ -12,9 +13,11 @@ const UserInfo = () => {
 
   return (
     <div className='flex items-center gap-3'>
-      <div className='w-10 h-10 rounded-full border border-primary/50 bg-primary/10 flex items-center justify-center shrink-0'>
-        <UserCircleIcon size={24} weight='duotone' className='text-primary' />
-      </div>
+      <img
+        src={avatarJpg}
+        alt='Avatar'
+        className='w-10 h-10 rounded-full border-2 border-primary/50 object-cover shrink-0'
+      />
       <div className='lg:block xs:block sm:hidden md:hidden'>
         <p className='text-sm font-medium text-text-primary leading-tight'>
           {user?.name ?? '—'}

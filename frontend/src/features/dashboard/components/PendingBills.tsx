@@ -22,9 +22,14 @@ type Bill = {
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
+const todayMidnight = (): Date => {
+  const d = new Date();
+  d.setHours(0, 0, 0, 0);
+  return d;
+};
+
 const daysUntilRecurring = (dueDay: number): number => {
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
+  const today = todayMidnight();
   const candidate = new Date(today.getFullYear(), today.getMonth(), dueDay);
   if (candidate < today) candidate.setMonth(candidate.getMonth() + 1);
   return Math.round((candidate.getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
@@ -37,14 +42,13 @@ const currentInstallmentNum = (firstDueDate: string, count: number): number => {
   return Math.min(Math.max(months + 1, 1), count);
 };
 
-const daysUntilInstallment = (firstDueDate: string, count: number): number => {
+const daysUntilInstallmentByDate = (firstDueDate: string, count: number): number => {
   const current = currentInstallmentNum(firstDueDate, count);
   const due = new Date(`${firstDueDate}T00:00:00`);
   due.setMonth(due.getMonth() + current - 1);
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
-  return Math.round((due.getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
+  return Math.round((due.getTime() - todayMidnight().getTime()) / (1000 * 60 * 60 * 24));
 };
+
 
 const dueLabel = (d: number): string => {
   if (d === 0) return 'Hoje';
@@ -84,25 +88,40 @@ export default function PendingBills({ decorated = false }: Props) {
           badge: `dia ${r.due_day}`,
         }));
 
-      const installments: Bill[] = instRaw
-        .filter((e) => {
-          if (!e.first_due_date || !e.installment_count) return false;
-          const current = currentInstallmentNum(e.first_due_date, e.installment_count);
-          return current <= e.installment_count;
-        })
-        .map((e) => {
-          const count = e.installment_count;
-          const current = currentInstallmentNum(e.first_due_date, count);
-          return {
+      const installments: Bill[] = instRaw.flatMap((e) => {
+        // com dados detalhados de parcelas vindos do backend
+        if (e.installments?.length) {
+          const sorted = [...(e.installments as any[])].sort(
+            (a, b) => a.installment_number - b.installment_number,
+          );
+          const next = sorted.find((inst) => !inst.paid_at);
+          if (!next) return [];
+          const due = new Date(`${next.due_date}T00:00:00`);
+          const diff = Math.round((due.getTime() - todayMidnight().getTime()) / 86400000);
+          return [{
             id: `inst-${e.id}`,
             title: e.description ?? 'Sem descrição',
-            amount: parseFloat(e.total_amount) / count,
-            due: daysUntilInstallment(e.first_due_date, count),
+            amount: parseFloat(next.amount),
+            due: diff,
             kind: 'installment' as BillKind,
-            badge: `${current}/${count}`,
+            badge: `${next.installment_number}/${e.installment_count}`,
             category: e.category as category,
-          };
-        });
+          }];
+        }
+        // fallback sem dados detalhados
+        if (!e.first_due_date || !e.installment_count) return [];
+        const current = currentInstallmentNum(e.first_due_date, e.installment_count);
+        if (current > e.installment_count) return [];
+        return [{
+          id: `inst-${e.id}`,
+          title: e.description ?? 'Sem descrição',
+          amount: parseFloat(e.total_amount) / e.installment_count,
+          due: daysUntilInstallmentByDate(e.first_due_date, e.installment_count),
+          kind: 'installment' as BillKind,
+          badge: `${current}/${e.installment_count}`,
+          category: e.category as category,
+        }];
+      });
 
       const all = [...recurring, ...installments].sort((a, b) => a.due - b.due);
       setBills(all);

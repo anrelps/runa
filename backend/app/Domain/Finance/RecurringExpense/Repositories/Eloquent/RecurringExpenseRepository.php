@@ -9,7 +9,6 @@ use App\Domain\Finance\RecurringExpense\DTOs\UpdateRecurringExpenseDTO;
 use App\Domain\Finance\RecurringExpense\Models\RecurringExpense;
 use App\Domain\Finance\RecurringExpense\Models\RecurringExpenseEntry;
 use App\Domain\Finance\RecurringExpense\Repositories\Contracts\RecurringExpenseRepositoryInterface;
-use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Auth;
 
 class RecurringExpenseRepository implements RecurringExpenseRepositoryInterface {
@@ -19,9 +18,9 @@ class RecurringExpenseRepository implements RecurringExpenseRepositoryInterface 
         private RecurringExpenseEntry $recurringExpenseEntryModel,
     ) {}
 
-    public function index(IndexRecurringExpenseDTO $dto): LengthAwarePaginator {
+    public function index(IndexRecurringExpenseDTO $dto) {
         $user_id = Auth::user()->id;
-        $recurringExpenses = $this->recurringExpenseModel
+        $query = $this->recurringExpenseModel
             ->where('user_id', $user_id)
             ->when(isset($dto->description), function($q) use ($dto) {
                 $q->where('description', 'LIKE', "%{$dto->description}%");
@@ -41,14 +40,8 @@ class RecurringExpenseRepository implements RecurringExpenseRepositoryInterface 
             ->when(isset($dto->is_active), function($q) use ($dto) {
                 $q->where('active', 1);
             })
-            ->orderBy('due_day', 'ASC')
-            ->when(isset($dto->per_page), function($q) use ($dto) {
-                $q->paginate($dto->per_page);
-            })
-            ->when(!isset($dto->per_page), function($q) use ($dto) {
-                $q->get();
-            });
-        return $recurringExpenses;
+            ->orderBy('due_day', 'ASC');
+        return $dto->per_page ? $query->paginate($dto->per_page) : $query->get();
     }
 
     public function create(CreateRecurringExpenseDTO $dto): RecurringExpense {

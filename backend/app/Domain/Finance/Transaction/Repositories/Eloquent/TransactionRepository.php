@@ -38,6 +38,7 @@ class TransactionRepository implements TransactionRepositoryInterface {
                 $q->whereDate('date', '<=', $dto->to_date);
             })
             ->orderBy('date', 'DESC')
+            ->orderBy('id', 'DESC')
             ->paginate(20);
     }
 
@@ -84,5 +85,21 @@ class TransactionRepository implements TransactionRepositoryInterface {
             'transactionable_type' => $dto->transactionable_type,
             'transactionable_id' => $dto->transactionable_id,
         ]);
+    }
+
+    public function show(int $id): Transaction {
+        $user_id = Auth::user()->id;
+        return $this->transactionModel
+            ->where('user_id', $user_id)
+            ->findOrFail($id);
+    }
+
+    public function update(Transaction $transaction, array $data): Transaction {
+        $transaction->update($data);
+        return $transaction->fresh();
+    }
+
+    public function delete(Transaction $transaction): void {
+        $transaction->delete();
     }
 }

@@ -13,7 +13,6 @@ use App\Domain\Finance\Transaction\DTOs\CreateTransactionDTO;
 use App\Domain\Finance\Transaction\Services\TransactionService;
 use Carbon\Carbon;
 use Exception;
-use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
@@ -24,7 +23,7 @@ class ExpenseService {
         private TransactionService $transactionService,
     ) {}
 
-    public function index(IndexExpenseDTO $dto): LengthAwarePaginator {
+    public function index(IndexExpenseDTO $dto) {
         $expenses = $this->expenseRepository->index($dto);
         return $expenses;
     }
@@ -75,18 +74,22 @@ class ExpenseService {
 
     public function updateInstallment(ExpenseInstallment $expenseInstallment): ExpenseInstallment {
         $installment = $this->expenseRepository->updateInstallment($expenseInstallment);
-        if(!is_null($installment->paid_at)) {
-            $this->transactionService->create(
-                new CreateTransactionDTO(
-                    'expense',
-                    $installment->amount,
-                    "Pagamento da parcela {$installment->installment_number} de {$installment->expense->description}",
-                    $installment->expense->category,
-                    $installment->paid_at,
-                    ExpenseInstallment::class,
-                    $installment->id,
-                )
-            );
+        if (!is_null($installment->paid_at)) {
+            if (is_null($installment->transaction)) {
+                $this->transactionService->create(
+                    new CreateTransactionDTO(
+                        'expense',
+                        $installment->amount,
+                        "Pagamento da parcela {$installment->installment_number} de {$installment->expense->description}",
+                        $installment->expense->category,
+                        $installment->paid_at,
+                        ExpenseInstallment::class,
+                        $installment->id,
+                    )
+                );
+            }
+        } else {
+            $installment->transaction?->delete();
         }
         return $installment;
     }

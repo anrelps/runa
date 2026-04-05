@@ -24,6 +24,15 @@ class ExpenseResource extends JsonResource
             'installment_count' => $this->installment_count,
             'first_due_date' => $this->first_due_date,
             'created_at' => $this->created_at,
+            'installments' => $this->whenLoaded('expenseInstallments', function () {
+                return $this->expenseInstallments->map(fn($i) => [
+                    'id' => $i->id,
+                    'installment_number' => $i->installment_number,
+                    'amount' => $i->amount,
+                    'due_date' => $i->due_date,
+                    'paid_at' => $i->paid_at,
+                ]);
+            }),
         ];
     }
 }

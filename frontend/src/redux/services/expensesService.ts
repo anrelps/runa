@@ -7,6 +7,7 @@ export interface Filters {
   from_date?: string;
   to_date?: string;
   page?: number;
+  per_page?: number;
 }
 
 export interface ExpenseData {
@@ -55,12 +56,32 @@ export const destroy = async (id: number) => {
   return res.data;
 };
 
+export const updateInstallment = async (installmentId: number) => {
+  const res = await api.put(`/expenses/update-installment/${installmentId}`);
+  return res.data;
+};
+
 export const createRecurring = async (data: RecurringExpenseData) => {
-  const res = await api.post('/recurring-expenses/', data);
+  const res = await api.post('/recurring-expenses', data);
   return res.data;
 };
 
 export const indexRecurring = async () => {
-  const res = await api.get('/recurring-expenses/');
+  const res = await api.get('/recurring-expenses');
+  return res.data;
+};
+
+export const showRecurring = async (id: number) => {
+  const res = await api.get(`/recurring-expenses/${id}`);
+  return res.data.data;
+};
+
+export const updateRecurring = async (id: number, data: Partial<RecurringExpenseData>) => {
+  const res = await api.put(`/recurring-expenses/${id}`, data);
+  return res.data;
+};
+
+export const destroyRecurring = async (id: number) => {
+  const res = await api.delete(`/recurring-expenses/${id}`);
   return res.data;
 };

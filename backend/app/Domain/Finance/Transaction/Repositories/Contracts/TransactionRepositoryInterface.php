@@ -13,4 +13,7 @@ interface TransactionRepositoryInterface {
     public function index(IndexTransactionDTO $dto): LengthAwarePaginator;
     public function transactionHistory(TransactionHistoryDTO $dto): TransactionHistory;
     public function create(CreateTransactionDTO $dto): Transaction;
+    public function show(int $id): Transaction;
+    public function update(Transaction $transaction, array $data): Transaction;
+    public function delete(Transaction $transaction): void;
 }

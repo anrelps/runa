@@ -10,6 +10,7 @@ import About from './pages/About/About';
 import AddExpense from './pages/AddExpense/AddExpense';
 import Commitments from './pages/Commitments/Commitments';
 import EditExpense from './pages/EditExpense/EditExpense';
+import EditRecurringExpense from './pages/EditRecurringExpense/EditRecurringExpense';
 import AddIncome from './pages/AddIncome/AddIncome';
 import EditIncome from './pages/EditIncome/EditIncome';
 import Contact from './pages/Contact/Contact';
@@ -60,6 +61,7 @@ const App = () => {
           <Route path='/income/add' element={<AddIncome />} />
           <Route path='/incomes/:id/edit' element={<EditIncome />} />
           <Route path='/commitments' element={<Commitments />} />
+          <Route path='/recurring-expenses/:id/edit' element={<EditRecurringExpense />} />
         </Route>
       </Routes>
     </BrowserRouter>

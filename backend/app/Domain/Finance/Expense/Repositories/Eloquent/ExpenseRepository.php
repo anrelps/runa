@@ -10,7 +10,6 @@ use App\Domain\Finance\Expense\Models\Expense;
 use App\Domain\Finance\Expense\Models\ExpenseInstallment;
 use App\Domain\Finance\Expense\Repositories\Contracts\ExpenseRepositoryInterface;
 use Carbon\Carbon;
-use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Auth;
 
 class ExpenseRepository implements ExpenseRepositoryInterface {
@@ -20,9 +19,10 @@ class ExpenseRepository implements ExpenseRepositoryInterface {
         private ExpenseInstallment $expenseInstallmentModel,
     ) {}
 
-    public function index(IndexExpenseDTO $dto): LengthAwarePaginator {
+    public function index(IndexExpenseDTO $dto) {
         $user_id = Auth::user()->id;
-        $expenses = $this->expenseModel
+        $query = $this->expenseModel
+            ->with('expenseInstallments')
             ->where('user_id', $user_id)
             ->when(isset($dto->category), function($q) use ($dto) {
                 $q->where('category', $dto->category);
@@ -39,18 +39,11 @@ class ExpenseRepository implements ExpenseRepositoryInterface {
             ->when(isset($dto->to_date), function($q) use ($dto) {
                 $q->where('created_at',  '<=', $dto->to_date);
             })
-            ->orderBy('first_due_date', 'DESC')
-<<<<<<< Updated upstream
-            ->when(isset($dto->per_page), function($q) use ($dto) {
-                $q->paginate($dto->per_page);
-            })
-            ->when(!isset($dto->per_page), function($q) use ($dto) {
-                $q->get();
-            });
-=======
-            ->paginate(12);
->>>>>>> Stashed changes
-        return $expenses;
+            ->orderBy('first_due_date', 'DESC');
+
+        return $dto->per_page
+            ? $query->paginate($dto->per_page)
+            : $query->get();
     }
 
     public function create(CreateExpenseDTO $dto): Expense {
@@ -79,7 +72,7 @@ class ExpenseRepository implements ExpenseRepositoryInterface {
         $expenseInstallment->update([
             'paid_at' => !is_null($expenseInstallment->paid_at) ? null : Carbon::now(),
         ]);
-        $expenseInstallment->load('expense');
+        $expenseInstallment->load('expense', 'transaction');
         return $expenseInstallment;
     }
 

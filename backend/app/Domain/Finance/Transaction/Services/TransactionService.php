@@ -30,4 +30,16 @@ class TransactionService {
         $transaction = $this->transactionRepository->create($dto);
         return $transaction;
     }
+
+    public function show(int $id): Transaction {
+        return $this->transactionRepository->show($id);
+    }
+
+    public function update(Transaction $transaction, array $data): Transaction {
+        return $this->transactionRepository->update($transaction, $data);
+    }
+
+    public function delete(Transaction $transaction): void {
+        $this->transactionRepository->delete($transaction);
+    }
 }

@@ -31,7 +31,7 @@ const Expenses = () => {
 
   const loadExpenses = useCallback(
     (page: number) => {
-      const filters: Record<string, any> = { page };
+      const filters: Record<string, any> = { page, per_page: 12 };
 
       if (category) filters.category = category;
       if (dateRange?.start) filters.from_date = dateRange.start;

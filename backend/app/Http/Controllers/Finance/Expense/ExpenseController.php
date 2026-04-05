@@ -37,6 +37,20 @@ class ExpenseController extends Controller
             $result = $this->expenseService->index(
                 IndexExpenseDTO::fromRequest($filters),
             );
+
+            if ($result instanceof \Illuminate\Pagination\LengthAwarePaginator) {
+                return response()->json([
+                    'success' => true,
+                    'data' => ExpenseResource::collection($result->items()),
+                    'meta' => [
+                        'current_page' => $result->currentPage(),
+                        'last_page'    => $result->lastPage(),
+                        'per_page'     => $result->perPage(),
+                        'total'        => $result->total(),
+                    ],
+                ], 200);
+            }
+
             return $this->successResponse(ExpenseResource::collection($result), 200);
         } catch(Exception $e) {
             return $this->errorResponse($e->getMessage(), 500);
@@ -46,6 +60,7 @@ class ExpenseController extends Controller
     public function show(Expense $expense) {
         try {
             $this->authorize('view', $expense);
+            $expense->load('expenseInstallments');
             return $this->successResponse(new ExpenseResource($expense), 200);
         } catch(AuthorizationException $e) {
             return $this->errorResponse('You cannot access this expense.', 403);

@@ -8,10 +8,8 @@ use App\Domain\Finance\Expense\DTOs\IndexExpenseDTO;
 use App\Domain\Finance\Expense\DTOs\UpdateExpenseDTO;
 use App\Domain\Finance\Expense\Models\Expense;
 use App\Domain\Finance\Expense\Models\ExpenseInstallment;
-use Illuminate\Pagination\LengthAwarePaginator;
-
 interface ExpenseRepositoryInterface {
-    public function index(IndexExpenseDTO $dto): LengthAwarePaginator;
+    public function index(IndexExpenseDTO $dto);
     public function create(CreateExpenseDTO $dto): Expense;
     public function createInstallment(CreateInstallmentDTO $dto): ExpenseInstallment;
     public function updateInstallment(ExpenseInstallment $expenseInstallment): ExpenseInstallment;

@@ -1,6 +1,7 @@
 import { ArrowsClockwiseIcon, GiftIcon, PencilSimpleIcon, TrashIcon } from '@phosphor-icons/react';
 import { AnimatePresence, motion } from 'framer-motion';
 import React, { useEffect, useRef, useState } from 'react';
+import ConfirmDialog from '../../../features/shared/components/ConfirmDialog';
 import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { useCurrencyBRL } from '../../../hooks/useCurrencyBRL';
@@ -78,6 +79,7 @@ const ExpenseItem: React.FC<ExpenseItemProps> = ({
       : GiftIcon;
 
   const formattedAmount = useCurrencyBRL(exp.total_amount ?? 0);
+  const [confirming, setConfirming] = useState(false);
 
   useEffect(() => {
     if (!isActive) return;
@@ -89,6 +91,7 @@ const ExpenseItem: React.FC<ExpenseItemProps> = ({
   }, [isActive, onClose]);
 
   const handleDelete = async () => {
+    setConfirming(false);
     onClose();
     if (exp.isRecurring && exp.recurringId != null) {
       await api.delete(`/recurring-expenses/${exp.recurringId}`);
@@ -125,7 +128,7 @@ const ExpenseItem: React.FC<ExpenseItemProps> = ({
 
             {(exp.installment_count ?? 0) > 1 && exp.first_due_date && (
               <span className='shrink-0 px-1.5 py-0.5 rounded text-[10px] font-semibold bg-border-subtle text-text-secondary border border-border-subtle'>
-                {currentInstallment(exp.first_due_date, exp.installment_count!)}/{exp.installment_count}
+                {exp.installment_count}x
               </span>
             )}
 
@@ -214,7 +217,7 @@ const ExpenseItem: React.FC<ExpenseItemProps> = ({
 
             <motion.button
               type='button'
-              onClick={handleDelete}
+              onClick={() => setConfirming(true)}
               initial={{ scale: 0.8, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.8, opacity: 0 }}
@@ -232,6 +235,14 @@ const ExpenseItem: React.FC<ExpenseItemProps> = ({
           </motion.div>
         )}
       </AnimatePresence>
+
+      <ConfirmDialog
+        open={confirming}
+        title='Remover despesa'
+        description={`Tem certeza que deseja remover "${exp.description ?? 'esta despesa'}"?`}
+        onConfirm={handleDelete}
+        onCancel={() => setConfirming(false)}
+      />
     </div>
   );
 };

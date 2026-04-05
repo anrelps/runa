@@ -11,8 +11,6 @@ use App\Domain\Finance\RecurringExpense\Models\RecurringExpenseEntry;
 use App\Domain\Finance\RecurringExpense\Repositories\Contracts\RecurringExpenseRepositoryInterface;
 use App\Domain\Finance\Transaction\DTOs\CreateTransactionDTO;
 use App\Domain\Finance\Transaction\Services\TransactionService;
-use Illuminate\Pagination\LengthAwarePaginator;
-
 class RecurringExpenseService {
 
     public function __construct(
@@ -20,7 +18,7 @@ class RecurringExpenseService {
         private TransactionService $transactionService,
     ) {}
 
-    public function index(IndexRecurringExpenseDTO $dto): LengthAwarePaginator {
+    public function index(IndexRecurringExpenseDTO $dto) {
         $recurringExpenses = $this->recurringExpenseRepository->index($dto);
         return $recurringExpenses;
     }

@@ -57,9 +57,9 @@ export interface UpdateTransactionData {
 
 export const index = async (
   filters?: TransactionFilters,
-): Promise<Transaction[]> => {
+): Promise<any> => {
   const res = await api.get('/transactions', { params: filters });
-  return res.data;
+  return res.data.data; // { data: [...], links: {}, meta: {} }
 };
 
 export const addBalance = async (
@@ -82,7 +82,7 @@ export const transactionHistory = async (): Promise<WalletSummary> => {
 
 export const show = async (id: number): Promise<Transaction> => {
   const res = await api.get(`/transactions/${id}`);
-  return res.data;
+  return res.data.data;
 };
 
 export const update = async (
@@ -90,7 +90,7 @@ export const update = async (
   data: UpdateTransactionData,
 ): Promise<Transaction> => {
   const res = await api.put(`/transactions/${id}`, data);
-  return res.data;
+  return res.data.data;
 };
 
 export const destroy = async (id: number): Promise<void> => {

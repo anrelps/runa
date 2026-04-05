@@ -1,11 +1,11 @@
 import { ArcElement, Chart as ChartJS, Legend, Tooltip } from 'chart.js';
 import React, { useEffect, useState } from 'react';
 import { Pie } from 'react-chartjs-2';
-import { useSelector } from 'react-redux';
 
 import { useTheme } from '../../contexts/ThemeContext';
 import { useChartResize } from '../../hooks/useChartResize';
-import { selectExpenses } from '../../redux/slices/expensesSlice';
+import { index } from '../../redux/services/expensesService';
+import type { Expense } from '../../redux/slices/expensesSlice';
 import { CATEGORIES, CATEGORY_ACCENTS } from '../../utils/consts';
 import Card from '../shared/components/Card';
 
@@ -30,13 +30,20 @@ type Props = { decorated?: boolean };
 const SpendingByCategoryPieChart: React.FC<Props> = ({ decorated = false }) => {
   const { outerRef, chartRef } = useChartResize();
   const { theme } = useTheme();
-  const expenses = useSelector(selectExpenses);
+  const [expenses, setExpenses] = useState<Expense[]>([]);
 
   const [borderColor, setBorderColor] = useState('');
 
   useEffect(() => {
     setBorderColor(getCssVar('--color-background-card'));
   }, [theme]);
+
+  useEffect(() => {
+    index({}).then((res) => {
+      const items: Expense[] = Array.isArray(res?.data) ? res.data : Array.isArray(res) ? res : [];
+      setExpenses(items);
+    });
+  }, []);
 
   // Aggregate total_amount by category
   const totals = CATEGORIES.reduce<Record<string, number>>((acc, cat) => {
