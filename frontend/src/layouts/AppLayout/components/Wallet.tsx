@@ -1,15 +1,17 @@
-import { WalletIcon, PlusCircleIcon } from '@phosphor-icons/react';
+import { PlusCircleIcon, WalletIcon } from '@phosphor-icons/react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
+import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { useTheme } from '../../../contexts/ThemeContext';
+import { selectWallet } from '../../../redux/slices/transactionsSlice';
 
 const Wallet = () => {
   const { theme } = useTheme();
   const navigate = useNavigate();
+  const wallet = useSelector(selectWallet);
   const [open, setOpen] = useState(false);
-  const [balance] = useState('5250.00');
   const [coords, setCoords] = useState({ top: 0, right: 0 });
   const buttonRef = useRef<HTMLButtonElement>(null);
   const popoverRef = useRef<HTMLDivElement>(null);
@@ -38,10 +40,7 @@ const Wallet = () => {
     return () => document.removeEventListener('mousedown', handler);
   }, [open]);
 
-  const formatted = parseFloat(balance).toLocaleString('pt-BR', {
-    minimumFractionDigits: 2,
-    maximumFractionDigits: 2,
-  });
+  const formatted = wallet?.formatted_balance ?? 'R$ 0,00';
 
   return (
     <div className='relative'>
@@ -109,7 +108,9 @@ const Wallet = () => {
               {/* Balance display */}
               <div className='flex items-baseline gap-2 mb-4'>
                 <span className='text-lg font-semibold text-text-secondary shrink-0'>R$</span>
-                <span className='text-3xl font-black text-text-primary'>{formatted}</span>
+                <span className='text-3xl font-black text-text-primary'>
+                  {formatted.replace(/^R\$\s*/, '')}
+                </span>
               </div>
 
               {/* Actions */}

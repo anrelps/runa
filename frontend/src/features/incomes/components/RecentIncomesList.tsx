@@ -1,4 +1,4 @@
-import { GiftIcon, PencilSimpleIcon, TrashIcon } from '@phosphor-icons/react';
+import { PencilSimpleIcon, TrashIcon, TrendUpIcon } from '@phosphor-icons/react';
 import { AnimatePresence, motion } from 'framer-motion';
 import React, { useEffect, useRef, useState } from 'react';
 import { useSelector } from 'react-redux';
@@ -10,13 +10,10 @@ import {
   transactionsIndex,
 } from '../../../redux/slices/transactionsSlice';
 import { useAppDispatch, type RootState } from '../../../redux/store';
-import type { category } from '../../../utils/consts';
-import { CATEGORY_ACCENTS, CATEGORY_ICONS } from '../../../utils/consts';
 
 interface Income {
   id: number;
   description?: string;
-  category?: category;
   amount?: number;
   date?: string;
   [key: string]: any;
@@ -47,10 +44,6 @@ const IncomeItem: React.FC<IncomeItemProps> = ({
   const dispatch = useAppDispatch();
   const ref = useRef<HTMLDivElement>(null);
 
-  const safeCategory = income.category;
-  const Icon = safeCategory
-    ? (CATEGORY_ICONS[safeCategory] ?? GiftIcon)
-    : GiftIcon;
   const formattedAmount = useCurrencyBRL(income.amount ?? 0);
 
   useEffect(() => {
@@ -78,33 +71,15 @@ const IncomeItem: React.FC<IncomeItemProps> = ({
       className='relative flex items-center justify-between p-3 rounded-xl bg-white/3 border border-border-card overflow-hidden'
     >
       <div className='flex items-center gap-3 min-w-0'>
-        <Icon
+        <TrendUpIcon
           size={20}
           weight='duotone'
-          style={{
-            color: safeCategory
-              ? CATEGORY_ACCENTS[safeCategory]
-              : 'var(--color-text-secondary)',
-          }}
+          style={{ color: 'var(--color-primary)' }}
         />
 
-        <div className='flex flex-col min-w-0'>
-          <span className='truncate text-sm font-medium text-text-primary capitalize'>
-            {income.description ?? 'Sem descrição'}
-          </span>
-
-          {safeCategory && (
-            <span
-              className='text-[10px] font-semibold px-1.5 py-0.5 rounded mt-0.5 w-fit'
-              style={{
-                background: CATEGORY_ACCENTS[safeCategory],
-                color: 'var(--color-background-primary)',
-              }}
-            >
-              {safeCategory}
-            </span>
-          )}
-        </div>
+        <span className='truncate text-sm font-medium text-text-primary capitalize'>
+          {income.description ?? 'Sem descrição'}
+        </span>
       </div>
 
       <div className='flex flex-col items-end shrink-0 ml-3'>

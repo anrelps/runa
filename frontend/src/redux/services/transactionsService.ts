@@ -17,7 +17,9 @@ export interface WalletSummary {
   balance: number;
   incomeMonth: number;
   expenseMonth: number;
+  monthlyBalance: number;
   formatted_balance: string;
+  formatted_monthly_balance: string;
 }
 
 export interface WalletHistoryResponse {
@@ -69,14 +71,32 @@ export const addBalance = async (
   return res.data;
 };
 
+const currentMonthRange = () => {
+  const now = new Date();
+  const year = now.getFullYear();
+  const month = String(now.getMonth() + 1).padStart(2, '0');
+  const lastDay = new Date(year, now.getMonth() + 1, 0).getDate();
+  return {
+    from_date: `${year}-${month}-01`,
+    to_date: `${year}-${month}-${String(lastDay).padStart(2, '0')}`,
+  };
+};
+
 export const transactionHistory = async (): Promise<WalletSummary> => {
-  const res = await api.get<WalletHistoryResponse>('/transactions/history');
+  const [allTime, thisMonth] = await Promise.all([
+    api.get<WalletHistoryResponse>('/transactions/history'),
+    api.get<WalletHistoryResponse>('/transactions/history', {
+      params: currentMonthRange(),
+    }),
+  ]);
 
   return {
-    balance: res.data.data.balance,
-    incomeMonth: res.data.data.total_income,
-    expenseMonth: res.data.data.total_expense,
-    formatted_balance: res.data.data.formatted_balance,
+    balance: allTime.data.data.balance,
+    formatted_balance: allTime.data.data.formatted_balance,
+    incomeMonth: thisMonth.data.data.total_income,
+    expenseMonth: thisMonth.data.data.total_expense,
+    monthlyBalance: thisMonth.data.data.balance,
+    formatted_monthly_balance: thisMonth.data.data.formatted_balance,
   };
 };
 

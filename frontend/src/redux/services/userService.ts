@@ -28,3 +28,8 @@ export const getUserData = async (): Promise<User> => {
   const res = await api.get('/user/profile');
   return res.data.user;
 };
+
+export const userDemo = async (): Promise<LoginResponse> => {
+  const res = await api.post('/demo');
+  return res.data;
+};

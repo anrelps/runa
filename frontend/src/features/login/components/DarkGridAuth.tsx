@@ -9,7 +9,7 @@ import { useSelector } from 'react-redux';
 import { Link, useNavigate } from 'react-router-dom';
 import { twMerge } from 'tailwind-merge';
 import logoSvg from '../../../assets/logo.svg';
-import { login } from '../../../redux/slices/userSlice';
+import { demo, login } from '../../../redux/slices/userSlice';
 import { useAppDispatch } from '../../../redux/store';
 
 export const DarkGridAuth = () => {
@@ -21,13 +21,15 @@ export const DarkGridAuth = () => {
     password: '',
   });
 
-  const { isAuthenticated } = useSelector((state: any) => state.user);
+  const { isAuthenticated, loading } = useSelector((state: any) => state.user);
 
   const handleSubmit = (event: React.SyntheticEvent<HTMLFormElement>) => {
     event.preventDefault();
-    const email = formData.email;
-    const password = formData.password;
-    dispatch(login({ email, password }));
+    dispatch(login({ email: formData.email, password: formData.password }));
+  };
+
+  const handleDemo = () => {
+    dispatch(demo());
   };
 
   useEffect(
@@ -77,8 +79,10 @@ export const DarkGridAuth = () => {
         <Or />
         <Email
           handleSubmit={handleSubmit}
+          handleDemo={handleDemo}
           formData={formData}
           setFormData={setFormData}
+          loading={loading}
         />
         <Terms />
       </motion.div>
@@ -146,13 +150,15 @@ const Or = () => {
 
 type EmailProps = {
   handleSubmit: (event: React.SyntheticEvent<HTMLFormElement>) => void;
+  handleDemo: () => void;
   formData: { email: string; password: string };
   setFormData: React.Dispatch<
     React.SetStateAction<{ email: string; password: string }>
   >;
+  loading: boolean;
 };
 
-const Email = ({ handleSubmit, formData, setFormData }: EmailProps) => {
+const Email = ({ handleSubmit, handleDemo, formData, setFormData, loading }: EmailProps) => {
   return (
     <form onSubmit={handleSubmit}>
       <div className='mb-3'>
@@ -212,9 +218,23 @@ const Email = ({ handleSubmit, formData, setFormData }: EmailProps) => {
           }}
         />
       </div>
-      <SplashButton type='submit' className='w-full'>
-        Entrar
-      </SplashButton>
+      <div className='flex gap-3'>
+        <BubbleButton
+          type='submit'
+          disabled={loading}
+          className='flex flex-1 justify-center py-2.5 text-base font-medium'
+        >
+          {loading ? 'Entrando...' : 'Entrar'}
+        </BubbleButton>
+        <SplashButton
+          type='button'
+          disabled={loading}
+          onClick={handleDemo}
+          className='flex-1'
+        >
+          {loading ? 'Carregando...' : 'Explorar Demo'}
+        </SplashButton>
+      </div>
     </form>
   );
 };
@@ -261,9 +281,10 @@ const SplashButton = ({ children, className, ...rest }: ButtonProps) => {
   );
 };
 
-const BubbleButton = ({ children, className, ...rest }: ButtonProps) => {
+const BubbleButton = ({ children, className, disabled, ...rest }: ButtonProps) => {
   return (
     <button
+      disabled={disabled}
       className={twMerge(
         `
         relative z-0 flex cursor-pointer items-center gap-2 overflow-hidden whitespace-nowrap rounded-md
@@ -279,7 +300,8 @@ const BubbleButton = ({ children, className, ...rest }: ButtonProps) => {
 
         hover:scale-105
         hover:before:translate-y-[0%]
-        active:scale-100`,
+        active:scale-100
+        disabled:cursor-not-allowed disabled:opacity-50 disabled:pointer-events-none`,
         className,
       )}
       style={{

@@ -18,11 +18,11 @@ const UserInfo = () => {
         alt='Avatar'
         className='w-10 h-10 rounded-full border-2 border-primary/50 object-cover shrink-0'
       />
-      <div className='lg:block xs:block sm:hidden md:hidden'>
-        <p className='text-sm font-medium text-text-primary leading-tight'>
+      <div className='lg:block xs:block sm:hidden md:hidden max-w-35'>
+        <p className='text-sm font-medium text-text-primary leading-tight truncate'>
           {user?.name ?? '—'}
         </p>
-        <p className='text-xs text-text-secondary leading-tight'>
+        <p className='text-xs text-text-secondary leading-tight truncate'>
           {user?.email ?? '—'}
         </p>
       </div>

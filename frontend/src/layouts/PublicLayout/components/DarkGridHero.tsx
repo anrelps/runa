@@ -3,6 +3,7 @@ import React, { type ReactNode, useEffect, useState } from 'react';
 import { motion, type Transition } from 'framer-motion';
 
 import { ArrowRightIcon } from '@phosphor-icons/react';
+import { useNavigate } from 'react-router-dom';
 
 import { twMerge } from 'tailwind-merge';
 
@@ -22,6 +23,7 @@ export const DarkGridHero = () => {
 };
 
 const Content = () => {
+  const navigate = useNavigate();
   return (
     <div className='relative z-20 mx-auto flex max-w-6xl flex-col items-center justify-center px-4 py-24 md:px-8 md:py-36'>
       <motion.div
@@ -114,7 +116,7 @@ const Content = () => {
         }}
         className='flex flex-col items-center gap-6 sm:flex-row'
       >
-        <SplashButton className='flex items-center gap-2'>
+        <SplashButton onClick={() => navigate('/login')} className='flex items-center gap-2'>
           Teste Grátis
           <ArrowRightIcon />
         </SplashButton>

@@ -2,6 +2,7 @@ import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import {
   getUserData,
   type LoginResponse,
+  userDemo,
   userLogin,
 } from '../services/userService';
 
@@ -38,6 +39,19 @@ export const login = createAsyncThunk<LoginResponse, LoginArgs>(
         return rejectWithValue('Resposta vazia do servidor');
       }
 
+      return res;
+    } catch (error: any) {
+      return rejectWithValue(error?.message ?? 'Erro desconhecido');
+    }
+  },
+);
+
+export const demo = createAsyncThunk<LoginResponse>(
+  'user/demo',
+  async (_, { rejectWithValue }) => {
+    try {
+      const res = await userDemo();
+      if (!res) return rejectWithValue('Resposta vazia do servidor');
       return res;
     } catch (error: any) {
       return rejectWithValue(error?.message ?? 'Erro desconhecido');
@@ -129,6 +143,33 @@ const userSlice = createSlice({
           (action.payload as string) ??
           action.error.message ??
           'Erro ao obter perfil do usuário';
+        localStorage.removeItem('token');
+      })
+
+      .addCase(demo.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+
+      .addCase(demo.fulfilled, (state, action) => {
+        state.loading = false;
+        state.error = null;
+        state.user = action.payload.user ?? null;
+        state.isAuthenticated = true;
+        state.authChecked = true;
+        state.token = action.payload.token ?? null;
+        if (action.payload.token) {
+          localStorage.setItem('token', action.payload.token);
+        }
+      })
+
+      .addCase(demo.rejected, (state, action) => {
+        state.loading = false;
+        state.isAuthenticated = false;
+        state.authChecked = true;
+        state.token = null;
+        state.error =
+          (action.payload as string) ?? action.error.message ?? 'Erro ao iniciar demo';
         localStorage.removeItem('token');
       })
 
