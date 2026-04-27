@@ -22,6 +22,7 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'demo_expires_at',
     ];
 
     /**
@@ -43,6 +44,7 @@ class User extends Authenticatable
     {
         return [
             'email_verified_at' => 'datetime',
+            'demo_expires_at' => 'datetime',
             'password' => 'hashed',
         ];
     }

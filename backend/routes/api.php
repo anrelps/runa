@@ -2,13 +2,15 @@
 
 use App\Http\Controllers\Finance\Expense\ExpenseController;
 use App\Http\Controllers\Finance\Expense\RecurringExpenseController;
-use App\Http\Controllers\Finance\Transaction\TransactionController;
+use App\Http\Controllers\TransactionController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\User\AuthController;
+use App\Http\Controllers\User\DemoController;
 
 Route::prefix('v1')->group(function () {
     Route::post('/register', [AuthController::class, 'register']);
     Route::post('/login', [AuthController::class, 'login']);
+    Route::post('/demo', [DemoController::class, 'create']);
 
     Route::middleware('auth:sanctum')->group(function() {
         Route::prefix('/user')->group(function() {
