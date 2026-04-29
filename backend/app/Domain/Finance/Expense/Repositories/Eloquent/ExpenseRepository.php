@@ -41,9 +41,7 @@ class ExpenseRepository implements ExpenseRepositoryInterface {
             })
             ->orderBy('first_due_date', 'DESC');
 
-        return $dto->per_page
-            ? $query->paginate($dto->per_page)
-            : $query->get();
+        return $query->paginate($dto->per_page ?? 12);
     }
 
     public function create(CreateExpenseDTO $dto): Expense {

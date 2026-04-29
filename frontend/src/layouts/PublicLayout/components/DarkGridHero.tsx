@@ -142,7 +142,7 @@ const GlowingChip = ({ children }: { children: string }) => {
       {children}
 
       <span
-        className='absolute bottom-0 left-3 right-3 h-[1px]'
+        className='absolute bottom-0 left-3 right-3 h-px'
         style={{
           backgroundImage:
             'linear-gradient(to right, transparent, var(--color-primary), transparent)',
@@ -347,7 +347,7 @@ const Beam = ({ top, left, transition = {} }: BeamType) => {
         backgroundImage:
           'linear-gradient(to bottom, transparent, var(--color-primary))',
       }}
-      className='absolute z-10 h-[64px] w-[1px]'
+      className='absolute z-10 h-16 w-px'
     />
   );
 };

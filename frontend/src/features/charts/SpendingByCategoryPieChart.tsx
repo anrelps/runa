@@ -4,8 +4,8 @@ import { Pie } from 'react-chartjs-2';
 
 import { useTheme } from '../../contexts/ThemeContext';
 import { useChartResize } from '../../hooks/useChartResize';
-import { index } from '../../redux/services/expensesService';
-import type { Expense } from '../../redux/slices/expensesSlice';
+import { index } from '../../redux/services/transactionsService';
+import type { Transaction } from '../../redux/services/transactionsService';
 import { CATEGORIES, CATEGORY_ACCENTS } from '../../utils/consts';
 import Card from '../shared/components/Card';
 
@@ -18,8 +18,18 @@ const getCssVar = (cssVar: string): string => {
   return getComputedStyle(el).getPropertyValue(cssVar).trim();
 };
 
-// 'var(--color-category-food)' → resolved color string
 const resolveColor = (varRef: string): string => getCssVar(varRef.slice(4, -1));
+
+const currentMonthRange = () => {
+  const now = new Date();
+  const year = now.getFullYear();
+  const month = String(now.getMonth() + 1).padStart(2, '0');
+  const lastDay = new Date(year, now.getMonth() + 1, 0).getDate();
+  return {
+    from_date: `${year}-${month}-01`,
+    to_date: `${year}-${month}-${String(lastDay).padStart(2, '0')}`,
+  };
+};
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
@@ -30,8 +40,7 @@ type Props = { decorated?: boolean };
 const SpendingByCategoryPieChart: React.FC<Props> = ({ decorated = false }) => {
   const { outerRef, chartRef } = useChartResize();
   const { theme } = useTheme();
-  const [expenses, setExpenses] = useState<Expense[]>([]);
-
+  const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [borderColor, setBorderColor] = useState('');
 
   useEffect(() => {
@@ -39,17 +48,17 @@ const SpendingByCategoryPieChart: React.FC<Props> = ({ decorated = false }) => {
   }, [theme]);
 
   useEffect(() => {
-    index({}).then((res) => {
-      const items: Expense[] = Array.isArray(res?.data) ? res.data : Array.isArray(res) ? res : [];
-      setExpenses(items);
+    const { from_date, to_date } = currentMonthRange();
+    index({ type: 'expense', from_date, to_date, per_page: 500 }).then((res) => {
+      const items: Transaction[] = Array.isArray(res?.data) ? res.data : Array.isArray(res) ? res : [];
+      setTransactions(items);
     });
   }, []);
 
-  // Aggregate total_amount by category
+  // Aggregate amount by category from transactions
   const totals = CATEGORIES.reduce<Record<string, number>>((acc, cat) => {
-    acc[cat] = expenses.reduce(
-      (sum, exp) =>
-        exp.category === cat ? sum + (parseFloat(exp.total_amount) || 0) : sum,
+    acc[cat] = transactions.reduce(
+      (sum, tx) => tx.category === cat ? sum + (parseFloat(String(tx.amount)) || 0) : sum,
       0,
     );
     return acc;
@@ -101,6 +110,9 @@ const SpendingByCategoryPieChart: React.FC<Props> = ({ decorated = false }) => {
       <div className='flex justify-between items-center mb-3.5'>
         <span className='text-sm font-semibold text-text-primary'>
           Gastos por categoria
+        </span>
+        <span className='text-xs text-text-secondary opacity-60'>
+          Mês atual
         </span>
       </div>
 

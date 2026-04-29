@@ -111,7 +111,7 @@ const Expenses = () => {
         />
       </div>
 
-      <RecentExpensesList />
+      <RecentExpensesList activeCategory={category} />
 
       <div className='mb-12'>
         <Pagination

@@ -29,6 +29,7 @@ class TransactionController extends Controller
                 'max_amount' => 'nullable|numeric',
                 'from_date' => 'nullable|date',
                 'to_date' => 'nullable|date',
+                'per_page' => 'nullable|integer|min:1|max:500',
             ]);
             $result = $this->transactionService->index(
                 IndexTransactionDTO::fromRequest($input),
@@ -75,7 +76,6 @@ class TransactionController extends Controller
             ]);
             $result = $this->transactionService->create(
                 new CreateTransactionDTO(
-                    auth()->id(),
                     $input['type'],
                     $input['amount'],
                     $input['description'],

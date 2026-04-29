@@ -98,7 +98,7 @@ const ExpenseItem: React.FC<ExpenseItemProps> = ({
       onRecurringDeleted?.(exp.recurringId);
     } else {
       await dispatch(expensesDelete(exp.id));
-      dispatch(expensesIndex({ page: 1 }));
+      dispatch(expensesIndex({ page: 1, per_page: 12 }));
     }
   };
 
@@ -247,7 +247,7 @@ const ExpenseItem: React.FC<ExpenseItemProps> = ({
   );
 };
 
-const RecentExpensesList: React.FC = () => {
+const RecentExpensesList: React.FC<{ activeCategory?: string | null }> = ({ activeCategory }) => {
   const expenses = useSelector((state: RootState) => selectExpenses(state)) as Expense[];
   const [recurring, setRecurring] = useState<Expense[]>([]);
   const [activeId, setActiveId] = useState<number | null>(null);
@@ -272,7 +272,8 @@ const RecentExpensesList: React.FC = () => {
     setRecurring((prev) => prev.filter((r) => r.recurringId !== id));
   };
 
-  const allExpenses = [...expenses, ...recurring];
+  const visibleRecurring = activeCategory ? [] : recurring;
+  const allExpenses = [...expenses, ...visibleRecurring];
 
   const grouped = groupByDate(allExpenses);
 

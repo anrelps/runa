@@ -10,8 +10,8 @@ import { Bar } from 'react-chartjs-2';
 
 import { useTheme } from '../../contexts/ThemeContext';
 import { useChartResize } from '../../hooks/useChartResize';
-import { index } from '../../redux/services/expensesService';
-import type { Expense } from '../../redux/slices/expensesSlice';
+import { index } from '../../redux/services/transactionsService';
+import type { Transaction } from '../../redux/services/transactionsService';
 import Card from '../shared/components/Card';
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, Tooltip);
@@ -84,8 +84,7 @@ type Props = { decorated?: boolean };
 const WeeklySpendingBarChart: React.FC<Props> = ({ decorated = false }) => {
   const { outerRef, chartRef } = useChartResize();
   const { theme } = useTheme();
-  const [expenses, setExpenses] = useState<Expense[]>([]);
-
+  const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [colors, setColors] = useState<ChartColors>(computeColors);
 
   useEffect(() => {
@@ -96,23 +95,22 @@ const WeeklySpendingBarChart: React.FC<Props> = ({ decorated = false }) => {
 
   useEffect(() => {
     const fromDate = months[0].start.toISOString().substring(0, 10);
-    index({ from_date: fromDate }).then((res) => {
-      const items: Expense[] = Array.isArray(res?.data) ? res.data : Array.isArray(res) ? res : [];
-      setExpenses(items);
+    index({ type: 'expense', from_date: fromDate, per_page: 500 }).then((res) => {
+      const items: Transaction[] = Array.isArray(res?.data) ? res.data : Array.isArray(res) ? res : [];
+      setTransactions(items);
     });
   }, [months]);
 
   const monthlyTotals = useMemo(
     () =>
       months.map(({ start, end }) =>
-        expenses.reduce((sum, exp) => {
-          if (!exp.first_due_date) return sum;
-          const d = new Date(`${exp.first_due_date}T00:00:00`);
-          const amount = parseFloat(String(exp.total_amount)) || 0;
-          return d >= start && d <= end ? sum + amount : sum;
+        transactions.reduce((sum, tx) => {
+          if (!tx.date) return sum;
+          const d = new Date(`${tx.date}T00:00:00`);
+          return d >= start && d <= end ? sum + (parseFloat(String(tx.amount)) || 0) : sum;
         }, 0),
       ),
-    [expenses, months],
+    [transactions, months],
   );
 
   const maxVal = Math.max(...monthlyTotals, 1);

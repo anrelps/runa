@@ -20,6 +20,10 @@ class Transaction extends Model
         'transactionable_id',
     ];
 
+    protected $casts = [
+        'amount' => 'float',
+    ];
+
     public function user() {
         return $this->belongsTo(User::class);
     }

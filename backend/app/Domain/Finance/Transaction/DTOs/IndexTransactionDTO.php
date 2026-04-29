@@ -10,6 +10,7 @@ class IndexTransactionDTO {
         public readonly ?float $max_amount,
         public readonly ?string $from_date,
         public readonly ?string $to_date,
+        public readonly ?int $per_page,
     ) {}
 
     public static function fromRequest(array $data) {
@@ -19,6 +20,7 @@ class IndexTransactionDTO {
             max_amount: $data['max_amount'] ?? null,
             from_date: $data['from_date'] ?? null,
             to_date: $data['to_date'] ?? null,
+            per_page: isset($data['per_page']) ? (int) $data['per_page'] : null,
         );
     }
 }

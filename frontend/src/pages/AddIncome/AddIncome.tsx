@@ -4,7 +4,7 @@ import IncomeForm, {
   type IncomeFormData,
 } from '../../features/incomes/components/IncomeForm';
 import AppLayout from '../../layouts/AppLayout/AppLayout';
-import { addBalanceWallet, selectTransactionsLoading } from '../../redux/slices/transactionsSlice';
+import { addBalanceWallet, selectTransactionsLoading, transactionBalanceWallet } from '../../redux/slices/transactionsSlice';
 import type { AppDispatch } from '../../redux/store';
 
 const AddIncome = () => {
@@ -22,6 +22,7 @@ const AddIncome = () => {
         date: data.date || new Date().toISOString().slice(0, 10),
       }),
     );
+    dispatch(transactionBalanceWallet());
     navigate('/incomes');
   };
 

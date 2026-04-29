@@ -6,6 +6,8 @@ import ConfirmDialog from '../../features/shared/components/ConfirmDialog';
 import { useCurrencyBRL } from '../../hooks/useCurrencyBRL';
 import AppLayout from '../../layouts/AppLayout/AppLayout';
 import { destroy, destroyRecurring, index, indexRecurring, updateInstallment } from '../../redux/services/expensesService';
+import { transactionBalanceWallet } from '../../redux/slices/transactionsSlice';
+import { useAppDispatch } from '../../redux/store';
 import type { category } from '../../utils/consts';
 import { CATEGORY_ACCENTS, CATEGORY_ICONS } from '../../utils/consts';
 
@@ -382,6 +384,7 @@ const InstallmentCard = ({
 // ── Page ────────────────────────────────────────────────────────────────────
 
 const Commitments = () => {
+  const dispatch = useAppDispatch();
   const [recurring, setRecurring] = useState<RecurringExpense[]>([]);
   const [installments, setInstallments] = useState<InstallmentExpense[]>([]);
 
@@ -407,6 +410,7 @@ const Commitments = () => {
 
   const handleInstallmentToggle = async (_expenseId: number, installmentId: number) => {
     await updateInstallment(installmentId);
+    dispatch(transactionBalanceWallet());
     loadData();
   };
 

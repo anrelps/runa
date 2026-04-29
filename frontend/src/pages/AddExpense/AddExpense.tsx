@@ -7,6 +7,7 @@ import ExpenseForm, {
 import AppLayout from '../../layouts/AppLayout/AppLayout';
 import { createRecurring } from '../../redux/services/expensesService';
 import { expensesCreate } from '../../redux/slices/expensesSlice';
+import { transactionBalanceWallet } from '../../redux/slices/transactionsSlice';
 import type { AppDispatch } from '../../redux/store';
 
 const AddExpense = () => {
@@ -43,6 +44,7 @@ const AddExpense = () => {
           return;
         }
       }
+      dispatch(transactionBalanceWallet());
       navigate('/expenses');
     } catch (err: any) {
       setError(err?.response?.data?.message ?? err?.message ?? 'Erro ao salvar despesa');

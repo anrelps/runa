@@ -39,6 +39,7 @@ export interface TransactionFilters {
   from_date?: string;
   to_date?: string;
   page?: number;
+  per_page?: number;
 }
 
 export interface CreateTransactionData {

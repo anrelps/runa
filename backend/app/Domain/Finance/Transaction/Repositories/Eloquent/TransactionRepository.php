@@ -39,7 +39,7 @@ class TransactionRepository implements TransactionRepositoryInterface {
             })
             ->orderBy('date', 'DESC')
             ->orderBy('id', 'DESC')
-            ->paginate(20);
+            ->paginate($dto->per_page ?? 20);
     }
 
     public function transactionHistory(TransactionHistoryDTO $dto): TransactionHistory {

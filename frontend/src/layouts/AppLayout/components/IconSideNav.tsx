@@ -14,7 +14,9 @@ import {
   useState,
 } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
+import brazilSvg from '../../../assets/brazil.svg';
 import logoSvg from '../../../assets/logo.svg';
+import usaSvg from '../../../assets/usa.svg';
 import { useTheme } from '../../../contexts/ThemeContext';
 
 const navItems = [
@@ -40,8 +42,21 @@ const navItems = [
   },
 ];
 
+
+export const useLang = () => {
+  const [lang, setLangState] = useState<'pt' | 'en'>(
+    () => (localStorage.getItem('app-lang') as 'pt' | 'en') ?? 'pt'
+  );
+  const setLang = (l: 'pt' | 'en') => {
+    localStorage.setItem('app-lang', l);
+    setLangState(l);
+  };
+  return [lang, setLang] as const;
+};
+
 const IconSideNav = () => {
   const [expanded, setExpanded] = useState(() => localStorage.getItem('sidenav-expanded') === 'true');
+  const [lang, setLang] = useLang();
   const navigate = useNavigate();
   const location = useLocation();
   const { theme } = useTheme();
@@ -87,7 +102,65 @@ const IconSideNav = () => {
           ))}
         </div>
 
-        <div className='w-full px-3 pb-4'>
+        <div className='w-full px-3 pb-4 flex flex-col gap-1'>
+          {/* Language switch — nav-item shaped container, toggle inside */}
+          <div className='p-4 bg-background-primary rounded-md relative flex items-center w-full overflow-hidden' style={{ minHeight: '56px', border: '2px solid var(--color-background-primary)' }}>
+            {/* Flag background — subtle, fading to transparent at center */}
+            <img
+              src={lang === 'pt' ? brazilSvg : usaSvg}
+              aria-hidden='true'
+              className='pointer-events-none absolute inset-0 w-full h-full object-cover'
+              style={{
+                opacity: 0.32,
+              filter: 'grayscale(100%)',
+                maskImage: 'radial-gradient(ellipse at center, transparent 0%, black 80%)',
+                WebkitMaskImage: 'radial-gradient(ellipse at center, transparent 0%, black 80%)',
+              }}
+            />
+            {expanded ? (
+              /* Expanded: pill toggle inside the box */
+              <motion.div
+                className='flex items-center rounded-md w-full overflow-hidden'
+                initial={{ opacity: 0, x: -8 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.15 }}
+                style={{
+                  background: 'color-mix(in srgb, var(--color-text-primary) 8%, transparent)',
+                  padding: '3px',
+                }}
+              >
+                {(['pt', 'en'] as const).map((l) => (
+                  <button
+                    key={l}
+                    onClick={() => setLang(l)}
+                    className='relative flex-1 py-1.5 rounded-sm text-[11px] font-bold uppercase tracking-widest cursor-pointer transition-colors z-10'
+                    style={{ color: lang === l ? 'var(--color-background-primary)' : 'var(--color-text-secondary)' }}
+                  >
+                    {lang === l && (
+                      <motion.span
+                        layoutId='lang-pill'
+                        className='absolute inset-0 rounded-sm'
+                        style={{ background: 'var(--color-primary)' }}
+                        transition={{ type: 'spring', stiffness: 500, damping: 35 }}
+                      />
+                    )}
+                    <span className='relative z-10'>{l}</span>
+                  </button>
+                ))}
+              </motion.div>
+            ) : (
+              /* Collapsed: current lang code in icon position */
+              <button
+                onClick={() => setLang(lang === 'pt' ? 'en' : 'pt')}
+                className='flex items-center justify-center w-full h-full cursor-pointer'
+              >
+                <span className='text-xs font-bold uppercase tracking-widest' style={{ color: 'var(--color-text-secondary)' }}>
+                  {lang}
+                </span>
+              </button>
+            )}
+          </div>
+
           <motion.button
             className='p-4 text-2xl w-full flex items-center justify-center rounded-md text-text-secondary hover:bg-white/10 transition-colors cursor-pointer'
             onClick={() => setExpanded((prev) => { const next = !prev; localStorage.setItem('sidenav-expanded', String(next)); return next; })}

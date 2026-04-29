@@ -1,5 +1,6 @@
 import { useTheme } from '../../../contexts/ThemeContext';
 import DarkToggle from './DarkToggle';
+import LangToggle from './LangToggle';
 import UserCards from './UserCards';
 import UserInfo from './UserInfo';
 import Wallet from './Wallet';
@@ -25,6 +26,9 @@ const UserSection = () => {
         </div>
         <div className='flex gap-2'>
           <DarkToggle />
+          <div className='md:hidden'>
+            <LangToggle />
+          </div>
           <Wallet />
         </div>
       </div>

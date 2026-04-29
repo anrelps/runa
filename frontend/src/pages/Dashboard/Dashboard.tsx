@@ -30,7 +30,7 @@ const Dashboard = () => {
           <Greeting />
         </div>
 
-        <div className='flex gap-4 justify-between flex-col lg:flex-row'>
+        <div className='flex gap-4 justify-between flex-col-reverse lg:flex-row'>
           <PendingBills />
           <RecentTransactions />
         </div>
