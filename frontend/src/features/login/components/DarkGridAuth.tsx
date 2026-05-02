@@ -5,6 +5,7 @@ import {
 } from '@phosphor-icons/react';
 import { motion } from 'framer-motion';
 import React, { useEffect, useState, type ReactNode } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import { Link, useNavigate } from 'react-router-dom';
 import { twMerge } from 'tailwind-merge';
@@ -13,6 +14,7 @@ import { demo, login } from '../../../redux/slices/userSlice';
 import { useAppDispatch } from '../../../redux/store';
 
 export const DarkGridAuth = () => {
+  const { t } = useTranslation();
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
 
@@ -56,7 +58,7 @@ export const DarkGridAuth = () => {
         style={{ color: 'var(--color-text-secondary)' }}
       >
         <ArrowLeftIcon />
-        Voltar
+        {t('common.back')}
       </Link>
 
       <motion.div
@@ -92,54 +94,61 @@ export const DarkGridAuth = () => {
   );
 };
 
-const Heading = () => (
-  <div>
-    <NavLogo />
-    <div className='mb-9 mt-6 space-y-1.5'>
-      <h1
-        className='text-2xl font-semibold'
-        style={{ color: 'var(--color-text-primary)' }}
-      >
-        Entre na sua conta
-      </h1>
-      <p style={{ color: 'var(--color-text-secondary)' }}>
-        Ainda não tem uma conta?{' '}
-        <a
-          href='#'
-          className='cursor-pointer transition-colors hover:opacity-80'
-          style={{ color: 'var(--color-primary)' }}
+const Heading = () => {
+  const { t } = useTranslation();
+  return (
+    <div>
+      <NavLogo />
+      <div className='mb-9 mt-6 space-y-1.5'>
+        <h1
+          className='text-2xl font-semibold'
+          style={{ color: 'var(--color-text-primary)' }}
         >
-          Crie uma.
-        </a>
-      </p>
+          {t('auth.title')}
+        </h1>
+        <p style={{ color: 'var(--color-text-secondary)' }}>
+          {t('auth.noAccount')}{' '}
+          <a
+            href='#'
+            className='cursor-pointer transition-colors hover:opacity-80'
+            style={{ color: 'var(--color-primary)' }}
+          >
+            {t('auth.createOne')}
+          </a>
+        </p>
+      </div>
     </div>
-  </div>
-);
+  );
+};
 
-const SocialOptions = () => (
-  <div className='opacity-40 cursor-not-allowed'>
-    <div className='mb-3 flex gap-3 pointer-events-none'>
-      <BubbleButton className='flex w-full justify-center py-3'>
-        <XLogoIcon />
-      </BubbleButton>
-      <BubbleButton className='flex w-full justify-center py-3'>
-        <GithubLogoIcon />
+const SocialOptions = () => {
+  const { t } = useTranslation();
+  return (
+    <div className='opacity-40 cursor-not-allowed'>
+      <div className='mb-3 flex gap-3 pointer-events-none'>
+        <BubbleButton className='flex w-full justify-center py-3'>
+          <XLogoIcon />
+        </BubbleButton>
+        <BubbleButton className='flex w-full justify-center py-3'>
+          <GithubLogoIcon />
+        </BubbleButton>
+      </div>
+      <BubbleButton className='flex w-full justify-center py-3 pointer-events-none'>
+        {t('auth.sso')}
       </BubbleButton>
     </div>
-    <BubbleButton className='flex w-full justify-center py-3 pointer-events-none'>
-      Entrar com SSO
-    </BubbleButton>
-  </div>
-);
+  );
+};
 
 const Or = () => {
+  const { t } = useTranslation();
   return (
     <div className='my-6 flex items-center gap-3 opacity-40'>
       <div
         className='h-px w-full'
         style={{ backgroundColor: 'rgba(255,255,255,0.08)' }}
       />
-      <span style={{ color: 'var(--color-text-secondary)' }}>OU</span>
+      <span style={{ color: 'var(--color-text-secondary)' }}>{t('auth.or')}</span>
       <div
         className='h-px w-full'
         style={{ backgroundColor: 'rgba(255,255,255,0.08)' }}
@@ -159,6 +168,7 @@ type EmailProps = {
 };
 
 const Email = ({ handleSubmit, handleDemo, formData, setFormData, loading }: EmailProps) => {
+  const { t } = useTranslation();
   return (
     <form onSubmit={handleSubmit}>
       <div className='mb-3'>
@@ -167,12 +177,12 @@ const Email = ({ handleSubmit, handleDemo, formData, setFormData, loading }: Ema
           className='mb-1.5 block'
           style={{ color: 'var(--color-text-secondary)' }}
         >
-          E-mail
+          {t('auth.email')}
         </label>
         <input
           id='email-input'
           type='email'
-          placeholder='seu.email@provedor.com'
+          placeholder={t('auth.emailPlaceholder')}
           value={formData.email}
           onChange={(e) =>
             setFormData((prev) => ({ ...prev, email: e.target.value }))
@@ -192,14 +202,14 @@ const Email = ({ handleSubmit, handleDemo, formData, setFormData, loading }: Ema
             className='block'
             style={{ color: 'var(--color-text-secondary)' }}
           >
-            Senha
+            {t('auth.password')}
           </label>
           <a
             href='#'
             className='cursor-pointer text-sm transition-colors hover:opacity-80'
             style={{ color: 'var(--color-primary)' }}
           >
-            Esqueceu?
+            {t('auth.forgotPassword')}
           </a>
         </div>
         <input
@@ -224,7 +234,7 @@ const Email = ({ handleSubmit, handleDemo, formData, setFormData, loading }: Ema
           disabled={loading}
           className='flex flex-1 justify-center py-2.5 text-base font-medium'
         >
-          {loading ? 'Entrando...' : 'Entrar'}
+          {loading ? t('auth.submitting') : t('auth.submit')}
         </BubbleButton>
         <SplashButton
           type='button'
@@ -232,33 +242,36 @@ const Email = ({ handleSubmit, handleDemo, formData, setFormData, loading }: Ema
           onClick={handleDemo}
           className='flex-1'
         >
-          {loading ? 'Carregando...' : 'Explorar Demo'}
+          {loading ? t('auth.loading') : t('auth.demo')}
         </SplashButton>
       </div>
     </form>
   );
 };
 
-const Terms = () => (
-  <p className='mt-9 text-xs' style={{ color: 'var(--color-text-secondary)' }}>
-    Ao entrar, você concorda com nossos{' '}
-    <a
-      href='#'
-      className='cursor-pointer transition-colors hover:opacity-80'
-      style={{ color: 'var(--color-primary)' }}
-    >
-      Termos de Uso
-    </a>{' '}
-    e{' '}
-    <a
-      href='#'
-      className='cursor-pointer transition-colors hover:opacity-80'
-      style={{ color: 'var(--color-primary)' }}
-    >
-      Política de Privacidade.
-    </a>
-  </p>
-);
+const Terms = () => {
+  const { t } = useTranslation();
+  return (
+    <p className='mt-9 text-xs' style={{ color: 'var(--color-text-secondary)' }}>
+      {t('auth.terms')}{' '}
+      <a
+        href='#'
+        className='cursor-pointer transition-colors hover:opacity-80'
+        style={{ color: 'var(--color-primary)' }}
+      >
+        {t('auth.termsLink')}
+      </a>{' '}
+      {t('auth.and')}{' '}
+      <a
+        href='#'
+        className='cursor-pointer transition-colors hover:opacity-80'
+        style={{ color: 'var(--color-primary)' }}
+      >
+        {t('auth.privacyLink')}
+      </a>
+    </p>
+  );
+};
 
 const SplashButton = ({ children, className, ...rest }: ButtonProps) => {
   return (

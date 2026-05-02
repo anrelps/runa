@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate, useParams } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import IncomeForm, {
   defaultIncomeFormData,
   type IncomeFormData,
@@ -15,6 +16,7 @@ import {
 import type { AppDispatch } from '../../redux/store';
 
 const EditIncome = () => {
+  const { t } = useTranslation();
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const dispatch = useDispatch<AppDispatch>();
@@ -57,7 +59,7 @@ const EditIncome = () => {
     return (
       <AppLayout>
         <div className='flex items-center justify-center h-40'>
-          <p className='text-sm text-text-secondary'>Carregando...</p>
+          <p className='text-sm text-text-secondary'>{t('common.loading')}</p>
         </div>
       </AppLayout>
     );
@@ -66,9 +68,9 @@ const EditIncome = () => {
   return (
     <AppLayout>
       <IncomeForm
-        title='Editar Saldo'
-        subtitle='Atualize os dados do saldo'
-        submitLabel='Salvar alterações'
+        title={t('income.editTitle')}
+        subtitle={t('income.editSubtitle')}
+        submitLabel={t('common.save')}
         loading={loading}
         initialData={initialData}
         onSubmit={handleSubmit}

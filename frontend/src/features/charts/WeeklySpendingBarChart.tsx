@@ -8,6 +8,7 @@ import {
 import React, { useEffect, useMemo, useState } from 'react';
 import { Bar } from 'react-chartjs-2';
 
+import { useTranslation } from 'react-i18next';
 import { useTheme } from '../../contexts/ThemeContext';
 import { useChartResize } from '../../hooks/useChartResize';
 import { index } from '../../redux/services/transactionsService';
@@ -83,6 +84,7 @@ type Props = { decorated?: boolean };
 
 const WeeklySpendingBarChart: React.FC<Props> = ({ decorated = false }) => {
   const { outerRef, chartRef } = useChartResize();
+  const { t } = useTranslation();
   const { theme } = useTheme();
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [colors, setColors] = useState<ChartColors>(computeColors);
@@ -176,7 +178,7 @@ const WeeklySpendingBarChart: React.FC<Props> = ({ decorated = false }) => {
       <div className='flex justify-between items-start mb-4'>
         <div className='flex flex-col gap-0.5'>
           <span className='text-sm font-semibold text-text-primary'>
-            Gastos mensais
+            {t('charts.weeklyTitle')}
           </span>
           <span className='text-xs text-text-secondary opacity-60'>
             {periodLabel(months)}
@@ -188,14 +190,14 @@ const WeeklySpendingBarChart: React.FC<Props> = ({ decorated = false }) => {
               className='inline-block w-2.5 h-2.5 rounded-sm'
               style={{ background: colors.current }}
             />
-            Mês atual
+            {t('charts.currentMonth')}
           </span>
           <span className='flex items-center gap-1.5'>
             <span
               className='inline-block w-2.5 h-2.5 rounded-sm'
               style={{ background: colors.past }}
             />
-            Anteriores
+            {t('charts.previous')}
           </span>
         </div>
       </div>
@@ -205,7 +207,7 @@ const WeeklySpendingBarChart: React.FC<Props> = ({ decorated = false }) => {
           <Bar key={theme} ref={chartRef as any} data={data} options={options} />
         ) : (
           <div className='flex h-full items-center justify-center'>
-            <p className='text-sm text-text-secondary/50'>Sem dados</p>
+            <p className='text-sm text-text-secondary/50'>{t('charts.noData')}</p>
           </div>
         )}
       </div>

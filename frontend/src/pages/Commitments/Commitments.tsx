@@ -1,6 +1,7 @@
 import { ArrowsClockwiseIcon, CaretDownIcon, CaretUpIcon, CheckCircleIcon, GiftIcon, PencilSimpleIcon, TrashIcon } from '@phosphor-icons/react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useEffect, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import ConfirmDialog from '../../features/shared/components/ConfirmDialog';
 import { useCurrencyBRL } from '../../hooks/useCurrencyBRL';
@@ -51,13 +52,16 @@ const today = () => {
 const isOverdue = (inst: Installment) =>
   !inst.paid_at && new Date(`${inst.due_date}T00:00:00`) < today();
 
-const daysLabel = (inst: Installment): { text: string; color: string } => {
-  if (inst.paid_at) return { text: 'Pago', color: 'text-green-400' };
-  const due = new Date(`${inst.due_date}T00:00:00`);
-  const diff = Math.round((due.getTime() - today().getTime()) / 86400000);
-  if (diff < 0) return { text: `Vencida há ${Math.abs(diff)}d`, color: 'text-accent-start font-semibold' };
-  if (diff === 0) return { text: 'Vence hoje', color: 'text-yellow-400 font-semibold' };
-  return { text: `Vence em ${diff}d`, color: 'text-text-secondary' };
+const useDaysLabel = () => {
+  const { t } = useTranslation();
+  return (inst: Installment): { text: string; color: string } => {
+    if (inst.paid_at) return { text: t('commitments.paid'), color: 'text-green-400' };
+    const due = new Date(`${inst.due_date}T00:00:00`);
+    const diff = Math.round((due.getTime() - today().getTime()) / 86400000);
+    if (diff < 0) return { text: t('pendingBills.daysAgoLabel', { count: Math.abs(diff) }), color: 'text-accent-start font-semibold' };
+    if (diff === 0) return { text: t('commitments.dueToday'), color: 'text-yellow-400 font-semibold' };
+    return { text: t('pendingBills.dueInLabel', { count: diff }), color: 'text-text-secondary' };
+  };
 };
 
 // ── Sub-components ───────────────────────────────────────────────────────────
@@ -79,6 +83,7 @@ const RecurringCard = ({
   item: RecurringExpense;
   onDeleted: (id: number) => void;
 }) => {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const [active, setActive] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
@@ -118,7 +123,9 @@ const RecurringCard = ({
           <span className='text-sm font-medium text-text-primary capitalize truncate'>
             {item.description}
           </span>
-          <span className='text-xs text-text-secondary'>todo dia {item.due_day}</span>
+          <span className='text-xs text-text-secondary'>
+            {t('expense.recurring.everyDay')} {item.due_day}
+          </span>
         </div>
       </div>
       <div className='flex flex-col items-end shrink-0 ml-3'>
@@ -132,7 +139,7 @@ const RecurringCard = ({
             color: item.active ? 'var(--color-primary)' : 'var(--color-text-secondary)',
           }}
         >
-          {item.active ? 'ativa' : 'inativa'}
+          {item.active ? t('expense.recurring.active') : t('expense.recurring.inactive')}
         </span>
       </div>
 
@@ -173,7 +180,7 @@ const RecurringCard = ({
               }}
             >
               <PencilSimpleIcon size={14} weight='bold' />
-              Editar
+              {t('common.edit')}
             </motion.button>
             <motion.button
               type='button'
@@ -190,7 +197,7 @@ const RecurringCard = ({
               }}
             >
               <TrashIcon size={14} weight='bold' />
-              Remover
+              {t('common.remove')}
             </motion.button>
           </motion.div>
         )}
@@ -198,8 +205,8 @@ const RecurringCard = ({
 
       <ConfirmDialog
         open={confirming}
-        title='Remover recorrente'
-        description={`Tem certeza que deseja remover "${item.description}"?`}
+        title={t('expense.recurring.removeTitle')}
+        description={`${t('expense.recurring.removeConfirm')} "${item.description}"?`}
         onConfirm={handleDelete}
         onCancel={() => setConfirming(false)}
       />
@@ -214,6 +221,8 @@ const InstallmentRow = ({
   inst: Installment;
   onToggle: (id: number) => void;
 }) => {
+  const { t } = useTranslation();
+  const daysLabel = useDaysLabel();
   const formatted = useCurrencyBRL(inst.amount);
   const { text, color } = daysLabel(inst);
   const overdue = isOverdue(inst);
@@ -249,7 +258,7 @@ const InstallmentRow = ({
         }}
       >
         <CheckCircleIcon size={13} weight={paid ? 'fill' : 'regular'} />
-        {paid ? 'Pago' : 'Marcar pago'}
+        {paid ? t('commitments.paid') : t('expense.installmentExpense.markPaid')}
       </button>
     </div>
   );
@@ -264,6 +273,7 @@ const InstallmentCard = ({
   onInstallmentToggle: (expenseId: number, installmentId: number) => void;
   onDeleted: (id: number) => void;
 }) => {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const [collapsed, setCollapsed] = useState(true);
   const count = item.installment_count ?? 1;
@@ -271,6 +281,7 @@ const InstallmentCard = ({
     (a, b) => a.installment_number - b.installment_number,
   );
   const paidCount = installments.filter((i) => i.paid_at).length;
+  const remaining = count - paidCount;
   const progress = count > 0 ? (paidCount / count) * 100 : 0;
 
   const safeCategory = item.category;
@@ -284,6 +295,10 @@ const InstallmentCard = ({
     await destroy(item.id);
     onDeleted(item.id);
   };
+
+  const remainingLabel = remaining === 1
+    ? t('expense.installmentExpense.remaining_one')
+    : t('expense.installmentExpense.remaining_other');
 
   return (
     <div className='flex flex-col gap-2 p-3 rounded-xl bg-white/3 border border-border-card'>
@@ -299,7 +314,7 @@ const InstallmentCard = ({
           <div className='flex flex-col min-w-0'>
             <div className='flex items-center gap-2'>
               <span className='text-sm font-medium text-text-primary capitalize truncate'>
-                {item.description ?? 'Sem descrição'}
+                {item.description ?? t('common.noDescription')}
               </span>
               <span className='shrink-0 px-1.5 py-0.5 rounded text-[10px] font-semibold bg-border-subtle text-text-secondary border border-border-subtle'>
                 {paidCount}/{count}
@@ -310,7 +325,7 @@ const InstallmentCard = ({
                 className='text-[10px] font-semibold px-1.5 py-0.5 rounded mt-0.5 w-fit'
                 style={{ background: accentColor, color: 'var(--color-background-primary)' }}
               >
-                {safeCategory}
+                {t(`categories.${safeCategory}`)}
               </span>
             )}
           </div>
@@ -321,7 +336,7 @@ const InstallmentCard = ({
             onClick={() => navigate(`/expenses/${item.id}/edit`)}
             className='p-1.5 rounded-lg transition-colors cursor-pointer'
             style={{ color: 'var(--color-accent-start)' }}
-            title='Editar'
+            title={t('common.edit')}
           >
             <PencilSimpleIcon size={14} weight='bold' />
           </button>
@@ -330,14 +345,14 @@ const InstallmentCard = ({
             onClick={() => setConfirming(true)}
             className='p-1.5 rounded-lg transition-colors cursor-pointer'
             style={{ color: '#ef4444' }}
-            title='Remover'
+            title={t('common.remove')}
           >
             <TrashIcon size={14} weight='bold' />
           </button>
           <button
             onClick={() => setCollapsed((v) => !v)}
             className='p-1.5 rounded-lg text-text-secondary hover:bg-white/10 transition-colors cursor-pointer'
-            title={collapsed ? 'Expandir parcelas' : 'Recolher parcelas'}
+            title={collapsed ? t('expense.installmentExpense.expand') : t('expense.installmentExpense.collapse')}
           >
             {collapsed ? <CaretDownIcon size={14} /> : <CaretUpIcon size={14} />}
           </button>
@@ -353,7 +368,7 @@ const InstallmentCard = ({
           />
         </div>
         <span className='text-[10px] text-text-secondary shrink-0'>
-          {count - paidCount} restante{count - paidCount !== 1 ? 's' : ''}
+          {remaining} {remainingLabel}
         </span>
       </div>
 
@@ -372,8 +387,8 @@ const InstallmentCard = ({
 
       <ConfirmDialog
         open={confirming}
-        title='Remover parcelada'
-        description={`Tem certeza que deseja remover "${item.description ?? 'esta compra'}" e todas as suas parcelas?`}
+        title={t('expense.installmentExpense.removeTitle')}
+        description={`${t('expense.installmentExpense.removeConfirm')} "${item.description ?? t('common.noDescription')}" ${t('expense.installmentExpense.removeAllInstallments')}`}
         onConfirm={handleDelete}
         onCancel={() => setConfirming(false)}
       />
@@ -384,6 +399,7 @@ const InstallmentCard = ({
 // ── Page ────────────────────────────────────────────────────────────────────
 
 const Commitments = () => {
+  const { t } = useTranslation();
   const dispatch = useAppDispatch();
   const [recurring, setRecurring] = useState<RecurringExpense[]>([]);
   const [installments, setInstallments] = useState<InstallmentExpense[]>([]);
@@ -426,9 +442,9 @@ const Commitments = () => {
     <AppLayout>
       <div className='flex flex-col gap-8'>
         <div>
-          <SectionHeader title='Recorrentes' count={recurring.length} />
+          <SectionHeader title={t('expense.recurring.title')} count={recurring.length} />
           {recurring.length === 0 ? (
-            <p className='text-sm text-text-secondary'>Nenhuma despesa recorrente.</p>
+            <p className='text-sm text-text-secondary'>{t('expense.recurring.empty')}</p>
           ) : (
             <div className='flex flex-col gap-2.5'>
               {recurring.map((item) => (
@@ -439,9 +455,9 @@ const Commitments = () => {
         </div>
 
         <div>
-          <SectionHeader title='Parceladas' count={installments.length} />
+          <SectionHeader title={t('expense.installmentExpense.title')} count={installments.length} />
           {installments.length === 0 ? (
-            <p className='text-sm text-text-secondary'>Nenhuma despesa parcelada.</p>
+            <p className='text-sm text-text-secondary'>{t('expense.installmentExpense.empty')}</p>
           ) : (
             <div className='flex flex-col gap-2.5'>
               {installments.map((item) => (

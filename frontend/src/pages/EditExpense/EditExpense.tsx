@@ -2,6 +2,7 @@ import { parseDate } from '@internationalized/date';
 import { useEffect, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate, useParams } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import ExpenseForm, {
   defaultExpenseFormData,
   type ExpenseFormData,
@@ -18,6 +19,7 @@ import {
 import type { AppDispatch } from '../../redux/store';
 
 const EditExpense = () => {
+  const { t } = useTranslation();
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const dispatch = useDispatch<AppDispatch>();
@@ -77,7 +79,7 @@ const EditExpense = () => {
       <AppLayout>
         <div className='flex items-center justify-center h-40'>
           <p className='text-sm text-text-secondary'>
-            {!loading ? 'Despesa não encontrada.' : 'Carregando...'}
+            {!loading ? t('expense.notFound') : t('common.loading')}
           </p>
         </div>
       </AppLayout>
@@ -90,9 +92,9 @@ const EditExpense = () => {
         <p className='text-sm text-red-400 mb-4 px-1'>{error}</p>
       )}
       <ExpenseForm
-        title='Editar Despesa'
-        subtitle='Atualize os dados da despesa'
-        submitLabel='Salvar alterações'
+        title={t('expense.editTitle')}
+        subtitle={t('expense.editSubtitle')}
+        submitLabel={t('common.save')}
         loading={loading}
         initialData={initialData}
         onSubmit={handleSubmit}

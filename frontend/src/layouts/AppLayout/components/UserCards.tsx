@@ -1,6 +1,7 @@
 import type { Icon as PhosphorIcon } from '@phosphor-icons/react';
 import { TrendDownIcon, TrendUpIcon, WalletIcon } from '@phosphor-icons/react';
 import { useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import {
   selectWallet,
@@ -8,13 +9,8 @@ import {
 } from '../../../redux/slices/transactionsSlice';
 import { useAppDispatch } from '../../../redux/store';
 
-const formatCurrency = (value: number | undefined) =>
-  `R$ ${(value ?? 0).toLocaleString('pt-BR', {
-    minimumFractionDigits: 2,
-    maximumFractionDigits: 2,
-  })}`;
-
 const UserCards = () => {
+  const { t, i18n } = useTranslation();
   const dispatch = useAppDispatch();
   const wallet = useSelector(selectWallet);
 
@@ -22,22 +18,30 @@ const UserCards = () => {
     dispatch(transactionBalanceWallet());
   }, [dispatch]);
 
+  const formatCurrency = (value: number | undefined) =>
+    (value ?? 0).toLocaleString(i18n.language === 'en' ? 'en-US' : 'pt-BR', {
+      style: 'currency',
+      currency: 'BRL',
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
+    });
+
   return (
     <div className='grid gap-2 grid-cols-1 sm:grid-cols-3 max-w-2xl'>
       <Card
-        title='Gastos do mês'
+        title={t('userCards.expenses')}
         value={formatCurrency(wallet?.expenseMonth)}
         Icon={TrendDownIcon}
         color='red'
       />
       <Card
-        title='Ganhos do mês'
+        title={t('userCards.income')}
         value={formatCurrency(wallet?.incomeMonth)}
         Icon={TrendUpIcon}
         color='green'
       />
       <Card
-        title='Saldo restante'
+        title={t('userCards.balance')}
         value={wallet?.formatted_balance ?? 'R$ 0,00'}
         Icon={WalletIcon}
         color='blue'

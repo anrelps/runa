@@ -13,43 +13,28 @@ import {
   type SetStateAction,
   useState,
 } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useLocation, useNavigate } from 'react-router-dom';
-import brazilSvg from '../../../assets/brazil.svg';
 import logoSvg from '../../../assets/logo.svg';
-import usaSvg from '../../../assets/usa.svg';
 import { useTheme } from '../../../contexts/ThemeContext';
 
-const navItems = [
-  {
-    icon: <PresentationChartIcon weight='fill' />,
-    label: 'Dashboard',
-    path: '/dashboard',
-  },
-  {
-    icon: <ChartLineDownIcon weight='fill' />,
-    label: 'Gastos',
-    path: '/expenses',
-  },
-  {
-    icon: <ChartLineUpIcon weight='fill' />,
-    label: 'Saldo',
-    path: '/incomes',
-  },
-  {
-    icon: <ArrowsClockwiseIcon weight='fill' />,
-    label: 'Compromissos',
-    path: '/commitments',
-  },
-];
+const useNavItems = () => {
+  const { t } = useTranslation();
+  return [
+    { icon: <PresentationChartIcon weight='fill' />, label: t('nav.dashboard'), path: '/dashboard' },
+    { icon: <ChartLineDownIcon weight='fill' />, label: t('nav.expenses'), path: '/expenses' },
+    { icon: <ChartLineUpIcon weight='fill' />, label: t('nav.incomes'), path: '/incomes' },
+    { icon: <ArrowsClockwiseIcon weight='fill' />, label: t('nav.commitments'), path: '/commitments' },
+  ];
+};
 
 
 export const useLang = () => {
-  const [lang, setLangState] = useState<'pt' | 'en'>(
-    () => (localStorage.getItem('app-lang') as 'pt' | 'en') ?? 'pt'
-  );
+  const { i18n } = useTranslation();
+  const lang = i18n.language as 'pt' | 'en';
   const setLang = (l: 'pt' | 'en') => {
+    i18n.changeLanguage(l);
     localStorage.setItem('app-lang', l);
-    setLangState(l);
   };
   return [lang, setLang] as const;
 };
@@ -57,6 +42,7 @@ export const useLang = () => {
 const IconSideNav = () => {
   const [expanded, setExpanded] = useState(() => localStorage.getItem('sidenav-expanded') === 'true');
   const [lang, setLang] = useLang();
+  const navItems = useNavItems();
   const navigate = useNavigate();
   const location = useLocation();
   const { theme } = useTheme();
@@ -103,62 +89,39 @@ const IconSideNav = () => {
         </div>
 
         <div className='w-full px-3 pb-4 flex flex-col gap-1'>
-          {/* Language switch — nav-item shaped container, toggle inside */}
-          <div className='p-4 bg-background-primary rounded-md relative flex items-center w-full overflow-hidden' style={{ minHeight: '56px', border: '2px solid var(--color-background-primary)' }}>
-            {/* Flag background — subtle, fading to transparent at center */}
-            <img
-              src={lang === 'pt' ? brazilSvg : usaSvg}
-              aria-hidden='true'
-              className='pointer-events-none absolute inset-0 w-full h-full object-cover'
+          {/* Language switch — vertical toggle */}
+          <div
+            className='bg-background-primary rounded-md flex items-center justify-center w-full overflow-hidden'
+            style={{ minHeight: '56px', padding: '6px' }}
+          >
+            <div
+              className='relative flex flex-col rounded-md overflow-hidden'
               style={{
-                opacity: 0.32,
-              filter: 'grayscale(100%)',
-                maskImage: 'radial-gradient(ellipse at center, transparent 0%, black 80%)',
-                WebkitMaskImage: 'radial-gradient(ellipse at center, transparent 0%, black 80%)',
+                background: 'color-mix(in srgb, var(--color-text-primary) 8%, transparent)',
+                padding: '3px',
+                gap: '2px',
+                width: '100%',
               }}
-            />
-            {expanded ? (
-              /* Expanded: pill toggle inside the box */
-              <motion.div
-                className='flex items-center rounded-md w-full overflow-hidden'
-                initial={{ opacity: 0, x: -8 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ duration: 0.15 }}
-                style={{
-                  background: 'color-mix(in srgb, var(--color-text-primary) 8%, transparent)',
-                  padding: '3px',
-                }}
-              >
-                {(['pt', 'en'] as const).map((l) => (
-                  <button
-                    key={l}
-                    onClick={() => setLang(l)}
-                    className='relative flex-1 py-1.5 rounded-sm text-[11px] font-bold uppercase tracking-widest cursor-pointer transition-colors z-10'
-                    style={{ color: lang === l ? 'var(--color-background-primary)' : 'var(--color-text-secondary)' }}
-                  >
-                    {lang === l && (
-                      <motion.span
-                        layoutId='lang-pill'
-                        className='absolute inset-0 rounded-sm'
-                        style={{ background: 'var(--color-primary)' }}
-                        transition={{ type: 'spring', stiffness: 500, damping: 35 }}
-                      />
-                    )}
-                    <span className='relative z-10'>{l}</span>
-                  </button>
-                ))}
-              </motion.div>
-            ) : (
-              /* Collapsed: current lang code in icon position */
-              <button
-                onClick={() => setLang(lang === 'pt' ? 'en' : 'pt')}
-                className='flex items-center justify-center w-full h-full cursor-pointer'
-              >
-                <span className='text-xs font-bold uppercase tracking-widest' style={{ color: 'var(--color-text-secondary)' }}>
-                  {lang}
-                </span>
-              </button>
-            )}
+            >
+              {(['en', 'pt'] as const).map((l) => (
+                <button
+                  key={l}
+                  onClick={() => setLang(l)}
+                  className='relative py-1.5 rounded-sm text-[11px] font-bold uppercase tracking-widest cursor-pointer transition-colors z-10 w-full text-center'
+                  style={{ color: lang === l ? 'var(--color-background-primary)' : 'var(--color-text-secondary)' }}
+                >
+                  {lang === l && (
+                    <motion.span
+                      layoutId='lang-pill-v'
+                      className='absolute inset-0 rounded-sm'
+                      style={{ background: 'var(--color-primary)' }}
+                      transition={{ type: 'spring', stiffness: 500, damping: 35 }}
+                    />
+                  )}
+                  <span className='relative z-10'>{l}</span>
+                </button>
+              ))}
+            </div>
           </div>
 
           <motion.button
@@ -185,6 +148,38 @@ const IconSideNav = () => {
             {item.icon}
           </BottomNavItem>
         ))}
+
+        {/* Language switch — vertical compact for mobile */}
+        <div className='flex flex-col items-center justify-center p-2 rounded-md' style={{ minWidth: 44 }}>
+          <div
+            className='relative flex flex-col rounded-md overflow-hidden'
+            style={{
+              background: 'color-mix(in srgb, var(--color-text-primary) 8%, transparent)',
+              padding: '3px',
+              gap: '2px',
+              width: '100%',
+            }}
+          >
+            {(['en', 'pt'] as const).map((l) => (
+              <button
+                key={l}
+                onClick={() => setLang(l)}
+                className='relative py-1 rounded-sm text-[10px] font-bold uppercase tracking-widest cursor-pointer z-10 w-full text-center'
+                style={{ color: lang === l ? 'var(--color-background-primary)' : 'var(--color-text-secondary)' }}
+              >
+                {lang === l && (
+                  <motion.span
+                    layoutId='lang-pill-mobile'
+                    className='absolute inset-0 rounded-sm'
+                    style={{ background: 'var(--color-primary)' }}
+                    transition={{ type: 'spring', stiffness: 500, damping: 35 }}
+                  />
+                )}
+                <span className='relative z-10'>{l}</span>
+              </button>
+            ))}
+          </div>
+        </div>
       </nav>
     </>
   );

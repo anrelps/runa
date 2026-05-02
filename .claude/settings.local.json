@@ -3,7 +3,18 @@
     "allow": [
       "Bash(php artisan:*)",
       "Bash(xargs cat:*)",
-      "Bash(npx tsc *)"
+      "Bash(npx tsc *)",
+      "Bash(npm install *)",
+      "Bash(sed -n '251,270p' /Users/anrelps/Developer/github/runa_project/frontend/src/features/expenses/components/RecentExpensesList.tsx)",
+      "Bash(sed -n '168,185p' /Users/anrelps/Developer/github/runa_project/frontend/src/features/incomes/components/RecentIncomesList.tsx)",
+      "Bash(sed -n '304,312p' /Users/anrelps/Developer/github/runa_project/frontend/src/features/expenses/components/RecentExpensesList.tsx)",
+      "Bash(sed -n '205,213p' /Users/anrelps/Developer/github/runa_project/frontend/src/features/incomes/components/RecentIncomesList.tsx)",
+      "Bash(sed -n '308,315p' /Users/anrelps/Developer/github/runa_project/frontend/src/features/expenses/components/RecentExpensesList.tsx)",
+      "Bash(sed -n '210,217p' /Users/anrelps/Developer/github/runa_project/frontend/src/features/incomes/components/RecentIncomesList.tsx)",
+      "Bash(sed -n '64,72p' /Users/anrelps/Developer/github/runa_project/frontend/src/features/expenses/components/RecentExpensesList.tsx)",
+      "Bash(sed -n '38,46p' /Users/anrelps/Developer/github/runa_project/frontend/src/features/incomes/components/RecentIncomesList.tsx)",
+      "Bash(sed -n '100,115p' /Users/anrelps/Developer/github/runa_project/frontend/src/locales/en.json)",
+      "Bash(sed -n '163,175p' /Users/anrelps/Developer/github/runa_project/frontend/src/locales/en.json)"
     ]
   }
 }

@@ -6,6 +6,7 @@ import {
 import { ArrowCircleDownIcon, ArrowLeftIcon } from '@phosphor-icons/react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { useCurrencyBRL } from '../../../hooks/useCurrencyBRL';
 import { DateField } from '../../shared/components/DateRangePicker/DateField';
@@ -74,7 +75,14 @@ const ExpenseForm = ({
   initialData,
   onSubmit,
 }: ExpenseFormProps) => {
+  const { t } = useTranslation();
   const navigate = useNavigate();
+
+  const expenseTypes = [
+    { value: 'single' as const, label: t('expense.form.single') },
+    { value: 'installment' as const, label: t('expense.form.installment') },
+    { value: 'recurring' as const, label: t('expense.form.recurring') },
+  ];
 
   const [data, setData] = useState<ExpenseFormData>({
     ...defaultExpenseFormData(),
@@ -168,7 +176,7 @@ const ExpenseForm = ({
 
           <div className='relative px-6 pt-5 pb-6 flex flex-col items-center gap-1'>
             <p className='text-[10px] font-semibold uppercase tracking-widest mb-1 text-text-secondary/60'>
-              Valor da despesa
+              {t('expense.form.amount')}
             </p>
             <div className='flex items-baseline gap-2'>
               <span className='text-xl font-semibold text-text-secondary'>R$</span>
@@ -188,10 +196,10 @@ const ExpenseForm = ({
         {/* ── Descrição + Categoria ── */}
         <div className='rounded-2xl border overflow-hidden' style={cardStyle}>
           <div className='px-5 pt-4 pb-5'>
-            <FieldLabel>Descrição</FieldLabel>
+            <FieldLabel>{t('expense.form.description')}</FieldLabel>
             <input
               type='text'
-              placeholder='Dê um nome para essa despesa...'
+              placeholder={t('expense.form.descriptionPlaceholder')}
               value={data.description}
               onChange={(e) => set('description', e.target.value)}
               required
@@ -204,7 +212,7 @@ const ExpenseForm = ({
           </div>
           <Divider />
           <div className='px-5 py-4'>
-            <FieldLabel>Categoria</FieldLabel>
+            <FieldLabel>{t('expense.form.category')}</FieldLabel>
             <div className='flex flex-wrap gap-2 mt-1'>
               {CATEGORIES.map((cat) => {
                 const color = CATEGORY_ACCENTS[cat];
@@ -227,7 +235,7 @@ const ExpenseForm = ({
                       className='w-1.5 h-1.5 rounded-full shrink-0'
                       style={{ background: color }}
                     />
-                    {cat}
+                    {t(`categories.${cat}`)}
                   </button>
                 );
               })}
@@ -238,24 +246,24 @@ const ExpenseForm = ({
         {/* ── Tipo + Parcelas / Dia recorrente ── */}
         <div className='rounded-2xl border overflow-hidden' style={cardStyle}>
           <div className='px-5 py-4'>
-            <FieldLabel>Tipo de despesa</FieldLabel>
+            <FieldLabel>{t('expense.form.type')}</FieldLabel>
             <div
               className='flex gap-1.5 mt-1 p-1 rounded-xl'
               style={{
                 background: 'color-mix(in srgb, var(--color-text-primary) 6%, transparent)',
               }}
             >
-              {EXPENSE_TYPES.map((t) => (
+              {expenseTypes.map((et) => (
                 <button
-                  key={t.value}
+                  key={et.value}
                   type='button'
-                  onClick={() => set('type', t.value)}
+                  onClick={() => set('type', et.value)}
                   className='relative flex-1 py-2 rounded-lg text-xs font-bold transition-colors cursor-pointer'
                   style={{
-                    color: data.type === t.value ? ACCENT : 'var(--color-text-secondary)',
+                    color: data.type === et.value ? ACCENT : 'var(--color-text-secondary)',
                   }}
                 >
-                  {data.type === t.value && (
+                  {data.type === et.value && (
                     <motion.span
                       layoutId='type-bg'
                       className='absolute inset-0 rounded-lg'
@@ -266,7 +274,7 @@ const ExpenseForm = ({
                       transition={{ type: 'spring', stiffness: 400, damping: 30 }}
                     />
                   )}
-                  <span className='relative z-10'>{t.label}</span>
+                  <span className='relative z-10'>{et.label}</span>
                 </button>
               ))}
             </div>
@@ -283,7 +291,7 @@ const ExpenseForm = ({
               >
                 <Divider />
                 <div className='px-5 py-4'>
-                  <FieldLabel>Data da despesa</FieldLabel>
+                  <FieldLabel>{t('expense.form.date')}</FieldLabel>
                   <DateField
                     value={data.date}
                     onChange={(val) => val && set('date', val)}
@@ -305,7 +313,7 @@ const ExpenseForm = ({
               >
                 <Divider />
                 <div className='px-5 py-4'>
-                  <FieldLabel>Vencimento da 1ª parcela</FieldLabel>
+                  <FieldLabel>{t('expense.form.firstDueDate')}</FieldLabel>
                   <DateField
                     value={data.date}
                     onChange={(val) => val && set('date', val)}
@@ -313,7 +321,7 @@ const ExpenseForm = ({
                 </div>
                 <Divider />
                 <div className='px-5 py-4'>
-                  <FieldLabel>Número de parcelas</FieldLabel>
+                  <FieldLabel>{t('expense.form.installmentCount')}</FieldLabel>
                   <div className='flex items-center gap-2 mt-1 flex-wrap'>
                     {[2, 3, 6, 12, 24].map((n) => (
                       <button
@@ -341,7 +349,7 @@ const ExpenseForm = ({
                     ))}
                   </div>
                   <div className='flex items-center gap-3 mt-3'>
-                    <span className='text-xs text-text-secondary/50 shrink-0'>Outro</span>
+                    <span className='text-xs text-text-secondary/50 shrink-0'>{t('expense.form.other')}</span>
                     <input
                       type='number'
                       min='2'
@@ -352,7 +360,7 @@ const ExpenseForm = ({
                           : data.installmentCount
                       }
                       onChange={(e) => set('installmentCount', e.target.value)}
-                      placeholder='Nº de parcelas'
+                      placeholder={t('expense.form.installmentCountLabel')}
                       className='flex-1 h-9 px-3 rounded-lg text-xs font-semibold border bg-transparent text-text-primary placeholder:text-text-secondary/30 outline-none transition-all [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none'
                       style={{ borderColor: 'var(--color-border-subtle)' }}
                     />
@@ -373,7 +381,7 @@ const ExpenseForm = ({
               >
                 <Divider />
                 <div className='px-5 py-4'>
-                  <FieldLabel>Dia da recorrência (todo mês)</FieldLabel>
+                  <FieldLabel>{t('expense.form.recurringDay')}</FieldLabel>
                   <div className='flex items-center gap-2 mt-1 flex-wrap'>
                     {[1, 5, 10, 15, 20, 25].map((d) => (
                       <button
@@ -396,12 +404,12 @@ const ExpenseForm = ({
                               : 'transparent',
                         }}
                       >
-                        dia {d}
+                        {t('expense.form.day')} {d}
                       </button>
                     ))}
                   </div>
                   <div className='flex items-center gap-3 mt-3'>
-                    <span className='text-xs text-text-secondary/50 shrink-0'>Outro dia</span>
+                    <span className='text-xs text-text-secondary/50 shrink-0'>{t('expense.form.otherDay')}</span>
                     <input
                       type='number'
                       min='1'
@@ -412,7 +420,7 @@ const ExpenseForm = ({
                           : data.recurringDay
                       }
                       onChange={(e) => set('recurringDay', e.target.value)}
-                      placeholder='1 – 31'
+                      placeholder={t('expense.form.dayRange')}
                       className='flex-1 h-9 px-3 rounded-lg text-xs font-semibold border bg-transparent text-text-primary placeholder:text-text-secondary/30 outline-none transition-all [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none'
                       style={{ borderColor: 'var(--color-border-subtle)' }}
                     />
@@ -435,7 +443,7 @@ const ExpenseForm = ({
             boxShadow: `0 8px 24px color-mix(in srgb, ${ACCENT} 35%, transparent)`,
           }}
         >
-          {loading ? 'Salvando...' : submitLabel}
+          {loading ? t('common.saving') : submitLabel}
         </motion.button>
       </form>
     </div>

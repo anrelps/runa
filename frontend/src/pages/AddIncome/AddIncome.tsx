@@ -1,5 +1,6 @@
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import IncomeForm, {
   type IncomeFormData,
 } from '../../features/incomes/components/IncomeForm';
@@ -8,6 +9,7 @@ import { addBalanceWallet, selectTransactionsLoading, transactionBalanceWallet }
 import type { AppDispatch } from '../../redux/store';
 
 const AddIncome = () => {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const dispatch = useDispatch<AppDispatch>();
   const loading = useSelector(selectTransactionsLoading);
@@ -29,9 +31,9 @@ const AddIncome = () => {
   return (
     <AppLayout>
       <IncomeForm
-        title='Adicionar Saldo'
-        subtitle='Registre um novo saldo'
-        submitLabel='Salvar saldo'
+        title={t('income.addTitle')}
+        subtitle={t('income.addSubtitle')}
+        submitLabel={t('income.save')}
         loading={loading}
         onSubmit={handleSubmit}
       />

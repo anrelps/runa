@@ -1,0 +1,233 @@
+{
+  "nav": {
+    "dashboard": "Dashboard",
+    "expenses": "Gastos",
+    "incomes": "Saldo",
+    "commitments": "Compromissos"
+  },
+  "common": {
+    "locale": "pt-BR",
+    "save": "Salvar alterações",
+    "saving": "Salvando...",
+    "loading": "Carregando...",
+    "edit": "Editar",
+    "remove": "Remover",
+    "cancel": "Cancelar",
+    "back": "Voltar",
+    "noDescription": "Sem descrição",
+    "noDate": "Sem data"
+  },
+  "expense": {
+    "add": "Adicionar despesa",
+    "addTitle": "Adicionar Despesa",
+    "addSubtitle": "Registre uma nova despesa",
+    "editTitle": "Editar Despesa",
+    "editSubtitle": "Atualize os dados da despesa",
+    "save": "Salvar despesa",
+    "saveError": "Erro ao salvar despesa",
+    "notFound": "Despesa não encontrada.",
+    "recentTitle": "Últimas Despesas",
+    "empty": "Nenhuma despesa encontrada.",
+    "removeTitle": "Remover despesa",
+    "removeConfirm": "Tem certeza que deseja remover",
+    "removeThis": "esta despesa",
+    "form": {
+      "single": "Única",
+      "installment": "Parcelada",
+      "recurring": "Recorrente",
+      "amount": "Valor da despesa",
+      "description": "Descrição",
+      "descriptionPlaceholder": "Dê um nome para essa despesa...",
+      "category": "Categoria",
+      "type": "Tipo de despesa",
+      "date": "Data da despesa",
+      "firstDueDate": "Vencimento da 1ª parcela",
+      "installmentCount": "Número de parcelas",
+      "other": "Outro",
+      "installmentCountLabel": "Nº de parcelas",
+      "recurringDay": "Dia da recorrência (todo mês)",
+      "day": "dia",
+      "otherDay": "Outro dia",
+      "dayRange": "1 – 31"
+    },
+    "recurring": {
+      "title": "Recorrentes",
+      "empty": "Nenhuma despesa recorrente.",
+      "everyDay": "todo dia",
+      "active": "ativa",
+      "inactive": "inativa",
+      "removeTitle": "Remover recorrente",
+      "removeConfirm": "Tem certeza que deseja remover",
+      "monthly": "mensal",
+      "dayPrefix": "Recorrente · dia"
+    },
+    "installmentExpense": {
+      "title": "Parceladas",
+      "empty": "Nenhuma despesa parcelada.",
+      "removeTitle": "Remover parcelada",
+      "removeConfirm": "Tem certeza que deseja remover",
+      "removeAllInstallments": "e todas as suas parcelas?",
+      "remaining_one": "restante",
+      "remaining_other": "restantes",
+      "markPaid": "Marcar pago",
+      "expand": "Expandir parcelas",
+      "collapse": "Recolher parcelas"
+    }
+  },
+  "income": {
+    "add": "Adicionar saldo",
+    "addTitle": "Adicionar Saldo",
+    "addSubtitle": "Registre um novo saldo",
+    "editTitle": "Editar Saldo",
+    "editSubtitle": "Atualize os dados do saldo",
+    "save": "Salvar saldo",
+    "saved": "Saldo adicionado",
+    "recentTitle": "Últimos Saldos",
+    "empty": "Nenhum saldo encontrado.",
+    "form": {
+      "amount": "Valor do saldo",
+      "customize": "Personalizar",
+      "customizeDesc": "Descrição e data personalizadas",
+      "defaultDesc": "Usar \"Saldo adicionado\" e data atual",
+      "description": "Descrição",
+      "descriptionPlaceholder": "Ex: Salário, Freelance...",
+      "date": "Data"
+    }
+  },
+  "editRecurring": {
+    "title": "Editar Recorrente",
+    "subtitle": "Atualize os dados da despesa recorrente",
+    "saveError": "Erro ao salvar"
+  },
+  "dashboard": {
+    "addBalance": "Saldo\nAdicionar",
+    "addExpense": "Despesa\nAdicionar",
+    "greeting": {
+      "morning": "Bom dia",
+      "afternoon": "Boa tarde",
+      "evening": "Boa noite"
+    }
+  },
+  "wallet": {
+    "label": "Carteira",
+    "balanceTitle": "Saldo da carteira",
+    "addBalance": "Adicionar saldo"
+  },
+  "userCards": {
+    "expenses": "Gastos do mês",
+    "income": "Ganhos do mês",
+    "balance": "Saldo restante"
+  },
+  "transactions": {
+    "title": "Transações Recentes",
+    "count": "transações",
+    "balance": "Saldo",
+    "expenses": "Gastos",
+    "income": "Entradas",
+    "outcome": "Saídas",
+    "today": "Hoje",
+    "yesterday": "Ontem"
+  },
+  "pendingBills": {
+    "title": "Contas Pendentes",
+    "total": "Total",
+    "recurring": "Recorrentes",
+    "installments": "Parceladas",
+    "empty": "Nenhuma conta pendente.",
+    "today": "Hoje",
+    "dueInLabel_one": "Em 1 dia",
+    "dueInLabel_other": "Em {{count}} dias",
+    "daysAgoLabel_one": "Há 1 dia",
+    "daysAgoLabel_other": "Há {{count}} dias"
+  },
+  "commitments": {
+    "paid": "Pago",
+    "overdueFor": "Vencida há",
+    "dueToday": "Vence hoje",
+    "dueIn": "Vence em",
+    "day": "d",
+    "dayFull": "dia"
+  },
+  "charts": {
+    "weeklyTitle": "Gastos mensais",
+    "currentMonth": "Mês atual",
+    "previous": "Anteriores",
+    "noData": "Sem dados",
+    "categoryTitle": "Gastos por categoria",
+    "noExpenses": "Sem despesas para exibir"
+  },
+  "auth": {
+    "title": "Entre na sua conta",
+    "noAccount": "Ainda não tem uma conta?",
+    "createOne": "Crie uma.",
+    "sso": "Entrar com SSO",
+    "or": "OU",
+    "email": "E-mail",
+    "emailPlaceholder": "seu.email@provedor.com",
+    "password": "Senha",
+    "forgotPassword": "Esqueceu?",
+    "loading": "Carregando...",
+    "submitting": "Entrando...",
+    "submit": "Entrar",
+    "demo": "Explorar Demo",
+    "terms": "Ao entrar, você concorda com nossos",
+    "termsLink": "Termos de Uso",
+    "and": "e",
+    "privacyLink": "Política de Privacidade."
+  },
+  "landing": {
+    "nav": {
+      "plans": "Planos",
+      "contact": "Contato",
+      "about": "Sobre"
+    },
+    "hero": {
+      "chip": "Comece gratuitamente hoje 🌟",
+      "title": "Descubra o poder do Runa",
+      "subtitle": "Runa organiza suas receitas, despesas e contas recorrentes em um só lugar, para que você saiba exatamente como está sua vida financeira.",
+      "cta": "Teste Grátis",
+      "learnMore": "Saiba Mais"
+    },
+    "stats": {
+      "heading": "RESULTADOS REAIS PARA",
+      "headingHighlight": "QUEM QUER CONTROLAR AS FINANÇAS",
+      "stat1": "de economia média no 1º mês de uso",
+      "stat2": "usuários ativos acompanhando despesas",
+      "stat3": "lançamentos financeiros organizados"
+    },
+    "testimonials": {
+      "ana": "Finalmente consegui organizar minhas finanças de forma simples e eficiente. A melhor decisão que tomei este ano.",
+      "anaAuthor": "Ana Silva - Empreendedora",
+      "carlos": "Transformou completamente a forma como gerencio meus gastos. Simples, intuitivo e muito eficaz.",
+      "carlosAuthor": "Carlos Santos - Designer",
+      "maria": "Interface intuitiva e recursos poderosos. Agora consigo planejar meu futuro financeiro com confiança.",
+      "mariaAuthor": "Maria Costa - Desenvolvedora"
+    },
+    "footer": {
+      "description": "Organize suas finanças de forma simples e inteligente. Runa te ajuda a ter controle total sobre receitas, despesas e contas recorrentes.",
+      "emailPlaceholder": "Seu e-mail",
+      "subscribe": "Inscrever",
+      "navTitle": "navegação",
+      "legalTitle": "legal",
+      "privacy": "Privacidade",
+      "terms": "Termos de uso",
+      "copyright": "Todos os direitos reservados."
+    }
+  },
+  "categories": {
+    "Moradia": "Moradia",
+    "Alimentação": "Alimentação",
+    "Transporte": "Transporte",
+    "Compras": "Compras",
+    "Lazer": "Lazer",
+    "Saúde": "Saúde",
+    "Educação": "Educação",
+    "Negócios": "Negócios",
+    "Finanças": "Finanças",
+    "Outros": "Outros"
+  },
+  "confirm": {
+    "remove": "Remover",
+    "cancel": "Cancelar"
+  }
+}

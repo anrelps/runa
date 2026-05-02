@@ -1,6 +1,7 @@
 import { ArrowsClockwiseIcon, GiftIcon, PencilSimpleIcon, TrashIcon } from '@phosphor-icons/react';
 import { AnimatePresence, motion } from 'framer-motion';
 import React, { useEffect, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import ConfirmDialog from '../../../features/shared/components/ConfirmDialog';
 import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
@@ -67,6 +68,7 @@ const ExpenseItem: React.FC<ExpenseItemProps> = ({
   onClose,
   onRecurringDeleted,
 }) => {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
   const ref = useRef<HTMLDivElement>(null);
@@ -123,7 +125,7 @@ const ExpenseItem: React.FC<ExpenseItemProps> = ({
         <div className='flex flex-col min-w-0'>
           <div className='flex items-center gap-2 min-w-0'>
             <span className='truncate text-sm font-medium text-text-primary capitalize'>
-              {exp.description ?? 'Sem descrição'}
+              {exp.description ?? t('common.noDescription')}
             </span>
 
             {(exp.installment_count ?? 0) > 1 && exp.first_due_date && (
@@ -140,7 +142,7 @@ const ExpenseItem: React.FC<ExpenseItemProps> = ({
                   color: 'var(--color-primary)',
                 }}
               >
-                Recorrente · dia {exp.due_day}
+                {t('expense.recurring.dayPrefix')} {exp.due_day}
               </span>
             )}
           </div>
@@ -153,7 +155,7 @@ const ExpenseItem: React.FC<ExpenseItemProps> = ({
                 color: 'var(--color-background-primary)',
               }}
             >
-              {safeCategory}
+              {t(`categories.${safeCategory}`)}
             </span>
           )}
         </div>
@@ -163,7 +165,7 @@ const ExpenseItem: React.FC<ExpenseItemProps> = ({
         <span className='text-sm font-bold text-accent-start'>{formattedAmount}</span>
         <span className='text-xs text-text-secondary'>
           {exp.isRecurring
-            ? 'mensal'
+            ? t('expense.recurring.monthly')
             : exp.created_at
               ? new Date(exp.created_at).toLocaleTimeString('pt-BR', {
                   hour: '2-digit',
@@ -211,7 +213,7 @@ const ExpenseItem: React.FC<ExpenseItemProps> = ({
                 }}
               >
                 <PencilSimpleIcon size={14} weight='bold' />
-                Editar
+                {t('common.edit')}
               </motion.button>
             )}
 
@@ -230,7 +232,7 @@ const ExpenseItem: React.FC<ExpenseItemProps> = ({
               }}
             >
               <TrashIcon size={14} weight='bold' />
-              Remover
+                {t('common.remove')}
             </motion.button>
           </motion.div>
         )}
@@ -238,8 +240,8 @@ const ExpenseItem: React.FC<ExpenseItemProps> = ({
 
       <ConfirmDialog
         open={confirming}
-        title='Remover despesa'
-        description={`Tem certeza que deseja remover "${exp.description ?? 'esta despesa'}"?`}
+        title={t('expense.removeTitle')}
+        description={`${t('expense.removeConfirm')} "${exp.description ?? t('expense.removeThis')}"?`}
         onConfirm={handleDelete}
         onCancel={() => setConfirming(false)}
       />
@@ -248,6 +250,7 @@ const ExpenseItem: React.FC<ExpenseItemProps> = ({
 };
 
 const RecentExpensesList: React.FC<{ activeCategory?: string | null }> = ({ activeCategory }) => {
+  const { t } = useTranslation();
   const expenses = useSelector((state: RootState) => selectExpenses(state)) as Expense[];
   const [recurring, setRecurring] = useState<Expense[]>([]);
   const [activeId, setActiveId] = useState<number | null>(null);
@@ -286,15 +289,15 @@ const RecentExpensesList: React.FC<{ activeCategory?: string | null }> = ({ acti
   if (!allExpenses.length) {
     return (
       <div className='rounded-2xl p-4 bg-background-card border border-border-card w-full mb-8'>
-        <h2 className='text-lg font-semibold mb-4 text-text-primary'>Últimas Despesas</h2>
-        <p className='text-sm text-text-secondary'>Nenhuma despesa encontrada.</p>
+        <h2 className='text-lg font-semibold mb-4 text-text-primary'>{t('expense.recentTitle')}</h2>
+        <p className='text-sm text-text-secondary'>{t('expense.empty')}</p>
       </div>
     );
   }
 
   return (
     <div className='rounded-2xl p-4 bg-background-card border border-border-card w-full mb-8'>
-      <h2 className='text-lg font-semibold mb-4 text-text-primary'>Últimas Despesas</h2>
+      <h2 className='text-lg font-semibold mb-4 text-text-primary'>{t('expense.recentTitle')}</h2>
 
       <div className='flex flex-col gap-6'>
         {dates.map((date) => (
@@ -302,8 +305,8 @@ const RecentExpensesList: React.FC<{ activeCategory?: string | null }> = ({ acti
             <div className='flex items-center gap-2 mb-2'>
               <span className='text-xs font-semibold text-text-secondary'>
                 {date === 'Sem data'
-                  ? 'Sem data'
-                  : new Date(`${date}T00:00:00`).toLocaleDateString('pt-BR', {
+                  ? t('common.noDate')
+                  : new Date(`${date}T00:00:00`).toLocaleDateString(t('common.locale'), {
                       weekday: 'short',
                       day: '2-digit',
                       month: '2-digit',

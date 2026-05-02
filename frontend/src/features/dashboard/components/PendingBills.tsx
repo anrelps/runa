@@ -1,5 +1,6 @@
 import { ArrowsClockwiseIcon, GiftIcon } from '@phosphor-icons/react';
 import { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useCurrencyBRL } from '../../../hooks/useCurrencyBRL';
 import { index, indexRecurring } from '../../../redux/services/expensesService';
 import type { category } from '../../../utils/consts';
@@ -50,11 +51,13 @@ const daysUntilInstallmentByDate = (firstDueDate: string, count: number): number
 };
 
 
-const dueLabel = (d: number): string => {
-  if (d === 0) return 'Hoje';
-  if (d === 1) return 'Amanhã';
-  if (d < 0) return `Há ${Math.abs(d)} dia${Math.abs(d) > 1 ? 's' : ''}`;
-  return `Em ${d} dias`;
+const useDueLabel = () => {
+  const { t } = useTranslation();
+  return (d: number): string => {
+    if (d === 0) return t('pendingBills.today');
+    if (d < 0) return t('pendingBills.daysAgoLabel', { count: Math.abs(d) });
+    return t('pendingBills.dueInLabel', { count: d });
+  };
 };
 
 const formatBRL = (v: number) =>
@@ -65,6 +68,9 @@ const formatBRL = (v: number) =>
 type Props = { decorated?: boolean };
 
 export default function PendingBills({ decorated = false }: Props) {
+  const { t } = useTranslation();
+  const noDescription = t('common.noDescription');
+  const dayLabel = t('commitments.dayFull');
   const [bills, setBills] = useState<Bill[]>([]);
 
   useEffect(() => {
@@ -85,7 +91,7 @@ export default function PendingBills({ decorated = false }: Props) {
           amount: parseFloat(r.amount),
           due: daysUntilRecurring(r.due_day),
           kind: 'recurring' as BillKind,
-          badge: `dia ${r.due_day}`,
+          badge: `${dayLabel} ${r.due_day}`,
         }));
 
       const installments: Bill[] = instRaw.flatMap((e) => {
@@ -100,7 +106,7 @@ export default function PendingBills({ decorated = false }: Props) {
           const diff = Math.round((due.getTime() - todayMidnight().getTime()) / 86400000);
           return [{
             id: `inst-${e.id}`,
-            title: e.description ?? 'Sem descrição',
+            title: e.description ?? noDescription,
             amount: parseFloat(next.amount),
             due: diff,
             kind: 'installment' as BillKind,
@@ -114,7 +120,7 @@ export default function PendingBills({ decorated = false }: Props) {
         if (current > e.installment_count) return [];
         return [{
           id: `inst-${e.id}`,
-          title: e.description ?? 'Sem descrição',
+          title: e.description ?? noDescription,
           amount: parseFloat(e.total_amount) / e.installment_count,
           due: daysUntilInstallmentByDate(e.first_due_date, e.installment_count),
           kind: 'installment' as BillKind,
@@ -141,7 +147,7 @@ export default function PendingBills({ decorated = false }: Props) {
       <div className='flex justify-between items-center mb-4 gap-2'>
         <div>
           <p className='text-xs font-medium uppercase tracking-widest text-text-secondary mb-1'>
-            Contas Pendentes
+            {t('pendingBills.title')}
           </p>
           <p className='text-2xl font-bold leading-none tracking-tight text-text-primary'>
             <span className='text-lg font-normal text-text-secondary mr-1'>R$</span>
@@ -159,15 +165,15 @@ export default function PendingBills({ decorated = false }: Props) {
 
       {/* Summary chips */}
       <div className='grid grid-cols-3 gap-2 mb-4'>
-        <StatChip value={bills.length} label='Total' valueColor='text-text-primary' />
-        <StatChip value={recurringCount} label='Recorrentes' valueColor='text-primary' />
-        <StatChip value={installmentCount} label='Parceladas' valueColor='text-accent-start' />
+        <StatChip value={bills.length} label={t('pendingBills.total')} valueColor='text-text-primary' />
+        <StatChip value={recurringCount} label={t('pendingBills.recurring')} valueColor='text-primary' />
+        <StatChip value={installmentCount} label={t('pendingBills.installments')} valueColor='text-accent-start' />
       </div>
 
       {/* Bills list */}
       {bills.length === 0 ? (
         <p className='text-sm text-text-secondary text-center py-4'>
-          Nenhuma conta pendente.
+          {t('pendingBills.empty')}
         </p>
       ) : (
         <div className='flex flex-col gap-2'>
@@ -194,6 +200,8 @@ const StatChip: React.FC<{ value: number; label: string; valueColor: string }> =
 );
 
 const BillItem: React.FC<{ bill: Bill }> = ({ bill }) => {
+  const { t } = useTranslation();
+  const dueLabel = useDueLabel();
   const isToday = bill.due === 0;
   const isSoon = bill.due > 0 && bill.due <= 3;
   const formatted = useCurrencyBRL(bill.amount);
@@ -252,7 +260,7 @@ const BillItem: React.FC<{ bill: Bill }> = ({ bill }) => {
               className='text-[10px] font-semibold px-1.5 py-0.5 rounded mt-0.5 w-fit'
               style={{ background: iconColor, color: 'var(--color-background-primary)' }}
             >
-              {safeCategory}
+              {t(`categories.${safeCategory}`)}
             </span>
           )}
         </div>

@@ -2,6 +2,7 @@ import { PlusCircleIcon } from '@phosphor-icons/react';
 import { useCallback, useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import SpendingByCategoryPieChart from '../../features/charts/SpendingByCategoryPieChart';
 import WeeklySpendingBarChart from '../../features/charts/WeeklySpendingBarChart';
 import CategoryFilterButtons from '../../features/expenses/components/CategoryFilterButtons';
@@ -17,6 +18,7 @@ import { useAppDispatch } from '../../redux/store';
 import type { category } from '../../utils/consts';
 
 const Expenses = () => {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
 
@@ -95,7 +97,7 @@ const Expenses = () => {
         }}
       >
         <PlusCircleIcon weight='fill' size={20} />
-        Adicionar despesa
+        {t('expense.add')}
       </button>
 
       <div className='flex flex-col md:flex-row w-full gap-4'>

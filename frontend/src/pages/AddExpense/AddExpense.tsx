@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import ExpenseForm, {
   type ExpenseFormData,
 } from '../../features/expenses/components/ExpenseForm';
@@ -11,6 +12,7 @@ import { transactionBalanceWallet } from '../../redux/slices/transactionsSlice';
 import type { AppDispatch } from '../../redux/store';
 
 const AddExpense = () => {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const dispatch = useDispatch<AppDispatch>();
   const [loading, setLoading] = useState(false);
@@ -40,14 +42,14 @@ const AddExpense = () => {
           }),
         );
         if (expensesCreate.rejected.match(result)) {
-          setError((result.payload as string) ?? 'Erro ao salvar despesa');
+          setError((result.payload as string) ?? t('expense.saveError'));
           return;
         }
       }
       dispatch(transactionBalanceWallet());
       navigate('/expenses');
     } catch (err: any) {
-      setError(err?.response?.data?.message ?? err?.message ?? 'Erro ao salvar despesa');
+      setError(err?.response?.data?.message ?? err?.message ?? t('expense.saveError'));
     } finally {
       setLoading(false);
     }
@@ -61,9 +63,9 @@ const AddExpense = () => {
         </div>
       )}
       <ExpenseForm
-        title='Adicionar Despesa'
-        subtitle='Registre uma nova despesa'
-        submitLabel='Salvar despesa'
+        title={t('expense.addTitle')}
+        subtitle={t('expense.addSubtitle')}
+        submitLabel={t('expense.save')}
         loading={loading}
         onSubmit={handleSubmit}
       />

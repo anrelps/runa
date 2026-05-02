@@ -4,6 +4,7 @@ import { Provider } from 'react-redux';
 import { I18nProvider } from 'react-aria-components';
 import App from './App.tsx';
 import './index.css';
+import './i18n';
 import { store } from './redux/store.ts';
 
 createRoot(document.getElementById('root')!).render(

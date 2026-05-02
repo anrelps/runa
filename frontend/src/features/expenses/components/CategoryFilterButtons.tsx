@@ -1,4 +1,5 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { CATEGORIES, CATEGORY_ACCENTS, type category } from '../../../utils/consts';
 
 interface Props {
@@ -7,6 +8,7 @@ interface Props {
 }
 
 const CategoryFilterButtons: React.FC<Props> = ({ selected, onSelect }) => {
+  const { t } = useTranslation();
   return (
     <div className='flex flex-wrap gap-2'>
       {CATEGORIES.map((cat) => {
@@ -29,7 +31,7 @@ const CategoryFilterButtons: React.FC<Props> = ({ selected, onSelect }) => {
               className='inline-block w-3 h-3 rounded-full shrink-0'
               style={{ background: CATEGORY_ACCENTS[cat] }}
             />
-            {cat}
+            {t(`categories.${cat}`)}
           </button>
         );
       })}

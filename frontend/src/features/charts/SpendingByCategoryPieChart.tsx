@@ -2,6 +2,7 @@ import { ArcElement, Chart as ChartJS, Legend, Tooltip } from 'chart.js';
 import React, { useEffect, useState } from 'react';
 import { Pie } from 'react-chartjs-2';
 
+import { useTranslation } from 'react-i18next';
 import { useTheme } from '../../contexts/ThemeContext';
 import { useChartResize } from '../../hooks/useChartResize';
 import { index } from '../../redux/services/transactionsService';
@@ -39,6 +40,7 @@ type Props = { decorated?: boolean };
 
 const SpendingByCategoryPieChart: React.FC<Props> = ({ decorated = false }) => {
   const { outerRef, chartRef } = useChartResize();
+  const { t } = useTranslation();
   const { theme } = useTheme();
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [borderColor, setBorderColor] = useState('');
@@ -109,10 +111,10 @@ const SpendingByCategoryPieChart: React.FC<Props> = ({ decorated = false }) => {
     >
       <div className='flex justify-between items-center mb-3.5'>
         <span className='text-sm font-semibold text-text-primary'>
-          Gastos por categoria
+          {t('charts.categoryTitle')}
         </span>
         <span className='text-xs text-text-secondary opacity-60'>
-          Mês atual
+          {t('charts.currentMonth')}
         </span>
       </div>
 
@@ -139,7 +141,7 @@ const SpendingByCategoryPieChart: React.FC<Props> = ({ decorated = false }) => {
                     border: '1.5px solid var(--color-border-card)',
                   }}
                 />
-                <span className='text-xs text-text-secondary'>{cat}</span>
+                <span className='text-xs text-text-secondary'>{t(`categories.${cat}`)}</span>
               </div>
             ))}
           </div>
@@ -147,7 +149,7 @@ const SpendingByCategoryPieChart: React.FC<Props> = ({ decorated = false }) => {
       ) : (
         <div className='flex-1 flex items-center justify-center'>
           <p className='text-sm text-text-secondary/50'>
-            Sem despesas para exibir
+            {t('charts.noExpenses')}
           </p>
         </div>
       )}

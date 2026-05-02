@@ -5,22 +5,10 @@ import {
   LinkedinLogoIcon,
   XLogoIcon,
 } from '@phosphor-icons/react';
+import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import logoSvg from '../../../assets/logo.svg';
 import GradientDivider from '../../../features/landing/components/GradientDivider';
-
-const footerLinks = {
-  navegação: [
-    { label: 'Home', to: '/' },
-    { label: 'Planos', to: '#' },
-    { label: 'Contato', to: '/contact' },
-    { label: 'Sobre', to: '/about' },
-  ],
-  legal: [
-    { label: 'Privacidade', to: '#' },
-    { label: 'Termos de uso', to: '#' },
-  ],
-};
 
 const socialLinks = [
   { icon: XLogoIcon, href: '#', label: 'X' },
@@ -30,16 +18,29 @@ const socialLinks = [
 ];
 
 const Footer = () => {
+  const { t } = useTranslation();
+
+  const footerLinks = {
+    [t('landing.footer.navTitle')]: [
+      { label: 'Home', to: '/' },
+      { label: t('landing.nav.plans'), to: '#' },
+      { label: t('landing.nav.contact'), to: '/contact' },
+      { label: t('landing.nav.about'), to: '/about' },
+    ],
+    [t('landing.footer.legalTitle')]: [
+      { label: t('landing.footer.privacy'), to: '#' },
+      { label: t('landing.footer.terms'), to: '#' },
+    ],
+  };
+
   return (
     <footer
       className='relative'
       style={{ backgroundColor: 'var(--color-background-primary)' }}
     >
-      {/* Top gradient divider */}
       <GradientDivider />
 
       <div className='mx-auto max-w-6xl px-4 pt-16 pb-8 md:px-8'>
-        {/* Main grid */}
         <div className='grid grid-cols-2 gap-10 md:grid-cols-4 lg:gap-16'>
           {/* Brand column */}
           <div className='col-span-2'>
@@ -53,12 +54,9 @@ const Footer = () => {
               className='mb-6 max-w-xs text-sm leading-relaxed'
               style={{ color: 'var(--color-text-secondary)' }}
             >
-              Organize suas finanças de forma simples e inteligente. Runa te
-              ajuda a ter controle total sobre receitas, despesas e contas
-              recorrentes.
+              {t('landing.footer.description')}
             </p>
 
-            {/* Newsletter */}
             <div className='flex w-full max-w-xs items-center gap-2'>
               <div className='relative flex-1'>
                 <EnvelopeSimpleIcon
@@ -68,7 +66,7 @@ const Footer = () => {
                 />
                 <input
                   type='email'
-                  placeholder='Seu e-mail'
+                  placeholder={t('landing.footer.emailPlaceholder')}
                   className='w-full rounded-lg border py-2 pr-3 pl-9 text-sm outline-none transition-colors focus:border-primary'
                   style={{
                     backgroundColor: 'var(--color-background-card)',
@@ -85,7 +83,7 @@ const Footer = () => {
                   color: 'var(--color-background-primary)',
                 }}
               >
-                Inscrever
+                {t('landing.footer.subscribe')}
               </button>
             </div>
           </div>
@@ -121,12 +119,8 @@ const Footer = () => {
           className='mt-14 flex flex-col items-center justify-between gap-4 border-t pt-6 sm:flex-row'
           style={{ borderColor: 'rgba(255,255,255,0.06)' }}
         >
-          <p
-            className='text-xs'
-            style={{ color: 'var(--color-text-secondary)' }}
-          >
-            &copy; {new Date().getFullYear()} Runa. Todos os direitos
-            reservados.
+          <p className='text-xs' style={{ color: 'var(--color-text-secondary)' }}>
+            &copy; {new Date().getFullYear()} Runa. {t('landing.footer.copyright')}
           </p>
 
           <div className='flex items-center gap-3'>
@@ -137,12 +131,8 @@ const Footer = () => {
                 aria-label={label}
                 className='rounded-md p-2 transition-colors duration-200 hover:bg-[rgba(255,255,255,0.06)]'
                 style={{ color: 'var(--color-text-secondary)' }}
-                onMouseEnter={(e) =>
-                  (e.currentTarget.style.color = 'var(--color-primary)')
-                }
-                onMouseLeave={(e) =>
-                  (e.currentTarget.style.color = 'var(--color-text-secondary)')
-                }
+                onMouseEnter={(e) => (e.currentTarget.style.color = 'var(--color-primary)')}
+                onMouseLeave={(e) => (e.currentTarget.style.color = 'var(--color-text-secondary)')}
               >
                 <Icon size={20} weight='regular' />
               </a>

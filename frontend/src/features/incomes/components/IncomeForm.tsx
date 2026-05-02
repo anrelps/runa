@@ -1,6 +1,7 @@
 import { ArrowCircleUpIcon, ArrowLeftIcon } from '@phosphor-icons/react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { useCurrencyBRL } from '../../../hooks/useCurrencyBRL';
 
@@ -48,6 +49,7 @@ const IncomeForm = ({
   initialData,
   onSubmit,
 }: IncomeFormProps) => {
+  const { t } = useTranslation();
   const navigate = useNavigate();
 
   const merged: IncomeFormData = { ...defaultIncomeFormData(), ...initialData };
@@ -129,7 +131,7 @@ const IncomeForm = ({
           />
           <div className='relative px-6 pt-5 pb-6 flex flex-col items-center gap-1'>
             <p className='text-[10px] font-semibold uppercase tracking-widest mb-1 text-text-secondary/60'>
-              Valor do saldo
+              {t('income.form.amount')}
             </p>
             <div className='flex items-baseline gap-2'>
               <span className='text-xl font-semibold text-text-secondary'>R$</span>
@@ -165,11 +167,11 @@ const IncomeForm = ({
             className='w-full flex items-center justify-between px-5 py-4 cursor-pointer'
           >
             <div className='flex flex-col items-start gap-0.5'>
-              <span className='text-sm font-semibold text-text-primary'>Personalizar</span>
+              <span className='text-sm font-semibold text-text-primary'>{t('income.form.customize')}</span>
               <span className='text-xs text-text-secondary/60'>
                 {expanded
-                  ? 'Descrição e data personalizadas'
-                  : 'Usar "Saldo adicionado" e data atual'}
+                  ? t('income.form.customizeDesc')
+                  : t('income.form.defaultDesc')}
               </span>
             </div>
             <div
@@ -198,10 +200,10 @@ const IncomeForm = ({
                   <div className='h-px w-full' style={{ background: 'var(--color-border-subtle)' }} />
 
                   <div>
-                    <FieldLabel>Descrição</FieldLabel>
+                    <FieldLabel>{t('income.form.description')}</FieldLabel>
                     <input
                       type='text'
-                      placeholder='Ex: Salário, Freelance...'
+                      placeholder={t('income.form.descriptionPlaceholder')}
                       value={data.description}
                       onChange={(e) => set('description', e.target.value)}
                       className='w-full rounded-xl px-4 py-3 text-sm font-medium text-text-primary placeholder:text-text-secondary/30 outline-none transition-all'
@@ -214,7 +216,7 @@ const IncomeForm = ({
                   </div>
 
                   <div>
-                    <FieldLabel>Data</FieldLabel>
+                    <FieldLabel>{t('income.form.date')}</FieldLabel>
                     <input
                       type='date'
                       value={data.date}
@@ -246,7 +248,7 @@ const IncomeForm = ({
             boxShadow: `0 8px 24px color-mix(in srgb, ${ACCENT} 35%, transparent)`,
           }}
         >
-          {loading ? 'Salvando...' : submitLabel}
+          {loading ? t('common.saving') : submitLabel}
         </motion.button>
       </form>
     </div>

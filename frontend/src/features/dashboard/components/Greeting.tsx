@@ -1,28 +1,26 @@
 import { useSelector } from 'react-redux';
+import { useTranslation } from 'react-i18next';
 import type { RootState } from '../../../redux/store';
 
-// ── Helpers ───────────────────────────────────────────────────────────────────
-
-const getGreeting = (): string => {
-  const hour = new Date().getHours();
-  if (hour >= 6 && hour < 12) return 'Bom dia';
-  if (hour >= 12 && hour < 18) return 'Boa tarde';
-  return 'Boa noite';
-};
-
-const getFormattedDate = (): string =>
-  new Date().toLocaleDateString('pt-BR', {
-    weekday: 'long',
-    day: 'numeric',
-    month: 'long',
-    year: 'numeric',
-  });
-
-// ── Component ─────────────────────────────────────────────────────────────────
-
 const Greeting = () => {
+  const { t, i18n } = useTranslation();
   const user = useSelector((state: RootState) => state.user.user) as { name: string } | null;
   const firstName = user?.name?.split(' ')[0] ?? '';
+
+  const getGreeting = (): string => {
+    const hour = new Date().getHours();
+    if (hour >= 6 && hour < 12) return t('dashboard.greeting.morning');
+    if (hour >= 12 && hour < 18) return t('dashboard.greeting.afternoon');
+    return t('dashboard.greeting.evening');
+  };
+
+  const getFormattedDate = (): string =>
+    new Date().toLocaleDateString(i18n.language === 'en' ? 'en-US' : 'pt-BR', {
+      weekday: 'long',
+      day: 'numeric',
+      month: 'long',
+      year: 'numeric',
+    });
 
   return (
     <div className='flex flex-col items-start sm:items-end gap-3 flex-1 sm:self-end'>

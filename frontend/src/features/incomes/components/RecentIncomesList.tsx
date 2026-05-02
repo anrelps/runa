@@ -1,6 +1,7 @@
 import { PencilSimpleIcon, TrashIcon, TrendUpIcon } from '@phosphor-icons/react';
 import { AnimatePresence, motion } from 'framer-motion';
 import React, { useEffect, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { useCurrencyBRL } from '../../../hooks/useCurrencyBRL';
@@ -40,6 +41,7 @@ const IncomeItem: React.FC<IncomeItemProps> = ({
   onActivate,
   onClose,
 }) => {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
   const ref = useRef<HTMLDivElement>(null);
@@ -78,7 +80,7 @@ const IncomeItem: React.FC<IncomeItemProps> = ({
         />
 
         <span className='truncate text-sm font-medium text-text-primary capitalize'>
-          {income.description ?? 'Sem descrição'}
+          {income.description ?? t('common.noDescription')}
         </span>
       </div>
 
@@ -88,7 +90,7 @@ const IncomeItem: React.FC<IncomeItemProps> = ({
         </span>
         <span className='text-xs text-text-secondary'>
           {income.date
-            ? new Date(`${income.date}T00:00:00`).toLocaleDateString('pt-BR', {
+            ? new Date(`${income.date}T00:00:00`).toLocaleDateString(t('common.locale'), {
                 day: '2-digit',
                 month: '2-digit',
               })
@@ -136,7 +138,7 @@ const IncomeItem: React.FC<IncomeItemProps> = ({
               }}
             >
               <PencilSimpleIcon size={14} weight='bold' />
-              Editar
+              {t('common.edit')}
             </motion.button>
 
             <motion.button
@@ -155,7 +157,7 @@ const IncomeItem: React.FC<IncomeItemProps> = ({
               }}
             >
               <TrashIcon size={14} weight='bold' />
-              Remover
+              {t('common.remove')}
             </motion.button>
           </motion.div>
         )}
@@ -165,6 +167,7 @@ const IncomeItem: React.FC<IncomeItemProps> = ({
 };
 
 const RecentIncomesList: React.FC = () => {
+  const { t } = useTranslation();
   const incomes = useSelector((state: RootState) =>
     selectTransactions(state),
   ) as Income[];
@@ -182,10 +185,10 @@ const RecentIncomesList: React.FC = () => {
     return (
       <div className='rounded-2xl p-4 bg-background-card border border-border-card w-full mb-8'>
         <h2 className='text-lg font-semibold mb-4 text-text-primary'>
-          Últimos Saldos
+          {t('income.recentTitle')}
         </h2>
         <p className='text-sm text-text-secondary'>
-          Nenhum saldo encontrado.
+          {t('income.empty')}
         </p>
       </div>
     );
@@ -194,7 +197,7 @@ const RecentIncomesList: React.FC = () => {
   return (
     <div className='rounded-2xl p-4 bg-background-card border border-border-card w-full mb-8'>
       <h2 className='text-lg font-semibold mb-4 text-text-primary'>
-        Últimos Saldos
+        {t('income.recentTitle')}
       </h2>
 
       <div className='flex flex-col gap-6'>
@@ -203,8 +206,8 @@ const RecentIncomesList: React.FC = () => {
             <div className='flex items-center gap-2 mb-2'>
               <span className='text-xs font-semibold text-text-secondary'>
                 {date === 'Sem data'
-                  ? 'Sem data'
-                  : new Date(`${date}T00:00:00`).toLocaleDateString('pt-BR', {
+                  ? t('common.noDate')
+                  : new Date(`${date}T00:00:00`).toLocaleDateString(t('common.locale'), {
                       weekday: 'short',
                       day: '2-digit',
                       month: '2-digit',

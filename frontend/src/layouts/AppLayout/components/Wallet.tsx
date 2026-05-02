@@ -2,12 +2,14 @@ import { PlusCircleIcon, WalletIcon } from '@phosphor-icons/react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
+import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { useTheme } from '../../../contexts/ThemeContext';
 import { selectWallet } from '../../../redux/slices/transactionsSlice';
 
 const Wallet = () => {
+  const { t } = useTranslation();
   const { theme } = useTheme();
   const navigate = useNavigate();
   const wallet = useSelector(selectWallet);
@@ -61,7 +63,7 @@ const Wallet = () => {
         <span className='shrink-0 flex items-center justify-center'>
           <WalletIcon weight='fill' size={18} />
         </span>
-        <span className='hidden md:inline whitespace-nowrap'>Carteira</span>
+        <span className='hidden md:inline whitespace-nowrap'>{t('wallet.label')}</span>
       </motion.button>
 
       {/* ── Popover (portal) ── */}
@@ -101,7 +103,7 @@ const Wallet = () => {
                   <WalletIcon weight='fill' size={15} />
                 </span>
                 <p className='text-xs font-bold uppercase tracking-widest text-text-secondary/60'>
-                  Saldo da carteira
+                  {t('wallet.balanceTitle')}
                 </p>
               </div>
 
@@ -126,7 +128,7 @@ const Wallet = () => {
                   onMouseLeave={e => { e.currentTarget.style.borderColor = 'var(--color-border-subtle)'; e.currentTarget.style.color = 'var(--color-text-secondary)'; }}
                 >
                   <PlusCircleIcon weight='bold' size={12} />
-                  Adicionar saldo
+                  {t('wallet.addBalance')}
                 </button>
               </div>
             </div>

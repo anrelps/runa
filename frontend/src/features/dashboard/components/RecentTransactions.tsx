@@ -1,6 +1,7 @@
 import { ArrowRightIcon, DotsThreeOutlineIcon } from '@phosphor-icons/react';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { index } from '../../../redux/services/transactionsService';
 import type { category } from '../../../utils/consts';
 import { CATEGORY_ACCENTS, CATEGORY_ICONS } from '../../../utils/consts';
@@ -27,21 +28,24 @@ const formatBRL = (value: number): string =>
     maximumFractionDigits: 2,
   });
 
-const formatDateLabel = (dateStr: string): string => {
-  const date = new Date(dateStr + 'T00:00:00');
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
-  const yesterday = new Date(today);
-  yesterday.setDate(today.getDate() - 1);
+const useFormatDateLabel = () => {
+  const { t, i18n } = useTranslation();
+  return (dateStr: string): string => {
+    const date = new Date(dateStr + 'T00:00:00');
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const yesterday = new Date(today);
+    yesterday.setDate(today.getDate() - 1);
 
-  if (date.toDateString() === today.toDateString()) return 'Hoje';
-  if (date.toDateString() === yesterday.toDateString()) return 'Ontem';
+    if (date.toDateString() === today.toDateString()) return t('transactions.today');
+    if (date.toDateString() === yesterday.toDateString()) return t('transactions.yesterday');
 
-  return date.toLocaleDateString('pt-BR', {
-    weekday: 'short',
-    day: '2-digit',
-    month: '2-digit',
-  });
+    return date.toLocaleDateString(i18n.language === 'en' ? 'en-US' : 'pt-BR', {
+      weekday: 'short',
+      day: '2-digit',
+      month: '2-digit',
+    });
+  };
 };
 
 function groupByDate(
@@ -74,7 +78,9 @@ type Props = {
 };
 
 export default function RecentTransactions({ decorated = false }: Props) {
+  const { t } = useTranslation();
   const navigate = useNavigate();
+  const formatDateLabel = useFormatDateLabel();
   const [transactions, setTransactions] = useState<Transaction[]>([]);
 
   useEffect(() => {
@@ -115,12 +121,12 @@ export default function RecentTransactions({ decorated = false }: Props) {
       <div className='flex justify-between items-center mb-5 gap-2'>
         <div>
           <p className='text-xs font-medium uppercase tracking-widest text-text-secondary mb-1'>
-            Transações Recentes
+            {t('transactions.title')}
           </p>
           <p className='text-2xl font-bold leading-none tracking-tight text-text-primary'>
             {transactions.length}
             <span className='text-base font-normal text-text-secondary ml-1.5'>
-              transações
+              {t('transactions.count')}
             </span>
           </p>
         </div>
@@ -130,21 +136,21 @@ export default function RecentTransactions({ decorated = false }: Props) {
             onClick={() => navigate('/incomes')}
             className='flex items-center gap-1 px-3 py-1.5 rounded-full text-xs font-semibold cursor-pointer transition-all border border-primary/20 bg-primary/8 text-primary hover:bg-primary/15'
           >
-            Saldo <ArrowRightIcon size={11} weight='bold' />
+            {t('transactions.balance')} <ArrowRightIcon size={11} weight='bold' />
           </button>
           <button
             onClick={() => navigate('/expenses')}
             className='flex items-center gap-1 px-3 py-1.5 rounded-full text-xs font-semibold cursor-pointer transition-all border border-accent-start/20 bg-accent-start/8 text-accent-start hover:bg-accent-start/15'
           >
-            Gastos <ArrowRightIcon size={11} weight='bold' />
+            {t('transactions.expenses')} <ArrowRightIcon size={11} weight='bold' />
           </button>
         </div>
       </div>
 
       {/* Summary chips */}
       <div className='grid grid-cols-2 gap-2.5 mb-5'>
-        <SummaryChip label='Entradas' value={totalIncome} type='income' />
-        <SummaryChip label='Saídas' value={totalExpense} type='expense' />
+        <SummaryChip label={t('transactions.income')} value={totalIncome} type='income' />
+        <SummaryChip label={t('transactions.outcome')} value={totalExpense} type='expense' />
       </div>
 
       {/* Grouped transactions */}
@@ -220,11 +226,12 @@ const SummaryChip: React.FC<SummaryChipProps> = ({ label, value, type }) => {
 type TransactionItemProps = { transaction: Transaction };
 
 const TransactionItem: React.FC<TransactionItemProps> = ({
-  transaction: t,
+  transaction: tx,
 }) => {
-  const isIncome = t.type === 'income';
-  const Icon = CATEGORY_ICONS[t.category] ?? DotsThreeOutlineIcon;
-  const accent = CATEGORY_ACCENTS[t.category] ?? 'var(--color-text-secondary)';
+  const { t } = useTranslation();
+  const isIncome = tx.type === 'income';
+  const Icon = CATEGORY_ICONS[tx.category] ?? DotsThreeOutlineIcon;
+  const accent = CATEGORY_ACCENTS[tx.category] ?? 'var(--color-text-secondary)';
 
   return (
     <div className='flex items-center justify-between p-3 rounded-xl bg-white/[0.03] border border-border-card hover:bg-white/[0.05] hover:border-primary/20 transition-all duration-200 cursor-pointer'>
@@ -240,15 +247,15 @@ const TransactionItem: React.FC<TransactionItemProps> = ({
         <div className='flex flex-col min-w-0'>
           <div className='flex items-center gap-1.5 min-w-0'>
             <span className='truncate text-sm font-medium text-text-primary capitalize'>
-              {t.title}
+              {tx.title}
             </span>
           </div>
-          {!isIncome && (
+          {!isIncome && tx.category && (
             <span
               className='text-[10px] font-semibold px-1.5 py-0.5 rounded mt-0.5 w-fit'
               style={{ background: accent, color: 'var(--color-background-primary)' }}
             >
-              {t.category}
+              {t(`categories.${tx.category}`)}
             </span>
           )}
         </div>
@@ -259,7 +266,7 @@ const TransactionItem: React.FC<TransactionItemProps> = ({
         <p
           className={`text-sm font-bold ${isIncome ? 'text-primary' : 'text-accent-start'}`}
         >
-          {isIncome ? '+' : '-'} R$ {formatBRL(t.amount)}
+          {isIncome ? '+' : '-'} R$ {formatBRL(tx.amount)}
         </p>
       </div>
     </div>

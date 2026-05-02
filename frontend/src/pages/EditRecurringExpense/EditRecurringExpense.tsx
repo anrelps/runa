@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import ExpenseForm, {
   defaultExpenseFormData,
   type ExpenseFormData,
@@ -8,6 +9,7 @@ import AppLayout from '../../layouts/AppLayout/AppLayout';
 import { showRecurring, updateRecurring } from '../../redux/services/expensesService';
 
 const EditRecurringExpense = () => {
+  const { t } = useTranslation();
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const [initialData, setInitialData] = useState<Partial<ExpenseFormData> | null>(null);
@@ -39,7 +41,7 @@ const EditRecurringExpense = () => {
       });
       navigate('/commitments');
     } catch (err: any) {
-      setError(err?.response?.data?.message ?? err?.message ?? 'Erro ao salvar');
+      setError(err?.response?.data?.message ?? err?.message ?? t('editRecurring.saveError'));
     } finally {
       setLoading(false);
     }
@@ -49,7 +51,7 @@ const EditRecurringExpense = () => {
     return (
       <AppLayout>
         <div className='flex items-center justify-center h-40'>
-          <p className='text-sm text-text-secondary'>Carregando...</p>
+          <p className='text-sm text-text-secondary'>{t('common.loading')}</p>
         </div>
       </AppLayout>
     );
@@ -63,9 +65,9 @@ const EditRecurringExpense = () => {
         </div>
       )}
       <ExpenseForm
-        title='Editar Recorrente'
-        subtitle='Atualize os dados da despesa recorrente'
-        submitLabel='Salvar alterações'
+        title={t('editRecurring.title')}
+        subtitle={t('editRecurring.subtitle')}
+        submitLabel={t('common.save')}
         loading={loading}
         initialData={initialData}
         onSubmit={handleSubmit}

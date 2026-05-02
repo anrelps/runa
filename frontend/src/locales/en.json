@@ -1,0 +1,233 @@
+{
+  "nav": {
+    "dashboard": "Dashboard",
+    "expenses": "Expenses",
+    "incomes": "Balance",
+    "commitments": "Commitments"
+  },
+  "common": {
+    "locale": "en-US",
+    "save": "Save changes",
+    "saving": "Saving...",
+    "loading": "Loading...",
+    "edit": "Edit",
+    "remove": "Remove",
+    "cancel": "Cancel",
+    "back": "Back",
+    "noDescription": "No description",
+    "noDate": "No date"
+  },
+  "expense": {
+    "add": "Add expense",
+    "addTitle": "Add Expense",
+    "addSubtitle": "Record a new expense",
+    "editTitle": "Edit Expense",
+    "editSubtitle": "Update the expense details",
+    "save": "Save expense",
+    "saveError": "Error saving expense",
+    "notFound": "Expense not found.",
+    "recentTitle": "Latest Expenses",
+    "empty": "No expenses found.",
+    "removeTitle": "Remove expense",
+    "removeConfirm": "Are you sure you want to remove",
+    "removeThis": "this expense",
+    "form": {
+      "single": "Single",
+      "installment": "Installment",
+      "recurring": "Recurring",
+      "amount": "Expense amount",
+      "description": "Description",
+      "descriptionPlaceholder": "Give this expense a name...",
+      "category": "Category",
+      "type": "Expense type",
+      "date": "Expense date",
+      "firstDueDate": "1st installment due date",
+      "installmentCount": "Number of installments",
+      "other": "Other",
+      "installmentCountLabel": "No. of installments",
+      "recurringDay": "Recurring day (every month)",
+      "day": "day",
+      "otherDay": "Other day",
+      "dayRange": "1 – 31"
+    },
+    "recurring": {
+      "title": "Recurring",
+      "empty": "No recurring expenses.",
+      "everyDay": "every day",
+      "active": "active",
+      "inactive": "inactive",
+      "removeTitle": "Remove recurring",
+      "removeConfirm": "Are you sure you want to remove",
+      "monthly": "monthly",
+      "dayPrefix": "Recurring · day"
+    },
+    "installmentExpense": {
+      "title": "Installments",
+      "empty": "No installment expenses.",
+      "removeTitle": "Remove installment",
+      "removeConfirm": "Are you sure you want to remove",
+      "removeAllInstallments": "and all its installments?",
+      "remaining_one": "remaining",
+      "remaining_other": "remaining",
+      "markPaid": "Mark as paid",
+      "expand": "Expand installments",
+      "collapse": "Collapse installments"
+    }
+  },
+  "income": {
+    "add": "Add balance",
+    "addTitle": "Add Balance",
+    "addSubtitle": "Record a new balance entry",
+    "editTitle": "Edit Balance",
+    "editSubtitle": "Update the balance details",
+    "save": "Save balance",
+    "saved": "Balance added",
+    "recentTitle": "Latest Balance",
+    "empty": "No balance entries found.",
+    "form": {
+      "amount": "Balance amount",
+      "customize": "Customize",
+      "customizeDesc": "Custom description and date",
+      "defaultDesc": "Use \"Balance added\" and current date",
+      "description": "Description",
+      "descriptionPlaceholder": "E.g. Salary, Freelance...",
+      "date": "Date"
+    }
+  },
+  "editRecurring": {
+    "title": "Edit Recurring",
+    "subtitle": "Update the recurring expense details",
+    "saveError": "Error saving"
+  },
+  "dashboard": {
+    "addBalance": "Balance\nAdd",
+    "addExpense": "Expense\nAdd",
+    "greeting": {
+      "morning": "Good morning",
+      "afternoon": "Good afternoon",
+      "evening": "Good evening"
+    }
+  },
+  "wallet": {
+    "label": "Wallet",
+    "balanceTitle": "Wallet balance",
+    "addBalance": "Add balance"
+  },
+  "userCards": {
+    "expenses": "Monthly expenses",
+    "income": "Monthly income",
+    "balance": "Remaining balance"
+  },
+  "transactions": {
+    "title": "Recent Transactions",
+    "count": "transactions",
+    "balance": "Balance",
+    "expenses": "Expenses",
+    "income": "Income",
+    "outcome": "Outcome",
+    "today": "Today",
+    "yesterday": "Yesterday"
+  },
+  "pendingBills": {
+    "title": "Pending Bills",
+    "total": "Total",
+    "recurring": "Recurring",
+    "installments": "Installments",
+    "empty": "No pending bills.",
+    "today": "Today",
+    "dueInLabel_one": "In 1 day",
+    "dueInLabel_other": "In {{count}} days",
+    "daysAgoLabel_one": "1 day ago",
+    "daysAgoLabel_other": "{{count}} days ago"
+  },
+  "commitments": {
+    "paid": "Paid",
+    "overdueFor": "Overdue for",
+    "dueToday": "Due today",
+    "dueIn": "Due in",
+    "day": "d",
+    "dayFull": "day"
+  },
+  "charts": {
+    "weeklyTitle": "Monthly spending",
+    "currentMonth": "Current month",
+    "previous": "Previous",
+    "noData": "No data",
+    "categoryTitle": "Spending by category",
+    "noExpenses": "No expenses to display"
+  },
+  "auth": {
+    "title": "Sign in to your account",
+    "noAccount": "Don't have an account yet?",
+    "createOne": "Create one.",
+    "sso": "Sign in with SSO",
+    "or": "OR",
+    "email": "E-mail",
+    "emailPlaceholder": "your.email@provider.com",
+    "password": "Password",
+    "forgotPassword": "Forgot?",
+    "loading": "Loading...",
+    "submitting": "Signing in...",
+    "submit": "Sign in",
+    "demo": "Explore Demo",
+    "terms": "By signing in, you agree to our",
+    "termsLink": "Terms of Use",
+    "and": "and",
+    "privacyLink": "Privacy Policy."
+  },
+  "landing": {
+    "nav": {
+      "plans": "Plans",
+      "contact": "Contact",
+      "about": "About"
+    },
+    "hero": {
+      "chip": "Start for free today 🌟",
+      "title": "Discover the power of Runa",
+      "subtitle": "Runa organizes your income, expenses and recurring bills in one place, so you always know exactly where your finances stand.",
+      "cta": "Try for Free",
+      "learnMore": "Learn More"
+    },
+    "stats": {
+      "heading": "REAL RESULTS FOR",
+      "headingHighlight": "THOSE WHO WANT TO CONTROL THEIR FINANCES",
+      "stat1": "average savings in the first month of use",
+      "stat2": "active users tracking their expenses",
+      "stat3": "financial entries organized"
+    },
+    "testimonials": {
+      "ana": "I finally managed to organize my finances in a simple and efficient way. The best decision I made this year.",
+      "anaAuthor": "Ana Silva - Entrepreneur",
+      "carlos": "It completely transformed the way I manage my spending. Simple, intuitive and very effective.",
+      "carlosAuthor": "Carlos Santos - Designer",
+      "maria": "Intuitive interface and powerful features. I can now plan my financial future with confidence.",
+      "mariaAuthor": "Maria Costa - Developer"
+    },
+    "footer": {
+      "description": "Organize your finances simply and intelligently. Runa helps you have full control over your income, expenses and recurring bills.",
+      "emailPlaceholder": "Your e-mail",
+      "subscribe": "Subscribe",
+      "navTitle": "navigation",
+      "legalTitle": "legal",
+      "privacy": "Privacy",
+      "terms": "Terms of use",
+      "copyright": "All rights reserved."
+    }
+  },
+  "categories": {
+    "Moradia": "Housing",
+    "Alimentação": "Food",
+    "Transporte": "Transport",
+    "Compras": "Shopping",
+    "Lazer": "Leisure",
+    "Saúde": "Health",
+    "Educação": "Education",
+    "Negócios": "Business",
+    "Finanças": "Finance",
+    "Outros": "Other"
+  },
+  "confirm": {
+    "remove": "Remove",
+    "cancel": "Cancel"
+  }
+}

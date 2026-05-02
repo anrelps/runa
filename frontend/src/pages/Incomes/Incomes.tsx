@@ -2,6 +2,7 @@ import { PlusCircleIcon } from '@phosphor-icons/react';
 import { useCallback, useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import RecentIncomesList from '../../features/incomes/components/RecentIncomesList';
 import { DateRangePicker } from '../../features/shared/components/DateRangePicker/DateRangePicker';
 import { Pagination } from '../../features/shared/components/Pagination';
@@ -13,6 +14,7 @@ import {
 import { useAppDispatch } from '../../redux/store';
 
 const Incomes = () => {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
 
@@ -70,7 +72,7 @@ const Incomes = () => {
         onMouseLeave={e => { e.currentTarget.style.filter = ''; }}
       >
         <PlusCircleIcon weight='fill' size={20} />
-        Adicionar saldo
+        {t('income.add')}
       </button>
 
       <div className='mb-4'>

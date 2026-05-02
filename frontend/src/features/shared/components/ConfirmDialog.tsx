@@ -1,5 +1,6 @@
 import { WarningIcon } from '@phosphor-icons/react';
 import { AnimatePresence, motion } from 'framer-motion';
+import { useTranslation } from 'react-i18next';
 
 interface ConfirmDialogProps {
   open: boolean;
@@ -15,11 +16,14 @@ const ConfirmDialog = ({
   open,
   title,
   description,
-  confirmLabel = 'Remover',
-  cancelLabel = 'Cancelar',
+  confirmLabel,
+  cancelLabel,
   onConfirm,
   onCancel,
 }: ConfirmDialogProps) => {
+  const { t } = useTranslation();
+  const resolvedConfirmLabel = confirmLabel ?? t('confirm.remove');
+  const resolvedCancelLabel = cancelLabel ?? t('confirm.cancel');
   return (
     <AnimatePresence>
       {open && (
@@ -78,7 +82,7 @@ const ConfirmDialog = ({
                     color: 'var(--color-text-secondary)',
                   }}
                 >
-                  {cancelLabel}
+                  {resolvedCancelLabel}
                 </button>
                 <button
                   type='button'
@@ -90,7 +94,7 @@ const ConfirmDialog = ({
                     color: '#ef4444',
                   }}
                 >
-                  {confirmLabel}
+                  {resolvedConfirmLabel}
                 </button>
               </div>
             </div>
