@@ -124,7 +124,7 @@ const transactionsSlice = createSlice({
         state.loading = true;
         state.error = null;
       })
-      .addCase(addBalanceWallet.fulfilled, (state, action) => {
+      .addCase(addBalanceWallet.fulfilled, (state) => {
         state.loading = false;
       })
       .addCase(addBalanceWallet.rejected, (state, action) => {

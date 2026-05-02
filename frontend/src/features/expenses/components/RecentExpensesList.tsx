@@ -31,13 +31,6 @@ interface Expense {
   [key: string]: any;
 }
 
-const currentInstallment = (firstDueDate: string, installmentCount: number): number => {
-  const start = new Date(`${firstDueDate}T00:00:00`);
-  const now = new Date();
-  const months = (now.getFullYear() - start.getFullYear()) * 12 + (now.getMonth() - start.getMonth());
-  return Math.min(Math.max(months + 1, 1), installmentCount);
-};
-
 const currentMonthDate = (day: number): string => {
   const now = new Date();
   const d = String(day).padStart(2, '0');
