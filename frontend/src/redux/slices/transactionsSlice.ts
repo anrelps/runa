@@ -47,7 +47,6 @@ export const addBalanceWallet = createAsyncThunk<
 >('transactions/addBalance', async (data, { rejectWithValue }) => {
   try {
     const res = await addBalance(data);
-    console.log('Resposta do addBalance:', res, 'Dados enviados:', data);
     return res;
   } catch (error: any) {
     return rejectWithValue(error?.message ?? 'Erro desconhecido');

@@ -1,5 +1,30 @@
-frontend/.env
-backend/.env.example
-backend/.env.example
-.claude/
+# Environment
 .env
+.env.local
+frontend/.env
+frontend/.env.production
+backend/.env
+backend/.env.*.local
+
+# Dependencies
+node_modules/
+vendor/
+
+# Build artifacts
+frontend/dist/
+frontend/dist-ssr/
+public/build/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.idea/
+.vscode/
+.zed/
+*.suo
+*.sw?
+
+# Claude Code
+.claude/

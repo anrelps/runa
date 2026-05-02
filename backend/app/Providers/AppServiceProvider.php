@@ -2,6 +2,13 @@
 
 namespace App\Providers;
 
+use App\Domain\Finance\Expense\Models\Expense;
+use App\Domain\Finance\Expense\Models\ExpenseInstallment;
+use App\Domain\Finance\RecurringExpense\Models\RecurringExpense;
+use App\Domain\Finance\Transaction\Models\Transaction;
+use App\Domain\Finance\Policies\ExpensePolicy;
+use App\Domain\Finance\Policies\RecurringExpensePolicy;
+use App\Domain\Finance\Policies\TransactionPolicy;
 use App\Domain\Finance\Expense\Repositories\Contracts\ExpenseRepositoryInterface;
 use App\Domain\Finance\Expense\Repositories\Eloquent\ExpenseRepository;
 use App\Domain\Finance\RecurringExpense\Repositories\Contracts\RecurringExpenseRepositoryInterface;
@@ -10,6 +17,7 @@ use App\Domain\Finance\Transaction\Repositories\Contracts\TransactionRepositoryI
 use App\Domain\Finance\Transaction\Repositories\Eloquent\TransactionRepository;
 use App\Domain\User\Repositories\Contracts\UserRepositoryInterface;
 use App\Domain\User\Repositories\Eloquent\UserRepository;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -30,6 +38,8 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
+        Gate::policy(Expense::class, ExpensePolicy::class);
+        Gate::policy(RecurringExpense::class, RecurringExpensePolicy::class);
+        Gate::policy(Transaction::class, TransactionPolicy::class);
     }
 }

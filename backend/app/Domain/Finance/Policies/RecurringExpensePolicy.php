@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Domain\Finance;
+namespace App\Domain\Finance\Policies;
 
 use App\Domain\User\Models\User;
 use App\Domain\Finance\RecurringExpense\Models\RecurringExpense;

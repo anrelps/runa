@@ -36,7 +36,6 @@ export const DarkGridAuth = () => {
 
   useEffect(
     function () {
-      console.log('Authentication status changed:', isAuthenticated);
       if (isAuthenticated) {
         navigate('/dashboard');
       }
