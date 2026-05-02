@@ -234,7 +234,7 @@ const TransactionItem: React.FC<TransactionItemProps> = ({
   const accent = CATEGORY_ACCENTS[tx.category] ?? 'var(--color-text-secondary)';
 
   return (
-    <div className='flex items-center justify-between p-3 rounded-xl bg-white/[0.03] border border-border-card hover:bg-white/[0.05] hover:border-primary/20 transition-all duration-200 cursor-pointer'>
+    <div className='flex items-center justify-between p-3 rounded-xl bg-white/3 border border-border-card hover:bg-white/5 hover:border-primary/20 transition-all duration-200 cursor-pointer'>
       {/* Left: icon + info */}
       <div className='flex items-center gap-3 min-w-0'>
         <div

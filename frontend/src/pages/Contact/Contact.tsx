@@ -4,31 +4,21 @@ import {
   EnvelopeSimpleIcon,
 } from '@phosphor-icons/react';
 import { motion } from 'framer-motion';
+import { useTranslation } from 'react-i18next';
 import ShiftingContactForm from '../../features/contact/components/ShiftingContactForm';
 import PublicLayout from '../../layouts/PublicLayout/PublicLayout';
 
-const contactCards = [
-  {
-    icon: EnvelopeSimpleIcon,
-    title: 'E-mail',
-    description: 'contato@runa.app',
-  },
-  {
-    icon: ClockIcon,
-    title: 'Tempo de resposta',
-    description: 'Até 24 horas úteis',
-  },
-  {
-    icon: ChatCircleDotsIcon,
-    title: 'FAQ',
-    description: 'Consulte as dúvidas frequentes',
-  },
-];
-
 const Contact = () => {
+  const { t } = useTranslation();
+
+  const contactCards = [
+    { icon: EnvelopeSimpleIcon, title: t('contact.card1Title'), description: t('contact.card1Desc') },
+    { icon: ClockIcon, title: t('contact.card2Title'), description: t('contact.card2Desc') },
+    { icon: ChatCircleDotsIcon, title: t('contact.card3Title'), description: t('contact.card3Desc') },
+  ];
+
   return (
     <PublicLayout>
-      {/* Hero */}
       <section
         className='relative overflow-hidden'
         style={{ backgroundColor: 'var(--color-background-primary)' }}
@@ -41,7 +31,7 @@ const Contact = () => {
             className='mb-4 text-3xl font-bold leading-tight sm:text-4xl md:text-5xl'
             style={{ color: 'var(--color-text-primary)' }}
           >
-            Fale com a gente
+            {t('contact.heroTitle')}
           </motion.h1>
           <motion.p
             initial={{ y: 20, opacity: 0 }}
@@ -50,12 +40,9 @@ const Contact = () => {
             className='mx-auto mb-12 max-w-xl text-base leading-relaxed md:text-lg'
             style={{ color: 'var(--color-text-secondary)' }}
           >
-            Tem uma dúvida, sugestão ou quer saber mais sobre o Runa? Preencha o
-            formulário abaixo ou use um dos nossos canais. Estamos prontos para
-            ajudar.
+            {t('contact.heroSubtitle')}
           </motion.p>
 
-          {/* Info cards */}
           <motion.div
             initial={{ y: 20, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
@@ -66,30 +53,18 @@ const Contact = () => {
               <div
                 key={title}
                 className='flex flex-col items-center gap-2 rounded-xl border p-5'
-                style={{
-                  backgroundColor: 'var(--color-background-card)',
-                  borderColor: 'rgba(255,255,255,0.06)',
-                }}
+                style={{ backgroundColor: 'var(--color-background-card)', borderColor: 'rgba(255,255,255,0.06)' }}
               >
                 <span
                   className='grid size-10 place-content-center rounded-full'
-                  style={{
-                    backgroundColor: 'rgba(32, 224, 150, 0.12)',
-                    color: 'var(--color-primary)',
-                  }}
+                  style={{ backgroundColor: 'rgba(32, 224, 150, 0.12)', color: 'var(--color-primary)' }}
                 >
                   <Icon size={20} />
                 </span>
-                <span
-                  className='text-sm font-semibold'
-                  style={{ color: 'var(--color-text-primary)' }}
-                >
+                <span className='text-sm font-semibold' style={{ color: 'var(--color-text-primary)' }}>
                   {title}
                 </span>
-                <span
-                  className='text-center text-xs'
-                  style={{ color: 'var(--color-text-secondary)' }}
-                >
+                <span className='text-center text-xs' style={{ color: 'var(--color-text-secondary)' }}>
                   {description}
                 </span>
               </div>
