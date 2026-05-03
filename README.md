@@ -10,7 +10,7 @@
 [![PostgreSQL](https://img.shields.io/badge/PostgreSQL-16-4169E1?style=flat-square&logo=postgresql&logoColor=white)](https://www.postgresql.org)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow?style=flat-square)](LICENSE)
 
-[Live Demo](https://runa-gamma.vercel.app) · [API](https://runa-production.up.railway.app/up) · [Report a bug](https://github.com/anrelps/runa/issues)
+[Live Demo](https://runa-gamma.vercel.app)
 
 </div>
 
