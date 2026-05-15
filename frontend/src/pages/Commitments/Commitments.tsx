@@ -12,8 +12,6 @@ import { useAppDispatch } from '../../redux/store';
 import type { category } from '../../utils/consts';
 import { CATEGORY_ACCENTS, CATEGORY_ICONS } from '../../utils/consts';
 
-// ── Types ───────────────────────────────────────────────────────────────────
-
 interface Installment {
   id: number;
   installment_number: number;
@@ -41,8 +39,6 @@ interface InstallmentExpense {
   [key: string]: any;
 }
 
-// ── Helpers ─────────────────────────────────────────────────────────────────
-
 const today = () => {
   const d = new Date();
   d.setHours(0, 0, 0, 0);
@@ -63,8 +59,6 @@ const useDaysLabel = () => {
     return { text: t('pendingBills.dueInLabel', { count: diff }), color: 'text-text-secondary' };
   };
 };
-
-// ── Sub-components ───────────────────────────────────────────────────────────
 
 const SectionHeader = ({ title, count }: { title: string; count: number }) => (
   <div className='flex items-center gap-3 mb-3'>
@@ -302,7 +296,6 @@ const InstallmentCard = ({
 
   return (
     <div className='flex flex-col gap-2 p-3 rounded-xl bg-white/3 border border-border-card'>
-      {/* Header */}
       <div className='flex items-center justify-between'>
         <div className='flex items-center gap-3 min-w-0'>
           <div
@@ -359,7 +352,6 @@ const InstallmentCard = ({
         </div>
       </div>
 
-      {/* Progress bar */}
       <div className='flex items-center gap-2'>
         <div className='flex-1 h-1.5 rounded-full bg-white/8 overflow-hidden'>
           <div
@@ -372,7 +364,6 @@ const InstallmentCard = ({
         </span>
       </div>
 
-      {/* Installments list */}
       {!collapsed && installments.length > 0 && (
         <div className='flex flex-col gap-1.5 mt-1'>
           {installments.map((inst) => (
@@ -395,8 +386,6 @@ const InstallmentCard = ({
     </div>
   );
 };
-
-// ── Page ────────────────────────────────────────────────────────────────────
 
 const Commitments = () => {
   const { t } = useTranslation();

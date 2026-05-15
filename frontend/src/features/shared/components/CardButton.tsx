@@ -65,7 +65,6 @@ const CardButton = ({
         boxShadow: `0 24px 64px var(--color-card-shadow), 0 0 0 1px ${mix(8)}`,
       }}
     >
-      {/* Mouse-tracking glow */}
       <motion.span
         animate={{ opacity: isHovered ? 1 : 0 }}
         transition={{ duration: 0.25 }}
@@ -80,7 +79,6 @@ const CardButton = ({
         aria-hidden='true'
       />
 
-      {/* Dot grid texture */}
       <span
         className='pointer-events-none absolute inset-0 opacity-[0.06]'
         style={{
@@ -90,7 +88,6 @@ const CardButton = ({
         aria-hidden='true'
       />
 
-      {/* Top-edge shine */}
       <span
         className='pointer-events-none absolute top-0 left-0 right-0 h-px'
         style={{
@@ -99,9 +96,7 @@ const CardButton = ({
         aria-hidden='true'
       />
 
-      {/* Icon zone */}
       <div className='relative flex-1 flex items-center justify-center'>
-        {/* Outer dashed orbit */}
         <motion.span
           variants={{
             idle: { opacity: 0.08, scale: 1, rotate: 0 },
@@ -112,7 +107,6 @@ const CardButton = ({
           style={{ borderColor: accent }}
           aria-hidden='true'
         />
-        {/* Inner solid ring */}
         <motion.span
           variants={{
             idle: { opacity: 0.14, scale: 1 },
@@ -123,7 +117,6 @@ const CardButton = ({
           style={{ borderColor: accent }}
           aria-hidden='true'
         />
-        {/* Soft glow disc */}
         <span
           className='absolute w-10 h-10 rounded-full'
           style={{ background: `radial-gradient(circle, ${mix(20)} 0%, transparent 70%)` }}
@@ -148,13 +141,11 @@ const CardButton = ({
         )}
       </div>
 
-      {/* Gradient divider */}
       <div
         className='mx-5 h-px shrink-0'
         style={{ background: `linear-gradient(to right, transparent, ${mix(22)}, transparent)` }}
       />
 
-      {/* Label zone */}
       <div className='flex items-center justify-between px-4 py-3.5 shrink-0'>
         <span
           className='text-xs font-bold tracking-widest uppercase leading-tight whitespace-pre-line text-left'

@@ -17,8 +17,6 @@ import Card from '../shared/components/Card';
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, Tooltip);
 
-// ── Helpers ───────────────────────────────────────────────────────────────────
-
 const getCssVar = (cssVar: string): string => {
   const el = document.querySelector('.light') ?? document.documentElement;
   return getComputedStyle(el).getPropertyValue(cssVar).trim();
@@ -46,8 +44,6 @@ const formatBRL = (v: number): string =>
   v >= 1000
     ? `R$ ${(v / 1000).toLocaleString('pt-BR', { maximumFractionDigits: 1 })}k`
     : `R$ ${v.toLocaleString('pt-BR', { maximumFractionDigits: 0 })}`;
-
-// ── Build last 6 months ───────────────────────────────────────────────────────
 
 const buildMonths = () => {
   const now = new Date();
@@ -77,8 +73,6 @@ const periodLabel = (months: ReturnType<typeof buildMonths>): string => {
       .replace(/^\w/, (c) => c.toUpperCase());
   return `${fmt(first)} – ${fmt(last)}`;
 };
-
-// ── Component ─────────────────────────────────────────────────────────────────
 
 type Props = { decorated?: boolean };
 

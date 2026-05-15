@@ -12,8 +12,6 @@ const hoverTransition = {
   mass: 0.22,
 } as const;
 
-// ── Lang switch ───────────────────────────────────────────────────────────────
-
 const useLang = () => {
   const { i18n } = useTranslation();
   const lang = i18n.language as 'pt' | 'en';
@@ -54,8 +52,6 @@ const LangSwitch = ({ layoutId }: { layoutId: string }) => {
   );
 };
 
-// ── Component ─────────────────────────────────────────────────────────────────
-
 const PublicNavBar = () => {
   const { t } = useTranslation();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -92,7 +88,6 @@ const PublicNavBar = () => {
           style={{ filter: 'brightness(0) saturate(100%) invert(1)' }}
         />
 
-        {/* Centre nav — desktop only */}
         <nav className='nav-container-gradient rounded-full px-6 hidden md:block absolute left-1/2 -translate-x-1/2'>
           <div className='flex items-center justify-center gap-1.5 p-1.5 text-text-primary'>
             <ul
@@ -126,7 +121,6 @@ const PublicNavBar = () => {
           </div>
         </nav>
 
-        {/* Mobile: switch + hamburger */}
         <div className='md:hidden flex items-center gap-2 relative z-50'>
           <LangSwitch layoutId='lang-pill-landing-mobile' />
           <button
@@ -144,7 +138,6 @@ const PublicNavBar = () => {
           </button>
         </div>
 
-        {/* Desktop: switch + login */}
         <div className='hidden md:flex items-center gap-3'>
           <LangSwitch layoutId='lang-pill-landing' />
           <Link
@@ -162,7 +155,6 @@ const PublicNavBar = () => {
         </div>
       </header>
 
-      {/* Mobile overlay menu */}
       {isMobileMenuOpen && (
         <div
           className='fixed inset-0 z-40 bg-background-primary/80 backdrop-blur-md md:hidden'

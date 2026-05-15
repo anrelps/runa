@@ -7,8 +7,6 @@ import type { category } from '../../../utils/consts';
 import { CATEGORY_ACCENTS, CATEGORY_ICONS } from '../../../utils/consts';
 import Card from '../../shared/components/Card';
 
-// ── Types ─────────────────────────────────────────────────────────────────────
-
 type TransactionType = 'expense' | 'income';
 
 type Transaction = {
@@ -19,8 +17,6 @@ type Transaction = {
   type: TransactionType;
   date: string;
 };
-
-// ── Helpers ───────────────────────────────────────────────────────────────────
 
 const formatBRL = (value: number): string =>
   value.toLocaleString('pt-BR', {
@@ -71,8 +67,6 @@ function getDaySummary(transactions: Transaction[]): {
   );
 }
 
-// ── Component ─────────────────────────────────────────────────────────────────
-
 type Props = {
   decorated?: boolean;
 };
@@ -117,7 +111,6 @@ export default function RecentTransactions({ decorated = false }: Props) {
 
   return (
     <Card decorated={decorated}>
-      {/* Header */}
       <div className='flex justify-between items-center mb-5 gap-2'>
         <div>
           <p className='text-xs font-medium uppercase tracking-widest text-text-secondary mb-1'>
@@ -147,19 +140,16 @@ export default function RecentTransactions({ decorated = false }: Props) {
         </div>
       </div>
 
-      {/* Summary chips */}
       <div className='grid grid-cols-2 gap-2.5 mb-5'>
         <SummaryChip label={t('transactions.income')} value={totalIncome} type='income' />
         <SummaryChip label={t('transactions.outcome')} value={totalExpense} type='expense' />
       </div>
 
-      {/* Grouped transactions */}
       <div className='flex flex-col gap-5'>
         {dates.map((date) => {
           const { income, expense } = getDaySummary(grouped[date]);
           return (
             <div key={date}>
-              {/* Date row */}
               <div className='flex items-center justify-between mb-2.5'>
                 <div className='flex items-center gap-2'>
                   <span className='text-xs font-semibold text-text-secondary'>
@@ -181,7 +171,6 @@ export default function RecentTransactions({ decorated = false }: Props) {
                 </div>
               </div>
 
-              {/* Transaction items */}
               <div className='flex flex-col gap-2'>
                 {grouped[date].map((t) => (
                   <TransactionItem key={t.id} transaction={t} />
@@ -194,8 +183,6 @@ export default function RecentTransactions({ decorated = false }: Props) {
     </Card>
   );
 }
-
-// ── Sub-components ────────────────────────────────────────────────────────────
 
 type SummaryChipProps = {
   label: string;
@@ -235,7 +222,6 @@ const TransactionItem: React.FC<TransactionItemProps> = ({
 
   return (
     <div className='flex items-center justify-between p-3 rounded-xl bg-white/3 border border-border-card hover:bg-white/5 hover:border-primary/20 transition-all duration-200 cursor-pointer'>
-      {/* Left: icon + info */}
       <div className='flex items-center gap-3 min-w-0'>
         <div
           className='w-9 h-9 rounded-xl flex items-center justify-center shrink-0'
@@ -261,7 +247,6 @@ const TransactionItem: React.FC<TransactionItemProps> = ({
         </div>
       </div>
 
-      {/* Right: amount */}
       <div className='shrink-0 ml-3 text-right'>
         <p
           className={`text-sm font-bold ${isIncome ? 'text-primary' : 'text-accent-start'}`}

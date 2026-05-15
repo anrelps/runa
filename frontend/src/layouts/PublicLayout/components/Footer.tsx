@@ -42,7 +42,6 @@ const Footer = () => {
 
       <div className='mx-auto max-w-6xl px-4 pt-16 pb-8 md:px-8'>
         <div className='grid grid-cols-2 gap-10 md:grid-cols-4 lg:gap-16'>
-          {/* Brand column */}
           <div className='col-span-2'>
             <img
               src={logoSvg}
@@ -88,7 +87,6 @@ const Footer = () => {
             </div>
           </div>
 
-          {/* Link columns */}
           {Object.entries(footerLinks).map(([title, links]) => (
             <div key={title}>
               <h4
@@ -114,7 +112,6 @@ const Footer = () => {
           ))}
         </div>
 
-        {/* Bottom bar */}
         <div
           className='mt-14 flex flex-col items-center justify-between gap-4 border-t pt-6 sm:flex-row'
           style={{ borderColor: 'rgba(255,255,255,0.06)' }}

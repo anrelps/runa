@@ -62,7 +62,7 @@ export const index = async (
   filters?: TransactionFilters,
 ): Promise<any> => {
   const res = await api.get('/transactions', { params: filters });
-  return res.data.data; // { data: [...], links: {}, meta: {} }
+  return res.data.data;
 };
 
 export const addBalance = async (

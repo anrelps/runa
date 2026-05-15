@@ -74,7 +74,6 @@ const Expenses = () => {
 
   return (
     <AppLayout>
-      {/* Botão principal */}
       <button
         onClick={() => navigate('/expenses/add')}
         className='w-full flex items-center justify-center gap-2.5 py-4 rounded-2xl mb-4 text-sm font-bold cursor-pointer transition-all'

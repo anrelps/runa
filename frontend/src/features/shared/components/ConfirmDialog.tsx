@@ -28,7 +28,6 @@ const ConfirmDialog = ({
     <AnimatePresence>
       {open && (
         <>
-          {/* Backdrop */}
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -38,7 +37,6 @@ const ConfirmDialog = ({
             onClick={onCancel}
           />
 
-          {/* Dialog */}
           <motion.div
             initial={{ opacity: 0, scale: 0.95, y: 8 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
@@ -54,7 +52,6 @@ const ConfirmDialog = ({
                 boxShadow: '0 20px 60px rgba(0,0,0,0.4)',
               }}
             >
-              {/* Icon + Text */}
               <div className='flex items-start gap-3'>
                 <div
                   className='shrink-0 w-9 h-9 rounded-xl flex items-center justify-center'
@@ -70,7 +67,6 @@ const ConfirmDialog = ({
                 </div>
               </div>
 
-              {/* Actions */}
               <div className='flex gap-2'>
                 <button
                   type='button'

@@ -5,7 +5,6 @@ import { profile } from './redux/slices/userSlice';
 import type { RootState } from './redux/store';
 import { useAppDispatch } from './redux/store';
 
-//Pages
 import About from './pages/About/About';
 import AddExpense from './pages/AddExpense/AddExpense';
 import Commitments from './pages/Commitments/Commitments';
@@ -21,7 +20,6 @@ import Incomes from './pages/Incomes/Incomes';
 import Login from './pages/Login/Login';
 import Pricing from './pages/Pricing/Pricing';
 
-//Components
 import ProtectedRoute from './features/shared/ProtectedRoute';
 
 const App = () => {

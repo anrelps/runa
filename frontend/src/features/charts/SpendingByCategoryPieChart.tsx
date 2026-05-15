@@ -12,8 +12,6 @@ import Card from '../shared/components/Card';
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
-// ── Helpers ───────────────────────────────────────────────────────────────────
-
 const getCssVar = (cssVar: string): string => {
   const el = document.querySelector('.light') ?? document.documentElement;
   return getComputedStyle(el).getPropertyValue(cssVar).trim();
@@ -32,11 +30,7 @@ const currentMonthRange = () => {
   };
 };
 
-// ── Types ─────────────────────────────────────────────────────────────────────
-
 type Props = { decorated?: boolean };
-
-// ── Component ─────────────────────────────────────────────────────────────────
 
 const SpendingByCategoryPieChart: React.FC<Props> = ({ decorated = false }) => {
   const { outerRef, chartRef } = useChartResize();
@@ -57,7 +51,6 @@ const SpendingByCategoryPieChart: React.FC<Props> = ({ decorated = false }) => {
     });
   }, []);
 
-  // Aggregate amount by category from transactions
   const totals = CATEGORIES.reduce<Record<string, number>>((acc, cat) => {
     acc[cat] = transactions.reduce(
       (sum, tx) => tx.category === cat ? sum + (parseFloat(String(tx.amount)) || 0) : sum,

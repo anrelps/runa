@@ -1,14 +1,10 @@
 import React from 'react';
 
-// ── Types ─────────────────────────────────────────────────────────────────────
-
 type CardProps = {
   children: React.ReactNode;
   decorated?: boolean;
   className?: string;
 };
-
-// ── Component ─────────────────────────────────────────────────────────────────
 
 const Card = React.forwardRef<HTMLDivElement, CardProps>(
   ({ children, decorated = false, className = '' }, ref) => {

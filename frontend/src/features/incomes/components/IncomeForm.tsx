@@ -79,7 +79,6 @@ const IncomeForm = ({
 
   return (
     <div className='max-w-lg'>
-      {/* ── Header ── */}
       <div className='flex items-center gap-4 mb-8'>
         <button
           type='button'
@@ -104,7 +103,6 @@ const IncomeForm = ({
       </div>
 
       <form onSubmit={handleSubmit} className='flex flex-col gap-3'>
-        {/* ── Hero: Valor ── */}
         <div className='relative overflow-hidden rounded-2xl border' style={cardStyle}>
           <span
             className='pointer-events-none absolute inset-0 opacity-[0.04]'
@@ -148,7 +146,6 @@ const IncomeForm = ({
           </div>
         </div>
 
-        {/* ── Personalizar (opcional) ── */}
         <div
           className='rounded-2xl border overflow-hidden transition-all'
           style={{
@@ -236,7 +233,6 @@ const IncomeForm = ({
           </AnimatePresence>
         </div>
 
-        {/* ── Submit ── */}
         <motion.button
           type='submit'
           disabled={loading}

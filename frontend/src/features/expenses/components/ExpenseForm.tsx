@@ -12,8 +12,6 @@ import { useCurrencyBRL } from '../../../hooks/useCurrencyBRL';
 import { DateField } from '../../shared/components/DateRangePicker/DateField';
 import { CATEGORIES, CATEGORY_ACCENTS } from '../../../utils/consts';
 
-// ── Constants ──────────────────────────────────────────────────────────────────
-
 const ACCENT = 'var(--color-accent-start)';
 
 export const EXPENSE_TYPES = [
@@ -23,8 +21,6 @@ export const EXPENSE_TYPES = [
 ] as const;
 
 export type ExpenseType = (typeof EXPENSE_TYPES)[number]['value'];
-
-// ── Types ──────────────────────────────────────────────────────────────────────
 
 export interface ExpenseFormData {
   type: ExpenseType;
@@ -55,8 +51,6 @@ interface ExpenseFormProps {
   onSubmit: (data: ExpenseFormData) => void;
 }
 
-// ── Sub-components ─────────────────────────────────────────────────────────────
-
 const Divider = () => <div className='h-px mx-0 shrink-0 bg-border-subtle' />;
 
 const FieldLabel = ({ children }: { children: React.ReactNode }) => (
@@ -64,8 +58,6 @@ const FieldLabel = ({ children }: { children: React.ReactNode }) => (
     {children}
   </p>
 );
-
-// ── Component ──────────────────────────────────────────────────────────────────
 
 const ExpenseForm = ({
   title,
@@ -118,7 +110,6 @@ const ExpenseForm = ({
 
   return (
     <div className='max-w-lg'>
-      {/* ── Header ── */}
       <div className='flex items-center gap-4 mb-8'>
         <button
           type='button'
@@ -145,7 +136,6 @@ const ExpenseForm = ({
       </div>
 
       <form onSubmit={handleSubmit} className='flex flex-col gap-3'>
-        {/* ── Hero: Valor ── */}
         <div
           className='relative overflow-hidden rounded-2xl border'
           style={cardStyle}
@@ -193,7 +183,6 @@ const ExpenseForm = ({
           </div>
         </div>
 
-        {/* ── Descrição + Categoria ── */}
         <div className='rounded-2xl border overflow-hidden' style={cardStyle}>
           <div className='px-5 pt-4 pb-5'>
             <FieldLabel>{t('expense.form.description')}</FieldLabel>
@@ -243,7 +232,6 @@ const ExpenseForm = ({
           </div>
         </div>
 
-        {/* ── Tipo + Parcelas / Dia recorrente ── */}
         <div className='rounded-2xl border overflow-hidden' style={cardStyle}>
           <div className='px-5 py-4'>
             <FieldLabel>{t('expense.form.type')}</FieldLabel>
@@ -431,7 +419,6 @@ const ExpenseForm = ({
           </AnimatePresence>
         </div>
 
-        {/* ── Submit ── */}
         <motion.button
           type='submit'
           disabled={loading}

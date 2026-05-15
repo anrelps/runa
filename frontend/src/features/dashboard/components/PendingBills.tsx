@@ -7,8 +7,6 @@ import type { category } from '../../../utils/consts';
 import { CATEGORY_ACCENTS, CATEGORY_ICONS } from '../../../utils/consts';
 import Card from '../../shared/components/Card';
 
-// ── Types ─────────────────────────────────────────────────────────────────────
-
 type BillKind = 'recurring' | 'installment';
 
 type Bill = {
@@ -20,8 +18,6 @@ type Bill = {
   badge?: string;
   category?: category;
 };
-
-// ── Helpers ───────────────────────────────────────────────────────────────────
 
 const todayMidnight = (): Date => {
   const d = new Date();
@@ -63,8 +59,6 @@ const useDueLabel = () => {
 const formatBRL = (v: number) =>
   v.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 
-// ── Component ─────────────────────────────────────────────────────────────────
-
 type Props = { decorated?: boolean };
 
 export default function PendingBills({ decorated = false }: Props) {
@@ -95,7 +89,6 @@ export default function PendingBills({ decorated = false }: Props) {
         }));
 
       const installments: Bill[] = instRaw.flatMap((e) => {
-        // com dados detalhados de parcelas vindos do backend
         if (e.installments?.length) {
           const sorted = [...(e.installments as any[])].sort(
             (a, b) => a.installment_number - b.installment_number,
@@ -114,7 +107,6 @@ export default function PendingBills({ decorated = false }: Props) {
             category: e.category as category,
           }];
         }
-        // fallback sem dados detalhados
         if (!e.first_due_date || !e.installment_count) return [];
         const current = currentInstallmentNum(e.first_due_date, e.installment_count);
         if (current > e.installment_count) return [];
@@ -143,7 +135,6 @@ export default function PendingBills({ decorated = false }: Props) {
 
   return (
     <Card decorated={decorated}>
-      {/* Header */}
       <div className='flex justify-between items-center mb-4 gap-2'>
         <div>
           <p className='text-xs font-medium uppercase tracking-widest text-text-secondary mb-1'>
@@ -163,14 +154,12 @@ export default function PendingBills({ decorated = false }: Props) {
         )}
       </div>
 
-      {/* Summary chips */}
       <div className='grid grid-cols-3 gap-2 mb-4'>
         <StatChip value={bills.length} label={t('pendingBills.total')} valueColor='text-text-primary' />
         <StatChip value={recurringCount} label={t('pendingBills.recurring')} valueColor='text-primary' />
         <StatChip value={installmentCount} label={t('pendingBills.installments')} valueColor='text-accent-start' />
       </div>
 
-      {/* Bills list */}
       {bills.length === 0 ? (
         <p className='text-sm text-text-secondary text-center py-4'>
           {t('pendingBills.empty')}
@@ -185,8 +174,6 @@ export default function PendingBills({ decorated = false }: Props) {
     </Card>
   );
 }
-
-// ── Sub-components ────────────────────────────────────────────────────────────
 
 const StatChip: React.FC<{ value: number; label: string; valueColor: string }> = ({
   value,

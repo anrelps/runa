@@ -47,7 +47,6 @@ const IconSideNav = () => {
   const location = useLocation();
   const { theme } = useTheme();
 
-  // Determina o item ativo baseado na rota atual
   const selected = navItems.findIndex((item) =>
     location.pathname.startsWith(item.path),
   );
@@ -58,7 +57,6 @@ const IconSideNav = () => {
 
   return (
     <>
-      {/* Desktop sidebar — hidden on mobile */}
       <motion.nav
         className='hidden md:flex h-screen bg-background-card flex-col items-start gap-2 sticky top-0 border-r border-border-subtle overflow-hidden'
         animate={{ width: expanded ? 220 : 80 }}
@@ -89,7 +87,6 @@ const IconSideNav = () => {
         </div>
 
         <div className='w-full px-3 pb-4 flex flex-col gap-1'>
-          {/* Language switch — vertical toggle */}
           <div
             className='bg-background-primary rounded-md flex items-center justify-center w-full overflow-hidden'
             style={{ minHeight: '56px', padding: '6px' }}
@@ -135,7 +132,6 @@ const IconSideNav = () => {
         </div>
       </motion.nav>
 
-      {/* Mobile bottom nav — visible only on mobile */}
       <nav className='md:hidden fixed bottom-0 left-0 right-0 z-50 bg-background-card border-t border-border-subtle flex items-center justify-around px-2 py-2'>
         {navItems.map((item, i) => (
           <BottomNavItem
@@ -149,7 +145,6 @@ const IconSideNav = () => {
           </BottomNavItem>
         ))}
 
-        {/* Language switch — vertical compact for mobile */}
         <div className='flex flex-col items-center justify-center p-2 rounded-md' style={{ minWidth: 44 }}>
           <div
             className='relative flex flex-col rounded-md overflow-hidden'

@@ -18,7 +18,6 @@ const Wallet = () => {
   const buttonRef = useRef<HTMLButtonElement>(null);
   const popoverRef = useRef<HTMLDivElement>(null);
 
-  // Calculate position from button
   const updateCoords = () => {
     if (!buttonRef.current) return;
     const rect = buttonRef.current.getBoundingClientRect();
@@ -28,7 +27,6 @@ const Wallet = () => {
     });
   };
 
-  // Close on outside click
   useEffect(() => {
     const handler = (e: MouseEvent) => {
       if (
@@ -46,7 +44,6 @@ const Wallet = () => {
 
   return (
     <div className='relative'>
-      {/* ── Trigger button ── */}
       <motion.button
         ref={buttonRef}
         onClick={() => { updateCoords(); setOpen((v) => !v); }}
@@ -66,7 +63,6 @@ const Wallet = () => {
         <span className='hidden md:inline whitespace-nowrap'>{t('wallet.label')}</span>
       </motion.button>
 
-      {/* ── Popover (portal) ── */}
       {createPortal(
         <AnimatePresence>
           {open && (
@@ -85,7 +81,6 @@ const Wallet = () => {
                 boxShadow: '0 16px 48px var(--color-card-shadow), 0 0 0 1px var(--color-border-card)',
               }}
           >
-            {/* Top shine */}
             <span
               className='pointer-events-none absolute top-0 left-0 right-0 h-px'
               style={{
@@ -94,7 +89,6 @@ const Wallet = () => {
             />
 
             <div className='px-5 pt-5 pb-4'>
-              {/* Header */}
               <div className='flex items-center gap-2 mb-4'>
                 <span
                   className='flex items-center justify-center w-7 h-7 rounded-lg'
@@ -107,7 +101,6 @@ const Wallet = () => {
                 </p>
               </div>
 
-              {/* Balance display */}
               <div className='flex items-baseline gap-2 mb-4'>
                 <span className='text-lg font-semibold text-text-secondary shrink-0'>R$</span>
                 <span className='text-3xl font-black text-text-primary'>
@@ -115,7 +108,6 @@ const Wallet = () => {
                 </span>
               </div>
 
-              {/* Actions */}
               <div className='flex gap-2'>
                 <button
                   onClick={() => { setOpen(false); navigate('/income/add'); }}
